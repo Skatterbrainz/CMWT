@@ -5,7 +5,7 @@ ConfigMgr Web Tools
 
 I have to say, I didn't expect the response to this that I've seen so far.  I'm really blown away (thank you!).  Some feedback has already pointed out some issues that might trip some people up, so I wanted to post them here:
 
-* The global.asa file has the path to _config.txt hard-coded as "F:\CMWT\_config.txt" - You may need to edit that to correct the drive letter and/or path.  The first indication that this is incorrect, is an error message "-2147467259: [Microsoft][ODBC Driver Manager] Data source name not found and no default driver specified"
+* The global.asa file has the path to _config.txt hard-coded as "F:\CMWT\\_config.txt" - You may need to edit that to correct the drive letter and/or path.  The first indication that this is incorrect, is an error message "-2147467259: [Microsoft][ODBC Driver Manager] Data source name not found and no default driver specified"
 
 * Some questions have come up about how the communications channel is managed between CMWT, SCCM and SQL.  Basically, all read operations are performed via SQL ADO requests, and all write operations are performed via the SMS (WMI) provider channel.  The exception to this are the AD Tools, which use ADSI with Secure LDAP connections.  For the SQL read ops, I chose this because my benchmarking seemed to show a significant performance benefit over read ops via WMI.  In no case are SQL write-ops performed against the SCCM database.  The CMWT database is separate and uses SQL ADO for read and write operations.
 
