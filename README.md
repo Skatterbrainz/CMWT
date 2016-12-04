@@ -1,9 +1,17 @@
 # cmwt
 ConfigMgr Web Tools
 
+## Update 12/04/2016 - General Info
+
+I have to say, I didn't expect the response to this that I've seen so far.  I'm really blown away (thank you!).  Some feedback has already pointed out some issues that might trip some people up, so I wanted to post them here:
+
+* The global.asa file has the path to _config.txt hard-coded as "F:\CMWT\_config.txt" - You may need to edit that to correct the drive letter and/or path.  The first indication that this is incorrect, is an error message "-2147467259: [Microsoft][ODBC Driver Manager] Data source name not found and no default driver specified"
+
+* Some questions have come up about how the communications channel is managed between CMWT, SCCM and SQL.  Basically, all read operations are performed via SQL ADO requests, and all write operations are performed via the SMS (WMI) provider channel.  The exception to this are the AD Tools, which use ADSI with Secure LDAP connections.  For the SQL read ops, I chose this because my benchmarking seemed to show a significant performance benefit over read ops via WMI.  In no case are SQL write-ops performed against the SCCM database.  The CMWT database is separate and uses SQL ADO for read and write operations.
+
 ## Update 12/03/2016 - Massive Overhaul
 
-Bsaed on user feedback, the application has undergone a massive rewrite.  It is still based on Classic ASP (get mad, I don't care, it still works just fine), but the UI has been replaced with an semi-quasi-Azure-ish kind of menu motif with the "hamburger" control thing at the top left.  The custom reports feature has been rewritten.  The database setup script is new.  The configuration settings script is new.  The installation guide is new (and actually tested by someone other than myself).  Enjoy!
+Based on user feedback, the application has undergone a massive rewrite.  It is still based on Classic ASP (get mad, I don't care, it still works just fine), but the UI has been replaced with an semi-quasi-Azure-ish kind of menu motif with the "hamburger" control thing at the top left.  The custom reports feature has been rewritten.  The database setup script is new.  The configuration settings script is new.  The installation guide is new (and actually tested by someone other than myself).  Enjoy!
 
 Tested with Configuration Manager 1610 on Windows Server 2012 R2 using SQL Server 2014 SP1.  Client tested on Chrome and IE 11 on Windows 10 (up to 14971).
 
