@@ -1,9 +1,9 @@
 # cmwt
 ConfigMgr Web Tools
 
-## Update 03/27/2016 - End of Life
+## Update 12/03/2016 - Massive Overhaul
 
-Based on zero feedback and zero traceable results on this project, I can't justify maintaining it.  I'll leave this online for another week. And then it goes bye bye.  If you downloaded it but haven't tried it yet, thank you for at least that much.  I appreciate the consideration.
+Bsaed on user feedback, the application has undergone a massive rewrite.  It is still based on Classic ASP (get mad, I don't care, it still works just fine), but the UI has been replaced with an semi-quasi-Azure-ish kind of menu motif with the "hamburger" control thing at the top left.  The custom reports feature has been rewritten.  The database setup script is new.  The configuration settings script is new.  The installation guide is new (and actually tested by someone other than myself).  Enjoy!
 
 ## Overview
 
