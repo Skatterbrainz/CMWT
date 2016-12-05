@@ -1,6 +1,10 @@
 # cmwt
 ConfigMgr Web Tools
 
+## Update 12/05/2016 - Latest Build Uploaded
+
+Refer to the CMWT GitHub Wiki pages for more information
+
 ## Update 12/04/2016 - General Info
 
 I have to say, I didn't expect the response to this that I've seen so far.  I'm really blown away (thank you!).  Some feedback has already pointed out some issues that might trip some people up, so I wanted to post them here:
