@@ -565,7 +565,7 @@ function CMWT_AutoLink (ColumnName, LinkVal)
 		Case "OSCAPTION":
 			result = "<a href=""os.asp?on=" & LinkVal & """ title=""Show Devices with " & LinkVal & """>" & LinkVal & "</a></td>"
 		Case "CLIENT","ISACTIVE","ISPXE":
-			result = CMWT_YESNO(LinkVal, False)
+			result = CMWT_YESNO(LinkVal, True)
 		Case "MEMORY":
 			If CMWT_NotNullString(LinkVal) Then
 				result = CMWT_KB2GB(LinkVal) & " GB"
@@ -592,9 +592,9 @@ function CMWT_AutoLink (ColumnName, LinkVal)
 			result = "<a href=""package.asp?id=" & LinkVal & """ title=""Package Details..."">" & LinkVal & "</a>"
 		Case "APPID":
 			result = "<a href=""package.asp?k2=8&id=" & LinkVal & """ title=""Application Details..."">" & LinkVal & "</a>"
-		Case "PUBLISHED","DISCOVERYENABLED":
-			result = CMWT_YESNO(LinkVal, False)
-		Case "ISENABLED","ISACTIVE","ISDELETED","ISOBSOLETE":
+		Case "PUBLISHED","DISCOVERYENABLED","ISDEPLOYED","ISSUPERSEDED":
+			result = CMWT_YESNO(LinkVal, True)
+		Case "ISENABLED","ISACTIVE","ISDELETED","ISOBSOLETE","ISEXPIRED","ISHIDDEN","EULAEXISTS":
 			result = CMWT_YESNO(LinkVal,True)
 		Case "TASKNAME":
 			result = "<a href=""cmtask.asp?tn=" & LinkVal & """ title=""View Details"">" & LinkVal & "</a>"
@@ -607,6 +607,12 @@ function CMWT_AutoLink (ColumnName, LinkVal)
 				CMWT_IMG_LINK (True, "icon_del2", "icon_del1", "icon_del2", "reportdel.asp?id=" & LinkVal, "Delete Report")
 		Case "FILENAME":
 			result = "<a href=""dupefiles.asp?cn=" & cn & "&fn=" & LinkVal & """ title=""View Instances"">" & LinkVal & "</a>"
+		Case "INFOURL":
+			If CMWT_NotNullString(LinkVal) Then
+				result = "<a href=""" & LinkVal & """ target=""_blank"" title=""Open Link"">Link</a>"
+			Else
+				result = ""
+			End If
 		Case "PACKAGETYPE":
 			Select Case LinkVal
 				Case 0: result = "0 = Package"
@@ -773,6 +779,82 @@ Sub CMWT_DB_TableGrid2 (rs, Caption, SortLink, AutoLink, FormLink)
 		Loop
 		Response.Write "<tr>" & _
 			"<td class=""td6 v10 bgGray"" colspan=""" & xcols+1 & """>" & _
+			xrows & " rows returned</td></tr></table>"
+	else
+		If CMWT_NotNullString(Caption) Then
+			Response.Write "<h2 class=""tfx"">" & Caption & "</h2>"
+		End If
+		Response.Write "<table class=""tfx""><tr class=""h100 tr1"">" & _
+			"<td class=""td6 v10 ctr"">No matching rows found</td></tr></table>"
+	end if 
+End Sub
+
+'-----------------------------------------------------------------------------
+' sub-name: CMWT_DB_TableGrid
+' sub-desc: 
+'-----------------------------------------------------------------------------
+
+Sub CMWT_DB_TableGridFilter (rs, Caption, SortLink, AutoLink, ColumnSet, FilterLink)
+	if not (rs.BOF and rs.EOF) then 
+		xrows = rs.RecordCount 
+		xcols = rs.Fields.Count
+		if CMWT_NotNullString(Caption) then 
+			response.write "<h2 class=""tfx"">" & Caption & "</h2>"
+		end if
+		response.write "<table class=""tfx""><tr>"
+		for i = 0 to xcols -1
+			fn = rs.fields(i).name
+			Select Case Ucase(fn)
+				Case "QTY","RECS","COUNT","MEMBERS","GROUPCOUNT","COMPUTERS","CLIENTS","COVERAGE":
+					Response.Write "<td class=""td6 v10 bgGray w80 " & CMWT_DB_ColumnJustify(fn) & """>"
+				Case "REPORTID":
+					Response.Write "<td class=""td6 v10 bgGray w100 " & CMWT_DB_ColumnJustify(fn) & """>"
+				Case Else:
+					Response.Write "<td class=""td6 v10 bgGray"">"
+			End Select
+			If CMWT_NotNullString(SortLink) Then
+				Response.Write CMWT_SORTLINK(SortLink, fn, SortBy) & "</td>"
+			Else
+				Response.Write fn & "</td>"
+			End If
+		next
+		if ColumnSet <> "" then 
+			Response.Write "<tr>"
+				For each csn in Split(colset,",")
+					csx = Split(csn,"=")
+					Response.Write "<td class=""pad6 v10 bgDarkGray"">"
+					If csx(1) = 1 Then
+						Response.Write "<input type=""text"" name=""ss" & csx(0) & """ id=""" & csx(0) & """ " & _
+							"maxlength=""50"" class=""pad5 v10"" title=""Filter: " & csx(0) & """ />"
+					End If
+					Response.Write "</td>"
+				Next
+				Response.Write "</tr>"
+		end if
+		Response.Write "</tr>"
+		If AutoLink <> "" Then 
+			alx = Split(AutoLink, "=")
+			afn = alx(0)
+			afl = alx(1)
+		Else
+			afn = ""
+		End If
+		Do Until rs.EOF
+			Response.Write "<tr class=""tr1"">"
+			For i = 0 to xcols-1
+				fn = rs.Fields(i).Name
+				fv = rs.Fields(i).Value
+				If Ucase(afn) = Ucase(fn) Then
+					fv = "<a href=""" & afl & "=" & fv & """>" & fv & "</a>"
+				Else
+					fv = CMWT_AutoLink (fn, fv)
+				End If
+				response.write "<td class=""td6 v10 " & CMWT_DB_ColumnJustify(fn) & """>" & fv & "</td>"
+			next
+			rs.MoveNext
+		Loop
+		Response.Write "<tr>" & _
+			"<td class=""td6 v10 bgGray"" colspan=""" & xcols & """>" & _
 			xrows & " rows returned</td></tr></table>"
 	else
 		If CMWT_NotNullString(Caption) Then
