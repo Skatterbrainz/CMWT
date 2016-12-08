@@ -3,7 +3,7 @@
 <%
 '-----------------------------------------------------------------------------
 ' filename....... devices.asp
-' lastupdate..... 12/05/2016
+' lastupdate..... 12/07/2016
 ' description.... devices listing page
 '-----------------------------------------------------------------------------
 time1 = Timer
@@ -110,7 +110,7 @@ If Not (rs.BOF and rs.EOF) Then
 			Case Else:
 				Response.Write "<td class=""td6 v10 bgGray"">"
 		End Select
-		Response.Write CMWT_SORTLINK("devices.asp", fn, SortBy) & "</td>"
+		Response.Write CMWT_SORTLINK("devices.asp?ch=" & objPFX, fn, SortBy) & "</td>"
 	Next
 	Response.Write "</tr>"
 	' iterate dataset rows

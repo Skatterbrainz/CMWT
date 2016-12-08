@@ -2,7 +2,7 @@
 <%
 '-----------------------------------------------------------------------------
 ' filename....... software.asp
-' lastupdate..... 12/04/2016
+' lastupdate..... 12/08/2016
 ' description.... software information landing page
 '-----------------------------------------------------------------------------
 time1 = Timer
@@ -29,7 +29,7 @@ CMWT_NewPage "", "", ""
 	<tr class="h50">
 		<td class="m111 w250 v10 td6" onClick="document.location.href='deployments.asp'" title="Deployments">Deployments</td>
 		<td class="m111 w250 v10 td6" onClick="document.location.href='ie.asp'" title="IE Versions">IE Versions</td>
-		<td class="m111 w250 v10 td6"></td>
+		<td class="m111 w250 v10 td6" onClick="document.location.href='updates.asp'" title="Software Updates">Software Updates</td>
 		<td></td>
 	</tr>
 	<tr class="h50">
