@@ -1,6 +1,10 @@
 # cmwt
 ConfigMgr Web Tools
 
+## Update 12/07/2016 - Latest Raw Code
+
+Wiki will be updated when finalized.  This is going to be daily build updates on the path to releasing another ZIP milestone release.
+
 ## Update 12/05/2016 - Latest Build Uploaded
 
 Refer to the CMWT GitHub Wiki pages for more information
