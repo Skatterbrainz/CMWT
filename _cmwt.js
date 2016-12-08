@@ -2,7 +2,7 @@
 ****************************************************************
 Filename..: cmwt.js
 Author....: David M. Stein
-Date......: 05/26/2015
+Date......: 12/07/2016
 Purpose...: javascript library
 ****************************************************************
 */
@@ -28,7 +28,7 @@ function manage (computer) {
 }
 
 function winrs (computer) {
-	var cmd = "file://sfcpmsfscdp01/tools/scripts/winrs.bat";
+	var cmd = "file://cm01/cmwt$/tools/scripts/winrs.bat";
   	try   {
   		var objShell = new ActiveXObject("wscript.shell");
   		objShell.Run(cmd+" "+computer);
