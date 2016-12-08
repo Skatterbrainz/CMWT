@@ -1,6 +1,6 @@
-	<table class="tfx">
+	<table class="tfx bgMedBlue">
 		<tr>
-			<td class="v10 pad6 bgDarkGray cGray">
+			<td class="v10 pad6 cGray">
 			CMWT - Configuration Manager Web Tools :: Today is <%=FormatDateTime(Now,vbLongDate)%>
 			</td>
 			<td class="v10 pad6 right w300">
