@@ -3,7 +3,7 @@
 '****************************************************************
 ' Filename..: cmsite.asp
 ' Author....: David M. Stein
-' Date......: 11/30/2016
+' Date......: 12/07/2016
 ' Purpose...: cm site hierarchy landing page
 '****************************************************************
 time1 = Timer
@@ -43,6 +43,12 @@ CMWT_NewPage "", "", ""
 			<td class="m111 w250 pad5" onClick="document.location.href='siteconfig.asp'" title="Site Configuration">Site Configuration</td>
 			<td class="m111 w250 pad5" onClick="document.location.href='cmtasks.asp'" title="Maintenance Tasks">Maintenance Tasks</td>
 			<td class="m111 w250 pad5" onClick="document.location.href='dbstatus.asp'" title="Database Fragmentation">Database Fragmentation</td>
+			<td></td>
+		</tr>
+		<tr class="h50">
+			<td class="m111 w250 pad5" onClick="document.location.href='sitelogs.asp'" title="Site Log Files">Site Logs</td>
+			<td class="m111 w250 pad5"></td>
+			<td class="m111 w250 pad5"></td>
 			<td></td>
 		</tr>
 	</table>

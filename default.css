@@ -2,7 +2,7 @@
 '****************************************************************
 ' Filename..: default.css
 ' Purpose...: base CSS stylesheet
-' Version...: 12/04/2016
+' Version...: 12/07/2016
 '****************************************************************
 */
 body {
@@ -38,7 +38,9 @@ li {margin-bottom: 6px;}
 .bgGreen    {background-color: #1f6040;}
 .bgOrange   {background-color: #b35900;}
 .bgGray     {background-color: #737373;}
+.bgMedGray  {background-color: #4d4d4d;}
 .bgDarkGray {background-color: #1f1f1f;}
+.bgMedBlue  {background-color: #19334d;}
 .bgBlue     {background-color: #264d73;}
 .bgBlack    {background-color: #000;}
 
@@ -93,9 +95,10 @@ li {margin-bottom: 6px;}
 .w50x {width: 515px;}
 .w60x {width: 640px;}
 
-//.tr1 {background-color:#264d73;color:#fff;}
 .tr1 {background-color:#404040;color:#fff;}
 .tr1:hover {background-color: #336699;color:#fff;}
+.tr2 {background-color:#1f1f1f;color:#fff;}
+.tr2:hover {background-color: #336699;color:#fff;}
 
 .t1000 {
 	width: 1000px;
@@ -146,11 +149,11 @@ li {margin-bottom: 6px;}
 	padding: 6px;
 }
 .td5a {
-	border: 1px solid #c0c0c0;
+	border: 1px solid #4d4d4d;
 	padding: 5px;
 }
 .td6a {
-	border: 1px solid #c0c0c0;
+	border: 1px solid #4d4d4d;
 	padding: 6px;
 }
 .td66 {
@@ -363,6 +366,7 @@ li {margin-bottom: 6px;}
 }
 .footer {
 	font-family:verdana,arial,helvetica,sans;
+	font-size: 10pt;
 	text-align: center;
 	color:#c0c0c0;
 }

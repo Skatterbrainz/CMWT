@@ -2,7 +2,7 @@
 <%
 '-----------------------------------------------------------------------------
 ' filename....... _core.asp
-' lastupdate..... 12/07/2016
+' lastupdate..... 12/08/2016
 ' description.... CMWT core functions library
 '-----------------------------------------------------------------------------
 
@@ -112,12 +112,12 @@ Sub CMWT_FOOTER ()
 	If ltime <> "" Then
 		ltime = " - Page load: " & ltime & " seconds"
 	End If
-	Response.Write "<br/><table class=""tfx""><tr><td class=""v10 ctr footer"">" & _
+	Response.Write "<br/><table class=""tfx""><tr><td class=""footer"">" & _
 		"Version: " & Application("CMWT_VERSION") & _
 		" - Build: " & Application("CMWT_BUILD") & _
-		" - Copyright &copy; 2016" & ltime & _
+		" - Copyright &copy; " & DatePart("yyyy",Now) & ltime & _
 		" - <a href=""about.asp"" title=""About"">About</a>" & _
-		" - <a href=""javascript:print()"" title=""Print Page"">Print</a></td></tr></table>"
+		"</td></tr></table>"
 End Sub
 
 '-----------------------------------------------------------------------------
@@ -565,11 +565,15 @@ function CMWT_AutoLink (ColumnName, LinkVal)
 		Case "OSCAPTION":
 			result = "<a href=""os.asp?on=" & LinkVal & """ title=""Show Devices with " & LinkVal & """>" & LinkVal & "</a></td>"
 		Case "CLIENT","ISACTIVE","ISPXE":
-			result = CMWT_YESNO(LinkVal, False)
+			result = CMWT_YESNO(LinkVal, True)
 		Case "MEMORY":
 			If CMWT_NotNullString(LinkVal) Then
 				result = CMWT_KB2GB(LinkVal) & " GB"
 			End If
+		Case "UID":
+			result = "<a href=""update.asp?id=" & LinkVal & """ title=""View Details"">" & LinkVal & "</a>"
+		Case "COMPLIANT":
+			result = LinkVal & "%"
 		Case "DISCOVERY":
 			result = "<a href=""discovery.asp?dm=" & LinkVal & """ title=""View Details"">" & LinkVal & "</a>"
 		Case "ROLENAME":
@@ -592,21 +596,37 @@ function CMWT_AutoLink (ColumnName, LinkVal)
 			result = "<a href=""package.asp?id=" & LinkVal & """ title=""Package Details..."">" & LinkVal & "</a>"
 		Case "APPID":
 			result = "<a href=""package.asp?k2=8&id=" & LinkVal & """ title=""Application Details..."">" & LinkVal & "</a>"
-		Case "PUBLISHED","DISCOVERYENABLED":
-			result = CMWT_YESNO(LinkVal, False)
-		Case "ISENABLED","ISACTIVE","ISDELETED","ISOBSOLETE":
+		Case "PUBLISHED","DISCOVERYENABLED","ISDEPLOYED","ISSUPERSEDED":
+			result = CMWT_YESNO(LinkVal, True)
+		Case "ISENABLED","ISACTIVE","ISDELETED","ISOBSOLETE","ISEXPIRED","ISHIDDEN","EULAEXISTS":
 			result = CMWT_YESNO(LinkVal,True)
 		Case "TASKNAME":
 			result = "<a href=""cmtask.asp?tn=" & LinkVal & """ title=""View Details"">" & LinkVal & "</a>"
 		Case "QUERYID":
 			result = "<a href=""cmquery.asp?id=" & LinkVal & """ title=""View Details"">" & LinkVal & "</a>"
 		Case "REPORTID":
-			result = LinkVal & " ... " & _
-				CMWT_IMG_LINK (True, "icon_add2", "icon_add1", "icon_add2", "reportrun.asp?id=" & LinkVal & "&rm=0", "Run Report") & " " & _
-				CMWT_IMG_LINK (True, "icon_edit2", "icon_edit1", "icon_edit2", "reportedit.asp?id=" & LinkVal, "Edit Report") & " " & _
-				CMWT_IMG_LINK (True, "icon_del2", "icon_del1", "icon_del2", "reportdel.asp?id=" & LinkVal, "Delete Report")
+			If PageTitle = "SQL Reports" Then
+				result = "<a href=""sqlrun.asp?id=" & LinkVal & """ title=""Run Report"">Run</a> . " & _
+					"<a href=""sqlrepedit.asp?id=" & LinkVal & """ title=""Modify Report"">Edit</a> . " & _
+					"<a href=""sqlrepdel.asp?id=" & LinkVal & """ title=""Delete Report"">Del</a>"
+			Else
+				result = LinkVal & " ... " & _
+					CMWT_IMG_LINK (True, "icon_add2", "icon_add1", "icon_add2", "reportrun.asp?id=" & LinkVal & "&rm=0", "Run Report") & " " & _
+					CMWT_IMG_LINK (True, "icon_edit2", "icon_edit1", "icon_edit2", "reportedit.asp?id=" & LinkVal, "Edit Report") & " " & _
+					CMWT_IMG_LINK (True, "icon_del2", "icon_del1", "icon_del2", "reportdel.asp?id=" & LinkVal, "Delete Report")
+			End If
 		Case "FILENAME":
 			result = "<a href=""dupefiles.asp?cn=" & cn & "&fn=" & LinkVal & """ title=""View Instances"">" & LinkVal & "</a>"
+		Case "INFOURL":
+			If CMWT_NotNullString(LinkVal) Then
+				If PageTitle = "Software Update" Then
+					result = "<a href=""" & LinkVal & """ target=""_blank"" title=""Open Link"">" & LinkVal & "</a>"
+				Else
+					result = "<a href=""" & LinkVal & """ target=""_blank"" title=""Open Link"">Link</a>"
+				End If
+			Else
+				result = ""
+			End If
 		Case "PACKAGETYPE":
 			Select Case LinkVal
 				Case 0: result = "0 = Package"
@@ -784,6 +804,82 @@ Sub CMWT_DB_TableGrid2 (rs, Caption, SortLink, AutoLink, FormLink)
 End Sub
 
 '-----------------------------------------------------------------------------
+' sub-name: CMWT_DB_TableGrid
+' sub-desc: 
+'-----------------------------------------------------------------------------
+
+Sub CMWT_DB_TableGridFilter (rs, Caption, SortLink, AutoLink, ColumnSet, FilterLink)
+	if not (rs.BOF and rs.EOF) then 
+		xrows = rs.RecordCount 
+		xcols = rs.Fields.Count
+		if CMWT_NotNullString(Caption) then 
+			response.write "<h2 class=""tfx"">" & Caption & "</h2>"
+		end if
+		response.write "<table class=""tfx""><tr>"
+		for i = 0 to xcols -1
+			fn = rs.fields(i).name
+			Select Case Ucase(fn)
+				Case "QTY","RECS","COUNT","MEMBERS","GROUPCOUNT","COMPUTERS","CLIENTS","COVERAGE":
+					Response.Write "<td class=""td6 v10 bgGray w80 " & CMWT_DB_ColumnJustify(fn) & """>"
+				Case "REPORTID":
+					Response.Write "<td class=""td6 v10 bgGray w100 " & CMWT_DB_ColumnJustify(fn) & """>"
+				Case Else:
+					Response.Write "<td class=""td6 v10 bgGray"">"
+			End Select
+			If CMWT_NotNullString(SortLink) Then
+				Response.Write CMWT_SORTLINK(SortLink, fn, SortBy) & "</td>"
+			Else
+				Response.Write fn & "</td>"
+			End If
+		next
+		if ColumnSet <> "" then 
+			Response.Write "<tr>"
+				For each csn in Split(colset,",")
+					csx = Split(csn,"=")
+					Response.Write "<td class=""pad6 v10 bgDarkGray"">"
+					If csx(1) = 1 Then
+						Response.Write "<input type=""text"" name=""ss" & csx(0) & """ id=""" & csx(0) & """ " & _
+							"maxlength=""50"" class=""pad5 v10"" title=""Filter: " & csx(0) & """ />"
+					End If
+					Response.Write "</td>"
+				Next
+				Response.Write "</tr>"
+		end if
+		Response.Write "</tr>"
+		If AutoLink <> "" Then 
+			alx = Split(AutoLink, "=")
+			afn = alx(0)
+			afl = alx(1)
+		Else
+			afn = ""
+		End If
+		Do Until rs.EOF
+			Response.Write "<tr class=""tr1"">"
+			For i = 0 to xcols-1
+				fn = rs.Fields(i).Name
+				fv = rs.Fields(i).Value
+				If Ucase(afn) = Ucase(fn) Then
+					fv = "<a href=""" & afl & "=" & fv & """>" & fv & "</a>"
+				Else
+					fv = CMWT_AutoLink (fn, fv)
+				End If
+				response.write "<td class=""td6 v10 " & CMWT_DB_ColumnJustify(fn) & """>" & fv & "</td>"
+			next
+			rs.MoveNext
+		Loop
+		Response.Write "<tr>" & _
+			"<td class=""td6 v10 bgGray"" colspan=""" & xcols & """>" & _
+			xrows & " rows returned</td></tr></table>"
+	else
+		If CMWT_NotNullString(Caption) Then
+			Response.Write "<h2 class=""tfx"">" & Caption & "</h2>"
+		End If
+		Response.Write "<table class=""tfx""><tr class=""h100 tr1"">" & _
+			"<td class=""td6 v10 ctr"">No matching rows found</td></tr></table>"
+	end if 
+End Sub
+
+'-----------------------------------------------------------------------------
 ' sub-name: CMWT_DB_TABLEROWGRID
 ' sub-desc: 
 '-----------------------------------------------------------------------------
@@ -924,15 +1020,19 @@ End Function
 Function CMWT_SORTLINK (BaseURL, ColName, DefSort)
 	If Ucase(Trim(DefSort)) = Ucase(Trim(ColName)) Then
 		If InStr(BaseURL,"?") > 0 Then
-			CMWT_SORTLINK = "<a href=""" & BaseURL & "&s=" & ColName & " desc"" title=""Sort by " & ColName & " (descending)"">" & ColName & "</a>"
+			CMWT_SORTLINK = "<a href=""" & BaseURL & "&s=" & ColName & " desc"" title=""Sort by " & ColName & " (descending)"">" & _
+				"<img src=""images/sortdn.png"" border=""0""> " & ColName & "</a>"
 		Else
-			CMWT_SORTLINK = "<a href=""" & BaseURL & "?s=" & ColName & " desc"" title=""Sort by " & ColName & " (descending)"">" & ColName & "</a>"
+			CMWT_SORTLINK = "<a href=""" & BaseURL & "?s=" & ColName & " desc"" title=""Sort by " & ColName & " (descending)"">" & _
+				"<img src=""images/sortdn.png"" border=""0""> " & ColName & "</a>"
 		End If
 	Else
 		If InStr(BaseURL,"?") > 0 Then
-			CMWT_SORTLINK = "<a href=""" & BaseURL & "&s=" & ColName & """ title=""Sort by " & ColName & """>" & ColName & "</a>"
+			CMWT_SORTLINK = "<a href=""" & BaseURL & "&s=" & ColName & """ title=""Sort by " & ColName & """>" & _
+				"<img src=""images/sortup.png"" border=""0""> " & ColName & "</a>"
 		Else
-			CMWT_SORTLINK = "<a href=""" & BaseURL & "?s=" & ColName & """ title=""Sort by " & ColName & """>" & ColName & "</a>"
+			CMWT_SORTLINK = "<a href=""" & BaseURL & "?s=" & ColName & """ title=""Sort by " & ColName & """>" & _
+				"<img src=""images/sortup.png"" border=""0""> " & ColName & "</a>"
 		End If
 	End If
 End Function
@@ -2112,4 +2212,50 @@ Sub CMWT_WAIT (intSeconds)
 	Loop
 End Sub
 
+'----------------------------------------------------------------
+' sub-name: CMWT_LIST_SITELOGS
+' sub-desc: 
+'----------------------------------------------------------------
+
+Sub CMWT_LIST_SITELOGS (CurrentFilename, ListSize)
+	Dim q, objFSO, objFolder, logPath, installDir, conn, rs, rsFiles
+	Dim fileName, objFile
+	CMWT_DB_OPEN Application("DSN_CMDB")
+	q = "SELECT TOP 1 InstallDir FROM dbo.v_Site"
+	CMWT_DB_QUERY Application("DSN_CMDB"), q
+	installDir = rs.Fields("InstallDir").value
+	conn.Close
+	rs.Close
+	logPath = installDir & "\logs"
+	Set objFSO = CreateObject("Scripting.FileSystemObject")
+	Set objFolder = objFSO.GetFolder(logPath)
+	Set rsFiles = CreateObject("ADODB.RecordSet")
+	rsFiles.CursorLocation = adUseClient
+	rsFiles.Fields.Append "filename", adVarChar, 50
+	rsFiles.Open
+	For each objFile in objFolder.Files 
+		fileName = objFile.Name
+		rsFiles.AddNew
+		rsFiles.Fields("filename").value = fileName
+		rsFiles.Update
+	Next
+	rsFiles.Sort = "filename"
+	rsFiles.MoveFirst
+	Response.Write "<select name=""list1"" id=""list1"" size=""" & ListSize & """ " & _
+		"class=""w400 pad5"" " & _
+		"onChange=""if (this.options[this.selectedIndex].value != 'null') { window.open(this.options[this.selectedIndex].value,'_top') }"">"
+
+	Do Until rsFiles.EOF
+		fileName  = rsFiles.Fields("filename").value
+		If CurrentFilename <> "" And Lcase(CurrentFilename) = Lcase(fileName) Then
+			Response.Write "<option value="""" selected>" & fileName & "</option>"
+		Else
+			Response.Write "<option value=""logview.asp?p=" & logPath & "&f=" & fileName & """>" & fileName & "</option>"
+		End If
+		rsFiles.MoveNext
+	Loop
+	Response.Write "</select>"
+	rsFiles.Close
+	Set rsFiles = Nothing 
+End Sub
 %>
