@@ -2,7 +2,7 @@
 <%
 '-----------------------------------------------------------------------------
 ' filename....... collection.asp
-' lastupdate..... 12/07/2016
+' lastupdate..... 12/08/2016
 ' description.... collection details report
 '-----------------------------------------------------------------------------
 time1 = Timer
@@ -53,6 +53,35 @@ Sub CMWT_CM_ListCollectionMembers (c, ResourceType, DefaultResID)
 		x1 = rs.Fields("ResourceID").value
 		x2 = rs.Fields("Name0").value
 		Response.Write "<option value=""" & x2 & """>" & x2 & "</option>"
+		rs.MoveNext
+	Loop
+	rs.Close
+End Sub
+
+'-----------------------------------------------------------------------------
+' sub-name: CMWT_CM_ListDirectCollections
+' sub-desc: 
+'-----------------------------------------------------------------------------
+
+Sub CMWT_CM_ListDirectCollections (c)
+	Dim query, cmd, rs, x1, x2
+	query = "SELECT DISTINCT dbo.v_CollectionRuleDirect.CollectionID, dbo.v_Collection.Name " & _
+		"FROM dbo.v_CollectionRuleDirect INNER JOIN " & _
+		"dbo.v_Collection ON dbo.v_CollectionRuleDirect.CollectionID = dbo.v_Collection.CollectionID " & _
+		"ORDER BY dbo.v_Collection.Name"
+	Set cmd  = Server.CreateObject("ADODB.Command")
+	Set rs   = Server.CreateObject("ADODB.Recordset")
+	rs.CursorLocation = adUseClient
+	rs.CursorType = adOpenStatic
+	rs.LockType = adLockReadOnly
+	Set cmd.ActiveConnection = c
+	cmd.CommandType = adCmdText
+	cmd.CommandText = query
+	rs.Open cmd
+	Do Until rs.EOF
+		x1 = rs.Fields("CollectionID").value
+		x2 = rs.Fields("Name").value
+		Response.Write "<option value=""" & x1 & """>" & x2 & "</option>"
 		rs.MoveNext
 	Loop
 	rs.Close
@@ -463,7 +492,10 @@ Select Case KeySet
 					<p>Compare Collection Members</p>
 					<form name="formx3" id="formx3" method="post" action="">
 						<select name="xx3" id="xx3" size="1" class="pad5 v10 w400">
-							<option value=""></optioN>
+							<option value=""></option>
+							<%
+							CMWT_CM_ListDirectCollections conn
+							%>
 						</select>
 						<input type="submit" name="bx3" id="bx3" class="btx w30 h30" value="..." title="Process" />
 					</form>
