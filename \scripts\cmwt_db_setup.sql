@@ -2,8 +2,8 @@ USE [CMWT]
 GO
 
 /*
-filename.... cmwt_db_setup.sql
-created..... 12/07/2016
+filename: cmwt_db_setup.sql
+filedate: 12/12/2016
 */
 SET ANSI_NULLS ON
 GO
@@ -32,7 +32,7 @@ GO
 SET ANSI_PADDING OFF
 GO
 
-/****** Object:  Table [dbo].[Notes]    Script Date: 12/7/2016 2:32:56 AM ******/
+/****** Object:  Table [dbo].[Notes]    Script Date: 12/8/2016 3:35:59 AM ******/
 SET ANSI_NULLS ON
 GO
 
@@ -62,7 +62,7 @@ GO
 SET ANSI_PADDING OFF
 GO
 
-/****** Object:  Table [dbo].[Reports]    Script Date: 12/7/2016 2:32:56 AM ******/
+/****** Object:  Table [dbo].[Reports]    Script Date: 12/8/2016 3:35:59 AM ******/
 SET ANSI_NULLS ON
 GO
 
@@ -93,7 +93,7 @@ GO
 SET ANSI_PADDING OFF
 GO
 
-/****** Object:  Table [dbo].[Reports2]    Script Date: 12/7/2016 2:32:56 AM ******/
+/****** Object:  Table [dbo].[Reports2]    Script Date: 12/8/2016 3:35:59 AM ******/
 SET ANSI_NULLS ON
 GO
 
@@ -122,7 +122,7 @@ GO
 SET ANSI_PADDING OFF
 GO
 
-/****** Object:  Table [dbo].[Tasks]    Script Date: 12/7/2016 2:32:56 AM ******/
+/****** Object:  Table [dbo].[Tasks]    Script Date: 12/8/2016 3:35:59 AM ******/
 SET ANSI_NULLS ON
 GO
 
