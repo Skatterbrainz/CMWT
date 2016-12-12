@@ -1,7 +1,7 @@
 <%
 '-----------------------------------------------------------------------------
 ' filename....... _sm.asp
-' lastupdate..... 12/03/2016
+' lastupdate..... 12/09/2016
 ' description.... sidebar menu panel
 '-----------------------------------------------------------------------------
 
@@ -22,7 +22,7 @@ end if
   <a href="./software.asp" title="Software">Software</a>
   <a href="./reports.asp" title="Reports">Reports</a>
   <a href="./adtools.asp" title="AD Tools">AD Tools</a>
-  <a href="#" title="Help">Help</a>
+  <a href="https://github.com/Skatterbrainz/cmwt/wiki" target="_blank" title="Help">Help</a>
   <a href="about.asp" title="About">About</a>
 </div>
 

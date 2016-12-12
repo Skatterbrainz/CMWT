@@ -1,8 +1,9 @@
 <!-- #include file=_core.asp -->
+<!-- #include file=_adds.asp -->
 <%
 '****************************************************************
 ' Filename..: adgroups.asp
-' Date......: 11/30/2016
+' Date......: 12/10/2016
 ' Purpose...: active directory groups list
 '****************************************************************
 time1 = Timer
@@ -14,7 +15,7 @@ If CMWT_NotNullString(fxn) Then
 	filtered = TRUE
 End If
 
-PageTitle = "Security Groups"
+PageTitle    = "Security Groups"
 PageBackLink = "adtools.asp"
 PageBackName = "Active Directory"
 
@@ -33,10 +34,15 @@ Else
 	query = "SELECT ADsPath, Name FROM 'LDAP://" & Application("CMWT_DomainPath") & "' WHERE objectCategory='group'"
 End If
 
+On Error Resume Next
 Set objConnection = CreateObject("ADODB.Connection")
-Set objCommand = CreateObject("ADODB.Command")
 objConnection.Provider = "ADsDSOObject"
+objConnection.Properties("User ID")  = Application("CM_AD_TOOLUSER")
+objConnection.Properties("Password") = Application("CM_AD_TOOLPASS")
+objConnection.Properties("ADSI Flag") = 1
 objConnection.Open "Active Directory Provider"
+
+Set objCommand = CreateObject("ADODB.Command")
 Set objCommand.ActiveConnection = objConnection
 
 objCommand.Properties("Page Size") = 1000

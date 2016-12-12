@@ -3,7 +3,7 @@
 <%
 '-----------------------------------------------------------------------------
 ' filename....... adgroup.asp
-' lastupdate..... 12/06/2016
+' lastupdate..... 12/10/2016
 ' description.... active directory security group information
 '-----------------------------------------------------------------------------
 time1 = Timer
@@ -13,7 +13,7 @@ QueryOn   = CMWT_GET("qq", "")
 PSet      = CMWT_GET("set", "1")
 CMWT_VALIDATE GroupName, "No group name specified"
 
-AdsPath = Get_ADsPath (Replace(GroupName, NetSuffix & "\", ""), "group")
+AdsPath = CMWT_AD_GetADsPath (Replace(GroupName, NetSuffix & "\", ""), "group")
 
 If Ucase(Application("CM_AD_TOOLS")) = "TRUE" Then
 	ad_modify = True
@@ -35,7 +35,7 @@ CMWT_NewPage "", "", ""
 <!-- #include file="_sm.asp" -->
 <!-- #include file="_banner.asp" -->
 <%
-menulist = "1=General,2=Members,4=Collections"
+menulist = "1=General,2=Members,3=Collections"
 
 Response.Write "<table class=""t2""><tr>"
 For each m in Split(menulist,",")
@@ -51,102 +51,84 @@ Response.Write "</tr></table>"
 
 Select Case PSet
 	Case "1":
-		Response.Write "<table class=""tfx"">"
 	
 		On Error Resume Next
-		Set objGroup = GetObject("LDAP://" & AdsPath)
 
-		Response.Write "" & _
-			"<tr class=""tr1""><td class=""td6 v10 w200 bgGray"">SAM Account Name</td>" & _
-				"<td class=""td6 v10"">" & objGroup.SAMAccountName & "</td></tr>" & _
-			"<tr class=""tr1""><td class=""td6 v10 w200 bgGray"">Canonical Name</td>" & _
-				"<td class=""td6 v10"">" & objGroup.Name & "</td></tr>" & _
-			"<tr class=""tr1""><td class=""td6 v10 w200 bgGray"">Distinguished Name</td>" & _
-				"<td class=""td6 v10"">" & AdsPath & "</td></tr>" & _
-			"<tr class=""tr1""><td class=""td6 v10 w200 bgGray"">E-Mail</td>" & _
-				"<td class=""td6 v10"">" & objGroup.Mail & "</td></tr>" & _
-			"<tr class=""tr1""><td class=""td6 v10 w200 bgGray"">Information</td>" & _
-				"<td class=""td6 v10"">" & objGroup.Info & "</td></tr>" & _
-			"<tr class=""tr1""><td class=""td6 v10 w200 bgGray"">Scope</td>" & _
-				"<td class=""td6 v10"">"
+		fields = "isCriticalSystemObject,whenCreated,mail,groupType,description,distinguishedname,samaccountname"
 
-		If intGroupType AND ADS_GROUP_TYPE_LOCAL_GROUP Then
-			Response.Write "Group scope: Domain Local</td></tr>"
-		ElseIf intGroupType AND ADS_GROUP_TYPE_GLOBAL_GROUP Then
-			Response.Write "Group scope: Global</td></tr>"
-		ElseIf intGroupType AND ADS_GROUP_TYPE_UNIVERSAL_GROUP Then
-			Response.Write "Group scope: Universal</td></tr>"
-		Else
-			Response.Write "Group scope: Unknown</td></tr>"
-		End If
+		query = "SELECT " & fields & " FROM 'LDAP://" & Application("CMWT_DomainPath") & "' " & _
+			"WHERE objectClass='group' AND sAMAccountName='" & GroupName & "'"
 
-		If intGroupType AND ADS_GROUP_TYPE_SECURITY_ENABLED Then
-			Response.Write "<tr class=""tr1""><td class=""td6 v10 w200 bgGray"">Type</td>" & _
-				"<td class=""td6 v10"">Security group</td></tr>"
-		Else
-			Response.Write "<tr class=""tr1""><td class=""td6 v10 w200 bgGray"">Type</td>" & _
-				"<td class=""td6 v10"">Distribution group</td></tr>"
-		End If
+		Set objConnection = CreateObject("ADODB.Connection")
+		Set objCommand    = CreateObject("ADODB.Command")
+		objConnection.Provider = "ADsDSOObject"
+		objConnection.Properties("User ID")  = Application("CM_AD_TOOLUSER")
+		objConnection.Properties("Password") = Application("CM_AD_TOOLPASS")
+		objConnection.Properties("ADSI Flag") = 1
+		objConnection.Open "Active Directory Provider"
+		Set objCommand.ActiveConnection = objConnection
+		objCommand.Properties("Page Size") = 1000
+		objCommand.Properties("Searchscope") = ADS_SCOPE_SUBTREE
+		objCommand.CommandText = query
+		Set objRecordSet = objCommand.Execute
 
-		Response.Write "<tr class=""tr1""><td class=""td6 v10 w200 bgGray"">Description</td>" & _
-				"<td class=""td6 v10"">"
-		Select Case VarType(objGroup.Description)
-			Case 8:
-				Response.write objGroup.Description
-			Case Else:
-				For Each strValue in objGroup.Description
-					Response.Write "<br/>" & Trim(strValue)
+		objRecordSet.MoveFirst
+		xrows = objRecordSet.RecordCount
+
+		Response.Write "<table class=""tfx"">"
+
+		If xrows > 0 Then
+			Do Until objRecordSet.EOF
+				Response.Write "<tr class=""tr1"">"
+				For i = 0 to objRecordSet.Fields.Count -1
+					fieldname = objRecordSet.Fields(i).Name
+					strvalue  = objRecordSet.Fields(i).Value
+					Select Case Lcase(fieldname)
+						Case "grouptype"
+							if strvalue AND ADS_GROUP_TYPE_LOCAL_GROUP then
+								strvalue = "Domain Local"
+							elseif strvalue AND ADS_GROUP_TYPE_GLOBAL_GROUP then
+								strvalue = "Global"
+							elseif strvalue AND ADS_GROUP_TYPE_UNIVERSAL_GROUP then
+								strvalue = "Universal"
+							else
+								strvalue = "Unknown"
+							end if
+						Case "description"
+							fv = ""
+							for each dv in strValue
+								fv = fv & dv
+							next
+							strvalue = fv
+					End Select
+					Response.Write "<tr class=""tr1"">" & _
+						"<td class=""td6 bgGray v10 w200"">" & CMWT_WordCase(fieldname) & "</td>" & _
+						"<td class=""td6 v10"">" & strvalue & "</td></tr>"
 				Next
-		End Select
-		Response.Write "</td></tr>"
-
-		strWhenCreated = objGroup.Get("whenCreated")
-		strWhenChanged = objGroup.Get("whenChanged")
-
-		Set objUSNChanged = objGroup.Get("uSNChanged")
-		dblUSNChanged = Abs(objUSNChanged.HighPart * 2^32 + objUSNChanged.LowPart)
-
-		Set objUSNCreated = objGroup.Get("uSNCreated")
-		dblUSNCreated = Abs(objUSNCreated.HighPart * 2^32 + objUSNCreated.LowPart)
-
-		objGroup.GetInfoEx Array("canonicalName"), 0
-		arrCanonicalName = objGroup.GetEx("canonicalName")
-		Response.Write "<tr class=""tr1""><td class=""td6 v10 w200 bgGray"">Canonical Path</td>" & _
-			"<td class=""td6 v10"">"
-		For Each strValue in arrCanonicalName
-			Response.Write Trim(strValue) & "<br/>"
-		Next
-		Response.Write "</td></tr>"
-
-		Response.Write "<tr class=""tr1""><td class=""td6 v10 w200 bgGray"">Object class</td>" & _
-				"<td class=""td6 v10"">" & objGroup.Class & "</td></tr>" & _
-			"<tr class=""tr1""><td class=""td6 v10 w200 bgGray"">When Created</td>" & _
-				"<td class=""td6 v10"">" & strWhenCreated & " (Created - GMT)" & "</td></tr>" & _
-			"<tr class=""tr1""><td class=""td6 v10 w200 bgGray"">When Changed</td>" & _
-				"<td class=""td6 v10"">" & strWhenChanged & " (Modified - GMT)" & "</td></tr>" & _
-			"<tr class=""tr1""><td class=""td6 v10 w200 bgGray"">USN Changed</td>" & _
-				"<td class=""td6 v10"">" & dblUSNChanged & " (USN Current)" & "</td></tr>" & _
-			"<tr class=""tr1""><td class=""td6 v10 w200 bgGray"">USN Created</td>" & _
-				"<td class=""td6 v10"">" & dblUSNCreated & " (USN Original)" & "</td></tr>"
+				objRecordSet.MoveNext
+			Loop
+		else
+			Response.Write "<tr class=""h100 tr1""><td class=""td6 v10 ctr"">No matching group found</td></tr>"
+		end if
 
 		Response.Write "</table>"
-	Case "2":
-		If CMWT_NotNullString(adspath) Then
 
+	Case "2":
+
+		' BUG IN THIS SECTION STILL NEEDS TO BE RESOLVED...
+		
+		If CMWT_NotNullString(adspath) Then
 			Response.Write "<table class=""tfx"">"
 			On Error Resume Next
 			Set objGroup = GetObject("LDAP://" & AdsPath)
 			objGroup.GetInfo
-
 			arrMemberOf = objGroup.GetEx("member")
-
 			If VarType(arrMemberOf) > 0 Then
 				Response.Write "<tr><td class=""td6 v10 bgGray w200"">Name</td>" & _
 					"<td class=""td6 v10 bgGray"">Path</td></tr>"
 				mcount = 0
 				For Each strMember in arrMemberOf
 					uid = Get_LogonName(strMember)
-
 					If CMWT_NotNullString(uid) Then
 						uid = "<a href=""aduser.asp?uid=" & uid & """ title=""Account Details for: " & uid & """>" & uid & "</a>"
 					End If
@@ -159,7 +141,6 @@ Select Case PSet
 				Response.Write "<tr class=""h100 tr1""><td class=""td6 v10 ctr"">No members found</td></tr>"
 			End If
 			Response.Write "</table>"
-
 			If ad_modify = True Then
 				If ad_safelock = True Then 
 					Response.Write "<div class=""tfx v10""><p>" & _
@@ -171,9 +152,21 @@ Select Case PSet
 				End If
 			End If
 		End If
-	
+		
 	Case "3":
 		
+		query = "SELECT DISTINCT dbo.v_Collection.CollectionID, dbo.v_Collection.Name, " & _
+			"CASE WHEN dbo.v_Collection.CollectionType=1 THEN 'USER' ELSE 'DEVICE' END AS [CollectionType], dbo.v_Collection.Comment " & _
+			"FROM dbo.v_Collection INNER JOIN " & _
+			"dbo.v_CollectionRuleQuery ON dbo.v_Collection.CollectionID = dbo.v_CollectionRuleQuery.CollectionID " & _
+			"WHERE (dbo.v_CollectionRuleQuery.QueryExpression LIKE '%" & GroupName & "%') " & _
+			"ORDER BY v_Collection.Name"
+
+		Dim conn, cmd, rs
+		CMWT_DB_QUERY Application("DSN_CMDB"), query
+		CMWT_DB_TABLEGRID rs, "", "", ""
+		CMWT_DB_CLOSE()
+		CMWT_SHOW_QUERY()
 
 End Select
 

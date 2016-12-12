@@ -39,7 +39,7 @@ menulist = "0=All,1=Query Based,2=Direct Membership"
 Response.Write "<table class=""t2""><tr>"
 For each m in Split(menulist,",")
 	mset = Split(m,"=")
-	mlink = "collections.asp?ks=" & KeyValue & "&k2=" & mset(0)
+	mlink = "collections.asp?ks=" & KeySet & "&k2=" & mset(0)
 	If KeySet2 = mset(0) Then
 		Response.Write "<td class=""m22"">" & mset(1) & "</td>"
 	Else

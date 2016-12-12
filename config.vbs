@@ -2,7 +2,7 @@
 ' filename: config.vbs
 ' author: David Stein
 ' date created: 11/30/2016
-' date modified: 12/03/2016
+' date modified: 12/12/2016
 '----------------------------------------------------------------------
 
 Dim ScriptPath, objFSO, objFile, strFileContents, InputFile, OutputFile
@@ -19,7 +19,7 @@ BackupFile = ScriptPath & "\_config.bak"
 Const ForReading = 1
 Const ForWriting = 2
 
-Sub Update-File (FileName, ContentData)
+Sub Update_File (FileName, ContentData)
 	Dim objFile
 	Set objFile = objFSO.OpenTextFile (FileName, ForWriting, True, 0)
 	objFile.Write(ContentData)
@@ -75,8 +75,8 @@ If err.Number = 0 Then
 		End If
 	Next
 	
-	Update-File BackupFile, strFileContents
-	Update-File InputFile, newContent
+	Update_File BackupFile, strFileContents
+	Update_File InputFile, newContent
 	
 	Set objFSO  = Nothing
 	MsgBox "Original backed up to: " & BackupFile & vbCRLF & _

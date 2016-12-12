@@ -2,7 +2,7 @@
 <%
 '-----------------------------------------------------------------------------
 ' filename....... collection.asp
-' lastupdate..... 12/07/2016
+' lastupdate..... 12/12/2016
 ' description.... collection details report
 '-----------------------------------------------------------------------------
 time1 = Timer
@@ -58,6 +58,35 @@ Sub CMWT_CM_ListCollectionMembers (c, ResourceType, DefaultResID)
 	rs.Close
 End Sub
 
+'-----------------------------------------------------------------------------
+' sub-name: CMWT_CM_ListDirectCollections
+' sub-desc: 
+'-----------------------------------------------------------------------------
+
+Sub CMWT_CM_ListDirectCollections (c)
+	Dim query, cmd, rs, x1, x2
+	query = "SELECT DISTINCT dbo.v_CollectionRuleDirect.CollectionID, dbo.v_Collection.Name " & _
+		"FROM dbo.v_CollectionRuleDirect INNER JOIN " & _
+		"dbo.v_Collection ON dbo.v_CollectionRuleDirect.CollectionID = dbo.v_Collection.CollectionID " & _
+		"ORDER BY dbo.v_Collection.Name"
+	Set cmd  = Server.CreateObject("ADODB.Command")
+	Set rs   = Server.CreateObject("ADODB.Recordset")
+	rs.CursorLocation = adUseClient
+	rs.CursorType = adOpenStatic
+	rs.LockType = adLockReadOnly
+	Set cmd.ActiveConnection = c
+	cmd.CommandType = adCmdText
+	cmd.CommandText = query
+	rs.Open cmd
+	Do Until rs.EOF
+		x1 = rs.Fields("CollectionID").value
+		x2 = rs.Fields("Name").value
+		Response.Write "<option value=""" & x1 & """>" & x2 & "</option>"
+		rs.MoveNext
+	Loop
+	rs.Close
+End Sub
+
 Dim conn, cmd, rs, query
 CMWT_DB_OPEN Application("DSN_CMDB")
 CollName = CMWT_CM_ObjectProperty (conn, "v_Collections", "SiteID", KeyValue, "CollectionName")
@@ -91,27 +120,67 @@ Response.Write "</tr></table>"
 
 Select Case KeySet
 	Case "1":
-
+		' referenc: https://msdn.microsoft.com/en-us/library/hh442671.aspx
 		query = "SELECT TOP 1 " & _
 			"CollectionName," & _
 			"dbo.v_Collections.CollectionID, " & _
 			"dbo.v_Collections.SiteID," & _
-			"ResultTableName,CollectionComment,Schedule,SourceLocaleID," & _
-			"LastChangeTime,LastRefreshRequest," & _
+			"ResultTableName," & _
+			"CollectionComment," & _
+			"Schedule,SourceLocaleID," & _
+			"LastChangeTime," & _
+			"LastRefreshRequest," & _
 			"CASE WHEN CollectionType=2 THEN 'DEVICE' " & _
 			"ELSE 'USER' END AS CollectionType," & _
 			"LimitToCollectionID," & _
-			"IsReferenceCollection,BeginDate,EvaluationStartTime,LastRefreshTime," & _
-			"LastIncrementalRefreshTime,LastMemberChangeTime,CurrentStatus," & _
-			"CurrentStatusTime,LimitToCollectionName,ISVData,ISVString,Flags," & _
-			"CollectionVariablesCount,ServiceWindowsCount,PowerConfigsCount," & _
-			"RefreshType,MonitoringFlags,IsBuiltIn,IncludeExcludeCollectionsCount," & _
-			"MemberCount,LocalMemberCount,ResultClassName,HasProvisionedMember, " & _
+			"IsReferenceCollection," & _
+			"BeginDate," & _
+			"EvaluationStartTime,LastRefreshTime," & _
+			"LastIncrementalRefreshTime," & _
+			"LastMemberChangeTime," & _
+			"CASE " & _
+			"WHEN CurrentStatus=0 THEN 'NONE' " & _
+			"WHEN CurrentStatus=1 THEN 'READY' " & _
+			"WHEN CurrentStatus=2 THEN 'REFRESHING' " & _
+			"WHEN CurrentStatus=3 THEN 'SAVING' " & _
+			"WHEN CurrentStatus=4 THEN 'EVALUATING' " & _
+			"WHEN CurrentStatus=5 THEN 'AWAITING_REFRESH' " & _
+			"WHEN CurrentStatus=6 THEN 'DELETING' " & _
+			"WHEN CurrentStatus=7 THEN 'APPENDING_MEMBER' " & _
+			"WHEN CurrentStatus=8 THEN 'QUERYING' " & _
+			"END AS CurrentStatus, " & _
+			"CurrentStatusTime," & _
+			"LimitToCollectionName," & _
+			"ISVData," & _
+			"ISVString,Flags," & _
+			"CollectionVariablesCount," & _
+			"ServiceWindowsCount," & _
+			"PowerConfigsCount," & _
+			"CASE " & _
+			"WHEN RefreshType=1 THEN 'MANUAL' " & _
+			"WHEN RefreshType=2 THEN 'PERIODIC' " & _
+			"WHEN RefreshType=4 THEN 'CONSTANT_UPDATE' " & _
+			"END AS RefreshType," & _
+			"MonitoringFlags," & _
+			"IsBuiltIn," & _
+			"IncludeExcludeCollectionsCount," & _
+			"MemberCount," & _
+			"LocalMemberCount," & _
+			"ResultClassName," & _
+			"CASE WHEN HasProvisionedMember=1 THEN 'YES' ELSE 'NO' END AS HasProvisionedMember, " & _
 			"CASE WHEN (dbo.v_CollectionRuleDirect.RuleName <> '') THEN 'DIRECT' ELSE 'QUERY' END AS RuleType " & _
 			"FROM dbo.v_Collections LEFT OUTER JOIN " & _
 			"dbo.v_CollectionRuleDirect ON dbo.v_Collections.SiteID = dbo.v_CollectionRuleDirect.CollectionID " & _
 			"WHERE (SiteID='" & KeyValue & "')"
 
+		FieldList1 = "CollectionName,CollectionID,CollectionComment,CollectionType,LimitToCollectionName,LimitToCollectionID," & _
+			"MemberCount,SiteID,EvaluationStartTime,LastRefreshTime,LastIncrementalRefreshTime,LastMemberChangeTime," & _
+			"LastChangeTime,LastRefreshRequest,CollectionVariablesCount,CurrentStatus,CurrentStatusTime"
+			
+		FieldList2 = "ResultTableName,Schedule,SourceLocaleID,IsReferenceCollection," & _
+			"BeginDate,ISVData,ISVString,Flags,ServiceWindowsCount,PowerConfigsCount,RefreshType,MonitoringFlags," & _
+			"IsBuiltIn,IncludeExcludeCollectionsCount,LocalMemberCount,ResultClassName,HasProvisionedMember"
+		
 		CMWT_DB_OPEN Application("DSN_CMDB")
 		Set cmd  = Server.CreateObject("ADODB.Command")
 		Set rs   = Server.CreateObject("ADODB.Recordset")
@@ -122,18 +191,30 @@ Select Case KeySet
 		cmd.CommandType = adCmdText
 		cmd.CommandText = query
 		rs.Open cmd
+
+		Response.Write "<table class=""tfx""><tr><td class=""vtop w600"">"
+		
 		Response.Write "<table class=""tfx"">"
-		Do Until rs.EOF
-			For i = 0 to rs.Fields.Count - 1
-				fn = rs.Fields(i).Name
-				fv = Trim(rs.Fields(i).Value)
-				Response.Write "<tr class=""tr1"">" & _
-					"<td class=""td6 w180 v10 bgDarkGray"">" & fn & "</td>" & _
-					"<td class=""td6 v10"">" & CMWT_AutoLink(fn,fv) & "</td></tr>"
-			Next
-			rs.MoveNext
-		Loop
-		Response.Write "</table>"
+		For each fn in Split(FieldList1, ",")
+			Response.Write "<tr class=""tr1"">" & _
+				"<td class=""td6 v10 w200 bgGray"">" & fn & "</td>" & _
+				"<td class=""td6 v10"">" & CMWT_AUTOLINK(fn, rs.Fields(fn).value) & "</td>" & _
+				"</tr>"
+		Next
+		Response.Write "</table></td>"
+	
+		Response.Write "<td class=""vtop"">"
+
+		Response.Write "<table class=""tfx"">"
+		For each fn in Split(FieldList2, ",")
+			Response.Write "<tr class=""tr1"">" & _
+				"<td class=""td6 v10 w200 bgGray"">" & fn & "</td>" & _
+				"<td class=""td6 v10"">" & CMWT_AUTOLINK(fn, rs.Fields(fn).value) & "</td>" & _
+				"</tr>"
+		Next
+		Response.Write "</table></td>"
+
+		Response.Write "</tr></table>"
 		CMWT_DB_CLOSE()
 	
 	Case "2":
@@ -349,7 +430,7 @@ Select Case KeySet
 					fv = rs.Fields(i).Value
 					Select Case Ucase(fn)
 						Case "NOTEID":
-							fv = CMWT_IMG_LINK (TRUE, "icon_del2", "icon_del1", "icon_del3", "confirm.asp?id=" & fv & "&tn=notes&pk=noteid&t=collection.asp^id=" & KeyValue & "^set=10^ks=4", "Remove") & " " & _
+							fv = CMWT_IMG_LINK (TRUE, "icon_del2", "icon_del1", "icon_del3", "confirm.asp?id=" & fv & "&tn=notes&pk=noteid&t=collection.asp^id=" & KeyValue & "^set=10^ks=5", "Remove") & " " & _
 								CMWT_IMG_LINK (TRUE, "icon_edit2", "icon_edit1", "icon_edit2", "noteedit.asp?id=" & fv, "Edit")
 							Response.Write "<td class=""td6 v10 w50"">" & fv & "</td>"
 						Case Else:
@@ -389,44 +470,39 @@ Select Case KeySet
 			<tr class="bgDarkGray vtop">
 				<td class="td6a v10 w250">
 					<p>Invoke Client Action</p>
-					<form name="formx1" id="formx1" method="post" action="">
+					<form name="formx1" id="formx1" method="post" action="colltools.asp">
+						<input type="hidden" name="group" id="group" value="1" />
+						<input type="hidden" name="cid" id="cid" value="<%=KeyValue%>" />
+						<input type="hidden" name="atyp" id="atyp" value="COLLECTION" />
 						<select name="xx1" id="xx1" size="6" class="pad5 v10 w200">
-							<option>Client Machine Policy Refresh</option>
-							<option>Client Discovery Cycle</option>
-							<option>Hardware Inventory Cycle</option>
-							<option>Software Inventory Cycle</option>
-							<option>Software Updates Scan Cycle</option>
+							<option value="MACHINEPOL">Client Machine Policy Refresh</option>
+							<option value="USERPOL">Client User Policy Refresh</option>
+							<option value="DISCOVER">Client Discovery Cycle</option>
+							<option value="HWINV">Hardware Inventory Cycle</option>
+							<option value="SWINV">Software Inventory Cycle</option>
+							<option value="UPSCAN">Software Updates Scan Cycle</option>
 						</select>
 						<p><input type="submit" name="bx1" id="bx1" class="btx w200 h30" value="Execute" title="Execute" /></p>
 					</form>
 				</td>
 				<td class="td6a v10 w250">
 					<p>Execute Tools</p>
-					<form name="formx2" id="formx2" method="post" action="">
+					<form name="formx2" id="formx2" method="post" action="colltools.asp">
+						<input type="hidden" name="group" id="group" value="2" />
+						<input type="hidden" name="cid" id="cid" value="<%=KeyValue%>" />
+						<input type="hidden" name="atyp" id="atyp" value="COLLECTION" />
 						<select name="xx2" id="xx2" size="6" class="pad5 v10 w200">
-							<option>Restart Members</option>
-							<option>Shutdown Members</option>
-							<option>Group Policy Update</option>
-							<option>Restart SMSAgent Service</option>
-							<option>Ping All</option>
+							<option value="RESTART">Restart Members</option>
+							<option value="SHUTDOWN">Shutdown Members</option>
+							<option value="GPUPDATE">Group Policy Update</option>
+							<option value="RESTART">Restart SMSAgent Service</option>
 						</select>
 						<p><input type="submit" name="bx2" id="bx2" class="btx w200 h30" value="Execute" title="Execute" /></p>
 					</form>
 				</td>
 				<td class="td6a v10">
 					<p>Collection Members</p>
-					<form name="formx3" id="formx3" method="post" action="">
-						<select name="xx3" id="xx3" size="1" class="pad5 v10 w400">
-							<option value=""></optioN>
-						</select>
-						<p><select name="xx3" id="xx3" size="1" class="pad5 v10 w200">
-							<option value=""></option>
-							<option value="COMPARE">Compare Members</option>
-							<option value="COPY">Copy Members</option>
-							<option value="MOVE">Move Members</option>
-						</select></p>
-						<p><input type="submit" name="bx3" id="bx3" class="btx w200 h30" value="Execute" title="Execute" /></p>
-					</form>
+					<input type="button" name="bx3" id="bx3" class="btx w200 h30" value="Copy / Move" onClick="document.location.href='collmem.asp?cid1=<%=KeyValue%>'" title="Copy or Move Members" />
 				</td>
 			</tr>
 			<%
@@ -435,37 +511,34 @@ Select Case KeySet
 			<tr class="bgDarkGray vtop">
 				<td class="td6a v10 w250">
 					<p>Invoke Client Action</p>
-					<form name="formx1" id="formx1" method="post" action="">
+					<form name="formx1" id="formx1" method="post" action="colltools.asp">
+						<input type="hidden" name="group" id="group" value="1" />
+						<input type="hidden" name="cid" id="cid" value="<%=KeyValue%>" />
+						<input type="hidden" name="atyp" id="atyp" value="COLLECTION" />
 						<select name="xx1" id="xx1" size="6" class="pad5 v10 w200">
-							<option>Client Machine Policy Refresh</option>
-							<option>Client Discovery Cycle</option>
-							<option>Hardware Inventory Cycle</option>
-							<option>Software Inventory Cycle</option>
-							<option>Software Updates Scan Cycle</option>
+							<option value="MACHINEPOL">Client Machine Policy Refresh</option>
+							<option value="USERPOL">Client User Policy Refresh</option>
+							<option value="DISCOVER">Client Discovery Cycle</option>
+							<option value="HWINV">Hardware Inventory Cycle</option>
+							<option value="SWINV">Software Inventory Cycle</option>
+							<option value="UPSCAN">Software Updates Scan Cycle</option>
 						</select>
 						<p><input type="submit" name="bx1" id="bx1" class="btx w200 h30" value="Execute" title="Execute" /></p>
 					</form>
 				</td>
 				<td class="td6a v10 w250">
 					<p>Execute Tools</p>
-					<form name="formx2" id="formx2" method="post" action="">
+					<form name="formx2" id="formx2" method="post" action="colltools.asp">
+						<input type="hidden" name="group" id="group" value="2" />
+						<input type="hidden" name="cid" id="cid" value="<%=KeyValue%>" />
+						<input type="hidden" name="atyp" id="atyp" value="COLLECTION" />
 						<select name="xx2" id="xx2" size="6" class="pad5 v10 w200">
-							<option>Restart Members</option>
-							<option>Shutdown Members</option>
-							<option>Group Policy Update</option>
-							<option>Restart SMSAgent Service</option>
-							<option>Ping All</option>
+							<option value="RESTART">Restart Members</option>
+							<option value="SHUTDOWN">Shutdown Members</option>
+							<option value="GPUPDATE">Group Policy Update</option>
+							<option value="RESTART">Restart SMSAgent Service</option>
 						</select>
 						<p><input type="submit" name="bx2" id="bx2" class="btx w200 h30" value="Execute" title="Execute" /></p>
-					</form>
-				</td>
-				<td class="td6a v10">
-					<p>Compare Collection Members</p>
-					<form name="formx3" id="formx3" method="post" action="">
-						<select name="xx3" id="xx3" size="1" class="pad5 v10 w400">
-							<option value=""></optioN>
-						</select>
-						<input type="submit" name="bx3" id="bx3" class="btx w30 h30" value="..." title="Process" />
 					</form>
 				</td>
 			</tr>
@@ -478,8 +551,6 @@ Select Case KeySet
 End Select
 
 CMWT_SHOW_QUERY()
-CMWT_Footer()	
+CMWT_Footer()
+Response.Write "</body></html>"	
 %>
-
-</body>
-</html>

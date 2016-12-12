@@ -3,7 +3,7 @@
 <%
 '-----------------------------------------------------------------------------
 ' filename....... aduser.asp
-' lastupdate..... 11/30/2016
+' lastupdate..... 12/10/2016
 ' description.... active directory user account information
 '-----------------------------------------------------------------------------
 time1 = Timer
@@ -18,17 +18,21 @@ If InStr(UserID, "\") > 0 Then
 	UserID = uu(1)
 End If
 
-PageTitle = "User Account: " & UserID 
+If PSet = "4" Then
+	Response.Redirect "cmuser.asp?uid=" & UserID
+End If
+
+PageTitle    = UserID 
 PageBackLink = "adusers.asp"
 PageBackName = "AD Users"
 
 On Error Resume Next
 
 fields = "logonCount,userAccountControl,pwdLastSet," & _
-	"whenCreated,employeeNumber,employeeID,manager,st,l," & _
+	"whenCreated,userWorkstations,employeeNumber,employeeID,manager,st,l," & _
 	"streetAddress,physicalDeliveryOfficeName,telephoneNumber," & _
 	"ipPhone,mobile,facsimileTelephoneNumber,department,company,mail," & _
-	"description,samaccountname,displayName"
+	"description,title,samaccountname,displayName"
 
 query = "SELECT " & fields & " FROM 'LDAP://" & Application("CMWT_DomainPath") & "' " & _
 	"WHERE objectClass='user' AND sAMAccountName='" & UserID & "'"
@@ -37,27 +41,22 @@ CMWT_NewPage "", "", ""
 %>
 <!-- #include file="_sm.asp" -->
 <!-- #include file="_banner.asp" -->
-
-<table class="tfx">
-	<tr>
-		<td class="pad6 a14 w300"><strong><%=UserID%></strong></td>
-		<td> </td>
-		<%
-		Select Case Pset
-			Case "1":
-				Response.Write "<td class=""pad5a v10 w200 bgBlue ctr"">Account</td>" & _
-					"<td class=""pad5a v10 w200 ctr ptr"" onMouseOver=""this.className='pad5a v10 w200 ctr ptr bgGray'"" onMouseOut=""this.className='pad5a v10 w200 ctr ptr'"" onClick=""document.location.href='aduser.asp?uid=" & UserID & "&set=2'"">Groups</td>" & _
-					"<td class=""pad5a v10 w200 ctr ptr"" onMouseOver=""this.className='pad5a v10 w200 ctr ptr bgGray'"" onMouseOut=""this.className='pad5a v10 w200 ctr ptr'"" onClick=""document.location.href='cmuser.asp?uid=" & UserID & "'"">CM Account</td>"
-			Case "2":
-				Response.Write "<td class=""pad5a v10 w200 ctr ptr"" onMouseOver=""this.className='pad5a v10 w200 ctr ptr bgGray'"" onMouseOut=""this.className='pad5a v10 w200 ctr ptr'"" onClick=""document.location.href='aduser.asp?uid=" & UserID & "&set=1'"">Account</td>" & _
-					"<td class=""pad5a v10 w200 bgBlue ctr"">Groups</td>" & _
-					"<td class=""pad5a v10 w200 ctr ptr"" onMouseOver=""this.className='pad5a v10 w200 ctr ptr bgGray'"" onMouseOut=""this.className='pad5a v10 w200 ctr ptr'"" onClick=""document.location.href='cmuser.asp?uid=" & UserID & "'"">CM Account</td>"
-		End Select
-		%>
-	</tr>
-</table>
-	
 <%
+menulist = "1=Account,2=Groups,3=Computers,4=CM Account"
+
+Response.Write "<table class=""t2""><tr>"
+For each m in Split(menulist,",")
+	mset = Split(m,"=")
+	'aduser.asp?uid=" & UserID & "&set=2
+	mlink = "aduser.asp?uid=" & UserID & "&set=" & mset(0)
+	If KeySet = mset(0) Then
+		Response.Write "<td class=""m22"">" & mset(1) & "</td>"
+	Else
+		Response.Write "<td class=""m11"" onClick=""document.location.href='" & mlink & "'"">" & mset(1) & "</td>"
+	End If
+Next
+Response.Write "</tr></table>"
+
 Select Case Pset
 
 	Case "1":
@@ -66,40 +65,35 @@ Select Case Pset
 
 		arrFN = Split(fields,",")
 		xcols = Ubound(arrFN)
-
 		Set objConnection = CreateObject("ADODB.Connection")
 		Set objCommand    = CreateObject("ADODB.Command")
-
 		objConnection.Provider = "ADsDSOObject"
+		objConnection.Properties("User ID")  = Application("CM_AD_TOOLUSER")
+		objConnection.Properties("Password") = Application("CM_AD_TOOLPASS")
 		objConnection.Properties("ADSI Flag") = 1
 		objConnection.Open "Active Directory Provider"
-
 		Set objCommand.ActiveConnection = objConnection
-
 		objCommand.Properties("Page Size") = 1000
 		objCommand.Properties("Searchscope") = ADS_SCOPE_SUBTREE
 		objCommand.CommandText = query
-
 		Set objRecordSet = objCommand.Execute
 		objRecordSet.MoveFirst
 		xrows = objRecordSet.RecordCount
 
 		If xrows > 0 Then
 			Do Until objRecordSet.EOF
-
 				Response.Write "<tr class=""tr1"">"
-
 				For i = 0 to objRecordSet.Fields.Count -1
 					fieldname = objRecordSet.Fields(i).Name
 					strvalue  = objRecordSet.Fields(i).Value
-
+					fn = fieldname
 					Select Case Ucase(fieldname)
 						Case "NAME":
-							fn = "Name"
+							'fn = "Name"
 							fv = strValue
 							funx = CMWT_NameParse (cn)
 						Case "DESCRIPTION":
-							fn = "Description"
+							'fn = "Description"
 							If CMWT_NotNullString(strValue) Then
 								d = ""
 								For each x in strValue
@@ -112,26 +106,25 @@ Select Case Pset
 						Case "USERACCOUNTCONTROL":
 							fv = CMWT_UAC (fv)
 							fn = "Status"
-						Case "L":
+						Case "L","CITY":
 							fn = "City"
-							fv = strvalue
+							fv = strValue
 						Case "ST":
 							fn = "State"
-							fv = strvalue
+							fv = strValue
 						Case "FACSIMILETELEPHONENUMBER":
 							fn = "FAX"
-							fv = strvalue
+							fv = strValue
 						Case Else:
 							fv = strValue
 							fn = fieldname
 					End Select
 
 					Response.Write "<tr class=""tr1"">" & _
-						"<td class=""td6 v10 bgGray w200"">" & fn & "</td>" & _
+						"<td class=""td6 v10 bgGray w200"">" & CMWT_WordCase(fn) & "</td>" & _
 						"<td class=""td6 v10"">" & fv & "</td></tr>"
 				Next
 				Response.Write "</tr>"
-
 				objRecordSet.MoveNext
 			Loop
 
@@ -142,10 +135,9 @@ Select Case Pset
 		Response.Write "</table>"
 			
 	Case "2":
-		
-		Response.Write "<table class=""tfx"">"
-
-		groups = Enum_Groups (UserID)
+	
+		Response.Write "<table class=""tfx""><tr><td class=""td6 v10 bgGray"">Group Name</td></tr>"
+		groups = CMWT_AD_EnumGroups (UserID)
 		If CMWT_NotNullString(groups) Then
 			gcount = 0
 			For each group in Split(groups, ",")
@@ -158,7 +150,6 @@ Select Case Pset
 		Else
 			Response.Write "<tr class=""h100 tr1""><td class=""td6 v10 ctr"">No group memberships found</td></tr>"
 		End If
-
 		Response.Write "</table>"
 
 		If ADModify = True Then
@@ -170,6 +161,20 @@ Select Case Pset
 				"<input type=""button"" name=""b1"" id=""b1"" class=""btx w150 h32"" value=""Add to Group"" disabled=""true"" />" & _
 				"</div>"
 		End If
+	Case "3":
+		Dim conn, cmd, rs
+		query = "SELECT DISTINCT " & _
+			"dbo.v_R_System.Name0 AS ComputerName, dbo.v_R_System.AD_Site_Name0 AS ADSiteName, " & _
+			"dbo.v_GS_USER_PROFILE.LocalPath0 AS ProfilePath, dbo.v_GS_USER_PROFILE.TimeStamp " & _
+			"FROM dbo.v_GS_USER_PROFILE INNER JOIN " & _
+			"dbo.v_R_System ON dbo.v_GS_USER_PROFILE.ResourceID = dbo.v_R_System.ResourceID INNER JOIN " & _
+			"dbo.v_R_User ON dbo.v_GS_USER_PROFILE.SID0 = dbo.v_R_User.SID0 " & _
+			"WHERE (dbo.v_R_User.User_Name0 = '" & UserID & "')"
+
+		CMWT_DB_QUERY Application("DSN_CMDB"), query
+		CMWT_DB_TABLEGRID rs, "", "", ""
+		CMWT_DB_CLOSE()
+		
 End Select
 
 CMWT_SHOW_QUERY()

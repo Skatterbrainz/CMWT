@@ -2,17 +2,17 @@
 <%
 '-----------------------------------------------------------------------------
 ' filename....... adusers.asp
-' lastupdate..... 11/30/2016
+' lastupdate..... 12/10/2016
 ' description.... active directory users report
 '-----------------------------------------------------------------------------
 time1 = Timer
-PageTitle = "AD Users"
-PageBackLink = "adtools.asp"
-PageBackName = "Active Directory"
-
 objPfx  = CMWT_GET("ch", "A")
 SelOpt  = CMWT_GET("sel", "")
 SortBy  = CMWT_GET("s", "sAMAccountName")
+
+PageTitle    = "AD Users"
+PageBackLink = "adtools.asp"
+PageBackName = "Active Directory"
 
 CMWT_NewPage "", "", ""
 %>
@@ -41,9 +41,13 @@ On Error Resume Next
 Set objConnection = Server.CreateObject("ADODB.Connection")
 Set objCommand    = Server.CreateObject("ADODB.Command")
 objConnection.Provider = "ADsDSOObject"
+objConnection.Properties("User ID")  = Application("CM_AD_TOOLUSER")
+objConnection.Properties("Password") = Application("CM_AD_TOOLPASS")
+objConnection.Properties("Encrypt Password") = False
+objConnection.Properties("ADSI Flag") = 1
 objConnection.Open "Active Directory Provider"
 If err.Number <> 0 Then
-	Response.Write "Error-1: " & err.Number & " / " & err.Description
+	Response.Write "[adusers] error-1: " & err.Number & " / " & err.Description
 	Response.End
 End If
 
@@ -53,7 +57,7 @@ objCommand.CommandText = query
 
 Set objRecordSet = objCommand.Execute
 If err.Number <> 0 Then
-	Response.Write "Error-2: " & err.Number & " / " & err.Description
+	Response.Write "[adusers] Error-2: " & err.Number & " / " & err.Description
 	Response.WRite "<p>" & Server.URLEncode(query) & "</p>"
 	Response.End
 End If

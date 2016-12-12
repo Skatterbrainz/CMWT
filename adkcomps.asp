@@ -3,14 +3,14 @@
 '****************************************************************
 ' Filename..: adkcomps.asp
 ' Author....: David M. Stein
-' Date......: 11/30/2016
+' Date......: 12/10/2016
 ' Purpose...: windows adk components
 '****************************************************************
 time1 = Timer
 
-PageTitle = "Boot Image Components"
-PageBackLink = "cmsite.asp"
-PageBackName = "Site Hierarchy"
+PageTitle    = "Boot Image Components"
+PageBackLink = "software.asp"
+PageBackName = "Software"
 
 SortBy  = CMWT_GET("s", "Name")
 QueryON = CMWT_GET("qq", "")
@@ -34,7 +34,5 @@ CMWT_DB_TABLEGRID rs, "", "adkcomps.asp", ""
 CMWT_DB_CLOSE()
 CMWT_SHOW_Query()
 CMWT_Footer()
+Response.Write "</body></html>"
 %>
-
-</body>
-</html>

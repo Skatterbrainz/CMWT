@@ -2,7 +2,7 @@
 <%
 '-----------------------------------------------------------------------------
 ' filename....... _core.asp
-' lastupdate..... 12/07/2016
+' lastupdate..... 12/12/2016
 ' description.... CMWT core functions library
 '-----------------------------------------------------------------------------
 
@@ -112,12 +112,12 @@ Sub CMWT_FOOTER ()
 	If ltime <> "" Then
 		ltime = " - Page load: " & ltime & " seconds"
 	End If
-	Response.Write "<br/><table class=""tfx""><tr><td class=""v10 ctr footer"">" & _
+	Response.Write "<br/><table class=""tfx""><tr><td class=""footer"">" & _
 		"Version: " & Application("CMWT_VERSION") & _
 		" - Build: " & Application("CMWT_BUILD") & _
-		" - Copyright &copy; 2016" & ltime & _
+		" - Copyright &copy; " & DatePart("yyyy",Now) & ltime & _
 		" - <a href=""about.asp"" title=""About"">About</a>" & _
-		" - <a href=""javascript:print()"" title=""Print Page"">Print</a></td></tr></table>"
+		"</td></tr></table>"
 End Sub
 
 '-----------------------------------------------------------------------------
@@ -282,6 +282,17 @@ Function CMWT_GET (KeyName, DefaultValue)
 End Function
 
 '-----------------------------------------------------------------------------
+' sub-name: CMWT_VALIDATE
+' sub-desc: 
+'-----------------------------------------------------------------------------
+
+Sub CMWT_VALIDATE (CheckValue, Message)
+	If CheckValue = "" Then
+		CMWT_STOP Message
+	End If
+End Sub
+
+'-----------------------------------------------------------------------------
 ' sub-name: CMWT_STOP
 ' sub-desc: 
 '-----------------------------------------------------------------------------
@@ -435,14 +446,10 @@ End function
 '-----------------------------------------------------------------------------
 
 Sub CMWT_DB_QUERY (dsn, query)
-	Set conn = Server.CreateObject("ADODB.Connection")
 	On Error Resume Next
+	Set conn = Server.CreateObject("ADODB.Connection")
 	conn.ConnectionTimeOut = 5
 	conn.Open dsn
-	If err.Number <> 0 Then
-		CMWT_STOP err.Number & ": " & err.Description
-	End If
-	On Error GoTo 0
 	Set cmd = Server.CreateObject("ADODB.Command")
 	Set rs  = Server.CreateObject("ADODB.Recordset")
 	rs.CursorLocation = adUseClient
@@ -452,6 +459,10 @@ Sub CMWT_DB_QUERY (dsn, query)
 	cmd.CommandType = adCmdText
 	cmd.CommandText = query
 	rs.Open cmd
+	If err.Number <> 0 Then
+		response.write "[cmwt_db_query] error: " & err.Number & "<br/>description: " & err.Description
+		response.end
+	End If
 End Sub
 
 '-----------------------------------------------------------------------------
@@ -512,6 +523,10 @@ Sub CMWT_RSQUERY (query)
 	cmd.CommandType = adCmdText
 	cmd.CommandText = query
 	rs.Open cmd
+	If err.Number <> 0 Then
+		response.write "[cmwt_rsquery] error: " & err.Number & "<br/>description: " & err.Description
+		response.end
+	End If
 End Sub
 
 '----------------------------------------------------------------
@@ -570,6 +585,10 @@ function CMWT_AutoLink (ColumnName, LinkVal)
 			If CMWT_NotNullString(LinkVal) Then
 				result = CMWT_KB2GB(LinkVal) & " GB"
 			End If
+		Case "UID":
+			result = "<a href=""update.asp?id=" & LinkVal & """ title=""View Details"">" & LinkVal & "</a>"
+		Case "COMPLIANT":
+			result = LinkVal & "%"
 		Case "DISCOVERY":
 			result = "<a href=""discovery.asp?dm=" & LinkVal & """ title=""View Details"">" & LinkVal & "</a>"
 		Case "ROLENAME":
@@ -585,11 +604,13 @@ function CMWT_AutoLink (ColumnName, LinkVal)
 		Case "CHASSISTYPE":
 			result = "<a href=""chassistype.asp?ct=" & LinkVal & """ title=""Computers of type " & LinkVal & """>" & LinkVal & "</a>"
 		Case "DPSERVER":
-			result = "<a href=""dpapplist.asp?dp=" & LinkVal & """ title=""DP Server..."">" & LinkVal & "</a>"
+			result = "<a href=""dpapplist.asp?dp=" & LinkVal & """ title=""View Applications..."">" & LinkVal & "</a>"
 		Case "DPGROUP":
-			result = "<a href=""dpgroup.asp?gn=" & LinkVal & """ title=""Group Details..."">" & LinkVal & "</a>"
-		Case "PACKAGEID":
-			result = "<a href=""package.asp?id=" & LinkVal & """ title=""Package Details..."">" & LinkVal & "</a>"
+			result = "<a href=""dpgroup.asp?gn=" & LinkVal & """ title=""View Details..."">" & LinkVal & "</a>"
+		Case "PACKAGEID","PKGID":
+			result = "<a href=""package.asp?id=" & LinkVal & """ title=""View Details..."">" & LinkVal & "</a>"
+		Case "TSPKGID":
+			result = "<a href=""tasksequence.asp?id=" & LinkVal & """ title=""View Details..."">" & LinkVal & "</a>"
 		Case "APPID":
 			result = "<a href=""package.asp?k2=8&id=" & LinkVal & """ title=""Application Details..."">" & LinkVal & "</a>"
 		Case "PUBLISHED","DISCOVERYENABLED","ISDEPLOYED","ISSUPERSEDED":
@@ -600,6 +621,10 @@ function CMWT_AutoLink (ColumnName, LinkVal)
 			result = "<a href=""cmtask.asp?tn=" & LinkVal & """ title=""View Details"">" & LinkVal & "</a>"
 		Case "QUERYID":
 			result = "<a href=""cmquery.asp?id=" & LinkVal & """ title=""View Details"">" & LinkVal & "</a>"
+		Case "REPID":
+			result = "<a href=""sqlrun.asp?id=" & LinkVal & """ title=""Run Report"">Run</a> . " & _
+				"<a href=""sqlrepedit.asp?id=" & LinkVal & """ title=""Modify Report"">Edit</a> . " & _
+				"<a href=""sqlrepdel.asp?id=" & LinkVal & """ title=""Delete Report"">Del</a>"
 		Case "REPORTID":
 			result = LinkVal & " ... " & _
 				CMWT_IMG_LINK (True, "icon_add2", "icon_add1", "icon_add2", "reportrun.asp?id=" & LinkVal & "&rm=0", "Run Report") & " " & _
@@ -609,7 +634,11 @@ function CMWT_AutoLink (ColumnName, LinkVal)
 			result = "<a href=""dupefiles.asp?cn=" & cn & "&fn=" & LinkVal & """ title=""View Instances"">" & LinkVal & "</a>"
 		Case "INFOURL":
 			If CMWT_NotNullString(LinkVal) Then
-				result = "<a href=""" & LinkVal & """ target=""_blank"" title=""Open Link"">Link</a>"
+				If PageTitle = "Software Update" Then
+					result = "<a href=""" & LinkVal & """ target=""_blank"" title=""Open Link"">" & LinkVal & "</a>"
+				Else
+					result = "<a href=""" & LinkVal & """ target=""_blank"" title=""Open Link"">Link</a>"
+				End If
 			Else
 				result = ""
 			End If
@@ -1006,15 +1035,19 @@ End Function
 Function CMWT_SORTLINK (BaseURL, ColName, DefSort)
 	If Ucase(Trim(DefSort)) = Ucase(Trim(ColName)) Then
 		If InStr(BaseURL,"?") > 0 Then
-			CMWT_SORTLINK = "<a href=""" & BaseURL & "&s=" & ColName & " desc"" title=""Sort by " & ColName & " (descending)"">" & ColName & "</a>"
+			CMWT_SORTLINK = "<a href=""" & BaseURL & "&s=" & ColName & " desc"" title=""Sort by " & ColName & " (descending)"">" & _
+				"<img src=""images/sortdn.png"" border=""0""> " & ColName & "</a>"
 		Else
-			CMWT_SORTLINK = "<a href=""" & BaseURL & "?s=" & ColName & " desc"" title=""Sort by " & ColName & " (descending)"">" & ColName & "</a>"
+			CMWT_SORTLINK = "<a href=""" & BaseURL & "?s=" & ColName & " desc"" title=""Sort by " & ColName & " (descending)"">" & _
+				"<img src=""images/sortdn.png"" border=""0""> " & ColName & "</a>"
 		End If
 	Else
 		If InStr(BaseURL,"?") > 0 Then
-			CMWT_SORTLINK = "<a href=""" & BaseURL & "&s=" & ColName & """ title=""Sort by " & ColName & """>" & ColName & "</a>"
+			CMWT_SORTLINK = "<a href=""" & BaseURL & "&s=" & ColName & """ title=""Sort by " & ColName & """>" & _
+				"<img src=""images/sortup.png"" border=""0""> " & ColName & "</a>"
 		Else
-			CMWT_SORTLINK = "<a href=""" & BaseURL & "?s=" & ColName & """ title=""Sort by " & ColName & """>" & ColName & "</a>"
+			CMWT_SORTLINK = "<a href=""" & BaseURL & "?s=" & ColName & """ title=""Sort by " & ColName & """>" & _
+				"<img src=""images/sortup.png"" border=""0""> " & ColName & "</a>"
 		End If
 	End If
 End Function
@@ -1121,17 +1154,6 @@ Sub CMWT_TABLE_GRAPH2 (subcount, tcount)
 		Response.Write "<table class=""t1x"">" & _
 			"<tr><td class=""pad6 bgOrange v8"" width=""10%""> </td>" & _
 			"<td class=""pad6 v8"">" & subcount & " (" & FormatPercent(pct,0) & ")</td></tr></table>"
-	End If
-End Sub
-
-'-----------------------------------------------------------------------------
-' sub-name: CMWT_VALIDATE
-' sub-desc: 
-'-----------------------------------------------------------------------------
-
-Sub CMWT_VALIDATE (CheckValue, Message)
-	If CheckValue = "" Then
-		CMWT_STOP Message
 	End If
 End Sub
 
@@ -2194,4 +2216,87 @@ Sub CMWT_WAIT (intSeconds)
 	Loop
 End Sub
 
+'----------------------------------------------------------------
+' sub-name: CMWT_LIST_SITELOGS
+' sub-desc: 
+'----------------------------------------------------------------
+
+Sub CMWT_LIST_SITELOGS (CurrentFilename, ListSize)
+	Dim q, objFSO, objFolder, logPath, installDir, conn, rs, rsFiles
+	Dim fileName, objFile
+	CMWT_DB_OPEN Application("DSN_CMDB")
+	q = "SELECT TOP 1 InstallDir FROM dbo.v_Site"
+	CMWT_DB_QUERY Application("DSN_CMDB"), q
+	installDir = rs.Fields("InstallDir").value
+	conn.Close
+	rs.Close
+	logPath = installDir & "\logs"
+	Set objFSO = CreateObject("Scripting.FileSystemObject")
+	Set objFolder = objFSO.GetFolder(logPath)
+	Set rsFiles = CreateObject("ADODB.RecordSet")
+	rsFiles.CursorLocation = adUseClient
+	rsFiles.Fields.Append "filename", adVarChar, 50
+	rsFiles.Open
+	For each objFile in objFolder.Files 
+		fileName = objFile.Name
+		rsFiles.AddNew
+		rsFiles.Fields("filename").value = fileName
+		rsFiles.Update
+	Next
+	rsFiles.Sort = "filename"
+	rsFiles.MoveFirst
+	Response.Write "<select name=""list1"" id=""list1"" size=""" & ListSize & """ " & _
+		"class=""w400 pad5"" " & _
+		"onChange=""if (this.options[this.selectedIndex].value != 'null') { window.open(this.options[this.selectedIndex].value,'_top') }"">"
+
+	Do Until rsFiles.EOF
+		fileName  = rsFiles.Fields("filename").value
+		If CurrentFilename <> "" And Lcase(CurrentFilename) = Lcase(fileName) Then
+			Response.Write "<option value="""" selected>" & fileName & "</option>"
+		Else
+			Response.Write "<option value=""logview.asp?p=" & logPath & "&f=" & fileName & """>" & fileName & "</option>"
+		End If
+		rsFiles.MoveNext
+	Loop
+	Response.Write "</select>"
+	rsFiles.Close
+	Set rsFiles = Nothing 
+End Sub
+
+'----------------------------------------------------------------
+' function-name: CMWT_WordCase
+' function-desc: 
+'----------------------------------------------------------------
+
+Function CMWT_WordCase (strVal)
+	If CMWT_NotNullString(strVal) Then
+		If Len(strVal) > 1 Then
+			CMWT_WordCase = UCase(Left(strVal,1)) & Lcase(Mid(strVal,2))
+		Else
+			CMWT_WordCase = Ucase(strVal)
+		End If
+	Else
+		CMWT_WordCase = ""
+	End If
+End Function 
+
+Function CMWT_DB_OfflineSort (sourceRS, fieldnames, sortName)
+	Dim fn
+	Set rs = CreateObject("ADODB.RecordSet")
+	rs.CursorLocation = adUseClient
+	For each fn in Split(fieldnames, ",")
+		rs.Fields.Append fn, adVarChar, 255
+	Next
+	rs.Open
+	Do Until sourceRS.EOF
+		For each fn in Split(fieldnames, ",")
+			rs.AddNew
+			rs.Fields(fn).value = sourceRS.Fields(fn).value
+			rs.Update
+		Next
+		sourceRS.MoveNext
+	Loop
+	rs.Sort = sortName
+	rs.MoveFirst
+End Function
 %>

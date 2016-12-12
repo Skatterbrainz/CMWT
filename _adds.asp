@@ -2,7 +2,7 @@
 <%
 '-----------------------------------------------------------------------------
 ' filename....... _adds.asp
-' lastupdate..... 11/30/2016
+' lastupdate..... 12/10/2016
 ' description.... active directory domain services module
 '-----------------------------------------------------------------------------
 
@@ -29,11 +29,11 @@ Function CMWT_UAC (intVal)
 End Function
 
 '----------------------------------------------------------------
-' function-name: EnumerateOUs
+' function-name: CMWT_AD_EnumerateOUs
 ' function-desc: 
 '----------------------------------------------------------------
 
-Function EnumerateOUs ()
+Function CMWT_AD_EnumerateOUs ()
 	Dim conn, rs, ObjRootDSE, Leaf
 	Dim StrSQL, StrDomName, ObjOU, Result : result = 0
 	Set ObjRootDSE = GetObject("LDAP://RootDSE") 
@@ -63,7 +63,7 @@ Function EnumerateOUs ()
 	Set rs = Nothing 
 	conn.Close
 	Set conn = Nothing
-	EnumerateOUs = result
+	CMWT_AD_EnumerateOUs = result
 End Function
 
 '----------------------------------------------------------------
@@ -125,21 +125,26 @@ Function OULink (LabelName, ou)
 End Function
 
 '----------------------------------------------------------------
-' function-name: Enum_Groups
+' function-name: CMWT_AD_EnumGroups
 ' function-desc: 
 '----------------------------------------------------------------
 
-Function Enum_Groups (strUserName)
+Function CMWT_AD_EnumGroups (strUserName)
 	Dim result : result = ""
-	Dim objRootDSE, strDomName, strSQL, objConn, objRS, GroupCollection, objGroup, objUser
+	Dim objRootDSE, strDomName, strSQL, conn, objRS, GroupCollection, objGroup, objUser
 	Set ObjRootDSE = GetObject("LDAP://RootDSE") 
 	StrDomName = Trim(ObjRootDSE.Get("DefaultNamingContext")) 
 	Set ObjRootDSE = Nothing
 	StrSQL = "Select ADsPath From 'LDAP://" & StrDomName & "' Where ObjectCategory = 'User' AND SAMAccountName = '" & StrUserName & "'" 
-	Set ObjConn = CreateObject("ADODB.Connection") 
-	ObjConn.Provider = "ADsDSOObject":    ObjConn.Open "Active Directory Provider" 
+	Set conn = CreateObject("ADODB.Connection") 
+
+	conn.Provider = "ADsDSOObject"
+	conn.Properties("User ID")  = Application("CM_AD_TOOLUSER")
+	conn.Properties("Password") = Application("CM_AD_TOOLPASS")
+	conn.Properties("ADSI Flag") = 1
+	conn.Open "Active Directory Provider"
 	Set ObjRS = CreateObject("ADODB.Recordset") 
-	ObjRS.Open StrSQL, ObjConn 
+	ObjRS.Open StrSQL, conn 
 	If Not ObjRS.EOF Then 
 		ObjRS.MoveLast:    ObjRS.MoveFirst 
 		Set ObjUser = GetObject (Trim(ObjRS.Fields("ADsPath").Value)) 
@@ -154,9 +159,60 @@ Function Enum_Groups (strUserName)
 		Next 
 		Set ObjGroup = Nothing:    Set GroupCollection = Nothing:    Set ObjUser = Nothing 
 	End If 
-	ObjRS.Close:    Set ObjRS = Nothing 
-	ObjConn.Close:    Set ObjConn = Nothing 
-	Enum_Groups = result
+	ObjRS.Close
+	Set ObjRS = Nothing 
+	conn.Close
+	Set conn = Nothing 
+	CMWT_AD_EnumGroups = result
+End Function
+
+'----------------------------------------------------------------
+' function-name: CMWT_AD_EnumGroupMembers
+' function-desc: 
+'----------------------------------------------------------------
+
+Function CMWT_AD_EnumGroupMembers (strGroupName)
+	Dim result : result = ""
+	Dim objRootDSE, strDomName, strSQL, conn, objRS, colMembers, objGroup
+	on error resume next
+	Set ObjRootDSE = GetObject("LDAP://RootDSE") 
+	StrDomName = Trim(ObjRootDSE.Get("DefaultNamingContext")) 
+	Set ObjRootDSE = Nothing
+	StrSQL = "Select ADsPath From 'LDAP://" & StrDomName & "' Where ObjectCategory = 'group' AND SAMAccountName = '" & strGroupName & "'" 
+	Set conn = CreateObject("ADODB.Connection") 
+	conn.Provider = "ADsDSOObject"
+	conn.Properties("User ID")  = Application("CM_AD_TOOLUSER")
+	conn.Properties("Password") = Application("CM_AD_TOOLPASS")
+	conn.Properties("ADSI Flag") = 1
+	conn.Open "Active Directory Provider"
+	Set ObjRS = CreateObject("ADODB.Recordset") 
+	ObjRS.Open StrSQL, conn 
+	If Not ObjRS.EOF Then 
+		ObjRS.MoveFirst 
+		adpath = Trim(ObjRS.Fields("ADsPath").Value)
+		response.write "ads path: " & adpath
+		Set objGroup = GetObject (adpath)
+		if err.number <> 0 then
+			response.write "error"
+		end if
+		Set colMembers = objGroup.Member
+		For Each objMember In colMembers 
+			If result <> "" Then
+				result = result & "," & objMember.CN
+			Else
+				result = objMember.CN
+			End If
+			'CheckForNestedGroup objMember 
+		Next 
+		Set objMember = Nothing
+		Set colMembers = Nothing
+		Set objGroup = Nothing 
+	End If 
+	ObjRS.Close
+	Set ObjRS = Nothing 
+	conn.Close
+	Set conn = Nothing 
+	CMWT_AD_EnumGroupMembers = result
 End Function
 
 '----------------------------------------------------------------
@@ -183,17 +239,19 @@ Private Sub CheckForNestedGroup (ObjThisGroupNestingCheck)
 End Sub
 
 '----------------------------------------------------------------
-' function-name: Get_ADsPath
+' function-name: CMWT_AD_GetADsPath
 ' function-desc: 
 '----------------------------------------------------------------
 
-Function Get_ADsPath (strName, objType)
+Function CMWT_AD_GetADsPath (strName, objType)
 	Dim query, conn, cmd, rs, result : result = ""
 	query = "SELECT distinguishedName FROM 'LDAP://" & Application("CMWT_DomainPath") & "' " & _
 		"WHERE objectCategory='" & objType & "' AND name='" & strName & "'"
 	Set conn = CreateObject("ADODB.Connection")
 	Set cmd    = CreateObject("ADODB.Command")
 	conn.Provider = "ADsDSOObject"
+	conn.Properties("User ID")  = Application("CM_AD_TOOLUSER")
+	conn.Properties("Password") = Application("CM_AD_TOOLPASS")
 	conn.Properties("ADSI Flag") = 1
 	conn.Open "Active Directory Provider"
 	Set cmd.ActiveConnection = conn
@@ -212,15 +270,15 @@ Function Get_ADsPath (strName, objType)
 	rs.Close
 	conn.Close
 	Set rs = Nothing : Set cmd = Nothing : Set conn = Nothing
-	Get_ADsPath = result
+	CMWT_AD_GetADsPath = result
 End Function
 
 '----------------------------------------------------------------
-' function-name: Get_DisplayName
+' function-name: CMWT_AD_GetDisplayName
 ' function-desc: 
 '----------------------------------------------------------------
 
-Function Get_DisplayName (UserID)
+Function CMWT_AD_GetDisplayName (UserID)
 	Dim uid, query, conn, cmd, rs, result : result = ""
 	uid = Replace(Lcase(UserID), Lcase(NetSuffix) & "\", "")
 	query = "SELECT displayName FROM 'LDAP://" & Application("CMWT_DomainPath") & "' " & _
@@ -228,6 +286,8 @@ Function Get_DisplayName (UserID)
 	Set conn = CreateObject("ADODB.Connection")
 	Set cmd = CreateObject("ADODB.Command")
 	conn.Provider = "ADsDSOObject"
+	conn.Properties("User ID")  = Application("CM_AD_TOOLUSER")
+	conn.Properties("Password") = Application("CM_AD_TOOLPASS")
 	conn.Properties("ADSI Flag") = 1
 	conn.Open "Active Directory Provider"
 	Set cmd.ActiveConnection = conn
@@ -246,19 +306,19 @@ Function Get_DisplayName (UserID)
 	rs.Close
 	conn.Close
 	Set rs = Nothing : Set cmd = Nothing : Set conn = Nothing
-	Get_DisplayName = result
+	CMWT_AD_GetDisplayName = result
 End Function
 
 '----------------------------------------------------------------
-' function-name: Get_LogonName
+' function-name: CMWT_AD_GetLogonName
 ' function-desc: 
 '----------------------------------------------------------------
 
-Function Get_LogonName (UserDN)
+Function CMWT_AD_GetLogonName (UserDN)
 	Dim objUser, result : result = ""
 	Set objUser = GetObject("LDAP://" & UserDN)
 	result = objUser.sAMAccountName
-	Get_LogonName = result
+	CMWT_AD_GetLogonName = result
 End Function
 
 %>

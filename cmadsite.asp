@@ -3,7 +3,7 @@
 <%
 '-----------------------------------------------------------------------------
 ' filename....... cmadsite.asp
-' lastupdate..... 11/30/2016
+' lastupdate..... 12/11/2016
 ' description.... computers assigned to specified AD site
 '-----------------------------------------------------------------------------
 time1 = Timer
@@ -163,6 +163,8 @@ If Not(rs.BOF And rs.EOF) Then
 			"<td class=""td6 v10 bgGray"" colspan=""" & xcols & """>" & _
 			xrows & " items returned - " & invcount & " inventoried (" & pct & ")</td></tr>"
 	End If
+Else
+	Response.Write "<tr class=""h100 tr1""><td class=""td6 v10 ctr"">No computers were found in this AD site</td></tr>"
 End If
 
 Response.Write "</table>"
@@ -170,7 +172,5 @@ Response.Write "</table>"
 CMWT_DB_CLOSE()
 CMWT_SHOW_QUERY()
 CMWT_FOOTER()
+Response.Write "</body></html>"
 %>
-	
-</body>
-</html>

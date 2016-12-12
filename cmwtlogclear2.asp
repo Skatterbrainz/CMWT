@@ -2,7 +2,7 @@
 <%
 '-----------------------------------------------------------------------------
 ' filename....... cmwtlogclear2.asp
-' lastupdate..... 12/04/2016
+' lastupdate..... 12/12/2016
 ' description.... add new custom note
 '-----------------------------------------------------------------------------
 Response.Expires = -1
@@ -19,6 +19,14 @@ Select Case Ucase(KeySet)
 			LogDescription = "All [" & KeySet & "] log entries were cleared by " & CMWT_USERNAME()
 		Else
 			query = "DELETE FROM dbo.EventLog WHERE (EventDateTime < DATEADD(dd, -" & RmvSet & ", GETDATE()) )"
+			LogDescription = "[" & KeySet & "] log entries older than " & RmvSet & " were cleared by " & CMWT_USERNAME()
+		End If
+	Case "TASKS"
+		If RmvSet = "-1" Then
+			query = "DELETE FROM dbo.Tasks"
+			LogDescription = "All [" & KeySet & "] log entries were cleared by " & CMWT_USERNAME()
+		Else
+			query = "DELETE FROM dbo.Tasks WHERE (DateTimeCreated < DATEADD(dd, -" & RmvSet & ", GETDATE()) )"
 			LogDescription = "[" & KeySet & "] log entries older than " & RmvSet & " were cleared by " & CMWT_USERNAME()
 		End If
 	Case Else:
