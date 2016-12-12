@@ -1,16 +1,17 @@
 <!-- #include file=_core.asp -->
-<!-- #include file=_queries.asp -->
 <%
 '-----------------------------------------------------------------------------
 ' filename....... dpgroups.asp
-' lastupdate..... 03/20/2016
+' lastupdate..... 12/09/2016
 ' description.... distribution point groups report
 '-----------------------------------------------------------------------------
 time1 = Timer
 
 SortBy  = CMWT_GET("s", "Name")
 QueryOn = CMWT_GET("qq", "")
-pageTitle = "Distribution Point Groups"
+PageTitle    = "Distribution Point Groups"
+PageBackLink = "cmsite.asp"
+PageBackName = "Site Hierarchy"
 
 CMWT_NewPage "", "", ""
 %>
@@ -29,7 +30,5 @@ CMWT_DB_TABLEGRID rs, "", "dpgroups.asp", ""
 CMWT_DB_CLOSE()
 CMWT_SHOW_QUERY()
 CMWT_Footer()
+Response.Write "</body></html>"
 %>
-
-</body>
-</html>

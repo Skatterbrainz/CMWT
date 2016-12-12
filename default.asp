@@ -4,7 +4,7 @@
 <%
 '-----------------------------------------------------------------------------
 ' filename....... default.asp
-' lastupdate..... 12/04/2016
+' lastupdate..... 12/07/2016
 ' description.... home page
 '-----------------------------------------------------------------------------
 time1 = Timer
@@ -15,8 +15,8 @@ IsHomePage = True
 
 CMWT_NewPage "", "", ""
 %>
-<!-- #include file="./_sm.asp" -->
-<!-- #include file="./_banner.asp" -->
+<!-- #include file="_sm.asp" -->
+<!-- #include file="_banner.asp" -->
 <table class="tfx">
 	<tr>
 		<td>
@@ -55,17 +55,17 @@ CMWT_NewPage "", "", ""
 			<h2>Site Resources</h2>
 			
 			<table class="t1x">
-				<tr class="tr1 ptr" onClick="document.location.href='clients.asp'" title="View Records">
-					<td class="td5a v10 bgBlue">Forest: Discovered Computers</td>
-					<td class="td5a v10 bgDarkGray w80 right"><a href="clients.asp"><%=count_computers%></a></td>
+				<tr class="tr2" onClick="document.location.href='clients.asp'" title="View Records">
+					<td class="td5a v10">Forest: Discovered Computers</td>
+					<td class="td5a v10 w80 right"><a href="clients.asp"><%=count_computers%></a></td>
 				</tr>
-				<tr class="tr1 ptr" onClick="document.location.href='adusers.asp?x=1'" title="View Records">
-					<td class="td5a v10 bgBlue">Forest: Discovered User Accounts</td>
-					<td class="td5a v10 bgDarkGray w80 right"><a href="adusers.asp?x=1"><%=count_users%></a></td>
+				<tr class="tr2" onClick="document.location.href='adusers.asp?x=1'" title="View Records">
+					<td class="td5a v10">Forest: Discovered User Accounts</td>
+					<td class="td5a v10 w80 right"><a href="adusers.asp?x=1"><%=count_users%></a></td>
 				</tr>
-				<tr class="tr1 ptr" onClick="document.location.href='adgroups.asp'" title="View Records">
-					<td class="td5a v10 bgBlue">Forest: Discovered Groups</td>
-					<td class="td5a v10 bgDarkGray w80 right"><a href="adgroups.asp"><%=count_groups%></a></td>
+				<tr class="tr2" onClick="document.location.href='adgroups.asp'" title="View Records">
+					<td class="td5a v10">Forest: Discovered Groups</td>
+					<td class="td5a v10 w80 right"><a href="adgroups.asp"><%=count_groups%></a></td>
 				</tr>
 			</table>
 			
@@ -75,13 +75,13 @@ CMWT_NewPage "", "", ""
 			<h2><a href="sitestatus.asp" title="Site Status">Status</a></h2>
 			
 			<table class="t1x">
-				<tr class="tr1 ptr" onClick="document.location.href='bgroups.asp'" title="View Records">
-					<td class="td5a v10 bgBlue">Site: Site Boundary Groups</td>
-					<td class="td5a v10 bgDarkGray w80 right"><a href="bgroups.asp"><%=count_bgs%></a></td>
+				<tr class="tr2" onClick="document.location.href='bgroups.asp'" title="View Records">
+					<td class="td5a v10">Site: Site Boundary Groups</td>
+					<td class="td5a v10 w80 right"><a href="bgroups.asp"><%=count_bgs%></a></td>
 				</tr>
-				<tr class="tr1 ptr" onClick="document.location.href='apps.asp'" title="View Records">
-					<td class="td5a v10 bgBlue">Site: Inventoried Applications</td>
-					<td class="td5a v10 bgDarkGray w80 right">
+				<tr class="tr2" onClick="document.location.href='apps.asp'" title="View Records">
+					<td class="td5a v10">Site: Inventoried Applications</td>
+					<td class="td5a v10 w80 right">
 						<%
 						If count_apps > 50 Then
 							Response.Write "<a href=""apps.asp?ch=A"">" & count_apps & "</a>"
@@ -91,9 +91,9 @@ CMWT_NewPage "", "", ""
 						%>
 					</td>
 				</tr>
-				<tr class="tr1 ptr" onClick="document.location.href='dpservers.asp'" title="View Records">
-					<td class="td5a v10 bgBlue w150">Site: Distribution Points</td>
-					<td class="td5a v10 bgDarkGray w80 right"><a href="dpservers.asp"><%=count_dps%></a></td>
+				<tr class="tr2" onClick="document.location.href='dpservers.asp'" title="View Records">
+					<td class="td5a v10">Site: Distribution Points</td>
+					<td class="td5a v10 w80 right"><a href="dpservers.asp"><%=count_dps%></a></td>
 				</tr>
 			</table>
 			

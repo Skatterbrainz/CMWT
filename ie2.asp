@@ -2,15 +2,16 @@
 <%
 '-----------------------------------------------------------------------------
 ' filename....... ie2.asp
-' lastupdate..... 11/27/2016
+' lastupdate..... 12/09/2016
 ' description.... computers with specific Internet Explorer version installed
 '-----------------------------------------------------------------------------
-Response.Expires = -1
 time1 = Timer
 
 KeyVal = CMWT_GET("v", "")
 CMWT_Validate KeyVal, "Version was not specified"
-PageTitle = "Computers with IE " & KeyVal
+PageTitle    = KeyVal
+PageBackLink = "ie.asp"
+PageBackName = "IE Version Installs"
 SortBy  = CMWT_GET("s", "DeviceName")
 QueryON = CMWT_GET("qq", "")
 
@@ -36,7 +37,5 @@ CMWT_DB_TABLEGRID rs, "", "ie2.asp", ""
 CMWT_DB_CLOSE()
 CMWT_SHOW_QUERY() 
 CMWT_FOOTER()
+Response.Write "</body></html>"
 %>
-
-</body>
-</html>

@@ -2,7 +2,7 @@
 <%
 '-----------------------------------------------------------------------------
 ' filename....... search.asp
-' lastupdate..... 12/04/2016
+' lastupdate..... 12/11/2016
 ' description.... search results report
 '-----------------------------------------------------------------------------
 time1 = Timer
@@ -14,24 +14,24 @@ QueryOn  = CMWT_GET("qq", "")
 
 pageTitle = "Search Results: " & SearchVal
 
-qlist = "v_R_System=Name0=Computers=1|" & _
-	"v_R_User=Name0=Users=2|" & _
-	"v_R_UserGroup=Usergroup_Name0=User Groups=3|" & _
+qlist = "v_R_System=Name0=AD Computers=1|" & _
+	"v_R_User=Name0=AD Users=2|" & _
+	"v_R_UserGroup=Usergroup_Name0=AD Groups=3|" & _
 	"v_Collection=Name=Collections=4|" & _
 	"v_Package=Name=Packages=5|" & _
 	"v_GS_COMPUTER_SYSTEM=Model0=Computer Models=6|" & _
-	"v_GS_SoftwareProduct=ProductName=Software Products=7|" & _
+	"v_GS_SoftwareProduct=ProductName=Installed Software=7|" & _
 	"v_DriverPackage=Name=Driver Packages=8"
 
 ' number=category=column=fieldslist=tablename|
 	
-xlist = "1=Computers=Name0=Name0 AS ComputerName,ResourceID,AD_Site_Name0 AS ADSite,Client_Version0 AS ClientVersion,Virtual_Machine_Host_Name0 AS VMHost=v_R_System|" & _
-	"2=Users=Name0=Full_User_Name0 AS DisplayName,User_Name0 AS UserID,User_Principal_Name0 AS UPN,Windows_NT_Domain0 AS Domain=v_R_User|" & _
-	"3=User Groups=Usergroup_Name0=Usergroup_Name0 AS GroupName,Windows_NT_Domain0 AS Domain=v_R_UserGroup|" & _
+xlist = "1=AD Computers=Name0=Name0 AS ComputerName,ResourceID,AD_Site_Name0 AS ADSite,Client_Version0 AS ClientVersion,Virtual_Machine_Host_Name0 AS VMHost=v_R_System|" & _
+	"2=AD Users=Name0=Full_User_Name0 AS DisplayName,User_Name0 AS UserID,User_Principal_Name0 AS UPN,Windows_NT_Domain0 AS Domain=v_R_User|" & _
+	"3=AD Groups=Usergroup_Name0=Usergroup_Name0 AS GroupName,Windows_NT_Domain0 AS Domain=v_R_UserGroup|" & _
 	"4=Collections=Name=Name,CollectionID,Comment,CASE WHEN CollectionType > 1 THEN 'USERS' ELSE 'DEVICES' END AS CollType,MemberCount=v_Collection|" & _
 	"5=Packages=Name=Name,PackageID,Manufacturer,Description=v_Package|" & _
 	"6=Computer Models=Model0=Manufacturer0 AS Mfr,Model0 AS Model,ResourceID,Domain0 AS Domain,Name0 AS Name,SystemType0 AS SystemType=v_GS_COMPUTER_SYSTEM|" & _
-	"7=Software Products=ProductName=CompanyName,ProductName,ProductVersion=v_GS_SoftwareProduct|" & _
+	"7=Installed Software=ARPDisplayName0=ARPDisplayName0 AS ProductName,NormalizedPublisher AS Publisher,NormalizedVersion AS ProductVersion=v_GS_INSTALLED_SOFTWARE_CATEGORIZED|" & _
 	"8=Driver Packages=Name=Name,PackageID,Description=v_DriverPackage"
 	
 Function CMWT_SEARCH_COUNT (c, SearchVal, TableName, MatchField)
@@ -90,12 +90,15 @@ If SearchCat = "" Then
 		cat = qm(3)
 		if qty > 0 Then 
 			fv = "<a href=""search.asp?q=" & SearchVal & "&cat=" & cat & """>" & qm(2) & "</a>"
+			Response.Write "<tr class=""tr1"">" & _
+				"<td class=""td6 v10 w50 ctr bgGreen"">" & qty & "</td>" & _
+				"<td class=""td6 v10"">" & fv & "</td></tr>"
 		Else 
 			fv = qm(2)
+			Response.Write "<tr class=""tr1"">" & _
+				"<td class=""td6 v10 w50 ctr"">" & qty & "</td>" & _
+				"<td class=""td6 v10"">" & fv & "</td></tr>"
 		End If
-		Response.Write "<tr class=""tr1"">" & _
-			"<td class=""td6 v10 w50 ctr"">" & qty & "</td>" & _
-			"<td class=""td6 v10"">" & fv & "</td></tr>"
 	Next
 	
 	Response.Write "</table>"
@@ -117,7 +120,5 @@ Else
 End If 
 
 CMWT_Footer()
+Response.Write "</body></html>"
 %>
-
-</body>
-</html>

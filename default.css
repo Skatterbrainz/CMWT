@@ -2,7 +2,7 @@
 '****************************************************************
 ' Filename..: default.css
 ' Purpose...: base CSS stylesheet
-' Version...: 12/07/2016
+' Version...: 12/10/2016
 '****************************************************************
 */
 body {
@@ -29,32 +29,32 @@ h1 {
 
 li {margin-bottom: 6px;}
 
+.bgWhite       {background-color: white;}
+.bgBlack       {background-color: #000;}
 .bgLightGray   {background-color: #e1e1e1;}
 .bgLightOrange {background-color: #FFCC99;}
 .bgLightGreen  {background-color: #7FFFCC;}
 .bgLightBlue   {background-color: #A3E0FF;}
 .bgLightRed    {background-color: #FF8080;}
-.bgWhite    {background-color: white;}
-.bgGreen    {background-color: #1f6040;}
-.bgOrange   {background-color: #b35900;}
-.bgGray     {background-color: #737373;}
-.bgMedGray  {background-color: #4d4d4d;}
-.bgDarkGray {background-color: #1f1f1f;}
-.bgMedBlue  {background-color: #19334d;}
-.bgBlue     {background-color: #264d73;}
-.bgBlack    {background-color: #000;}
+.bgMedBlue     {background-color: #19334d;}
+.bgMedGray     {background-color: #4d4d4d;}
+.bgDarkGray    {background-color: #1f1f1f;}
+.bgBlue        {background-color: #264d73;}
+.bgGreen       {background-color: #1f6040;}
+.bgOrange      {background-color: #b35900;}
+.bgGray        {background-color: #737373;}
 
-.cBlue    {color:blue;}
-.cMedBlue {color:#0077b3;}
-.cBold    {font-weight:bold;}
-.cRed     {color:red;}
-.cPurple  {color:purple;}
-.cGray    {color:#c0c0c0;}
-.cGreen   {color:#1f6040;}
-.cLightGreen  {color: #7FFFCC;}
-.cYellow  {color:#ffff99;}
-.cBlack   {color:#000;}
-.cOrange  {color:#b35900;}
+.cBlack        {color:#000;}
+.cLightGreen   {color: #7FFFCC;}
+.cMedBlue      {color:#0077b3;}
+.cBlue         {color:blue;}
+.cRed          {color:red;}
+.cPurple       {color:purple;}
+.cGray         {color:#c0c0c0;}
+.cGreen        {color:#1f6040;}
+.cYellow       {color:#ffff99;}
+.cOrange       {color:#b35900;}
+//.cBold       {font-weight:bold;}
 
 .h28  {height: 25px;}
 .h30  {height: 30px;}
@@ -90,6 +90,7 @@ li {margin-bottom: 6px;}
 .w420 {width: 420px;}
 .w450 {width: 450px;}
 .w500 {width: 500px;}
+.w600 {width: 600px;}
 .w700 {width: 700px;}
 .w800 {width: 800px;}
 .w50x {width: 515px;}
@@ -141,11 +142,9 @@ li {margin-bottom: 6px;}
 	padding: 4px;
 }
 .td5 {
-	//border: 1px solid #c0c0c0;
 	padding: 5px;
 }
 .td6 {
-	//border: 1px solid #c0c0c0;
 	padding: 6px;
 }
 .td5a {
@@ -366,6 +365,7 @@ li {margin-bottom: 6px;}
 }
 .footer {
 	font-family:verdana,arial,helvetica,sans;
+	font-size: 10pt;
 	text-align: center;
 	color:#c0c0c0;
 }

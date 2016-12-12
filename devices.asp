@@ -3,7 +3,7 @@
 <%
 '-----------------------------------------------------------------------------
 ' filename....... devices.asp
-' lastupdate..... 12/05/2016
+' lastupdate..... 12/10/2016
 ' description.... devices listing page
 '-----------------------------------------------------------------------------
 time1 = Timer
@@ -11,13 +11,16 @@ KeySet  = CMWT_GET("ks", "1")
 QueryOn = CMWT_GET("qq", "")
 ObjPfx  = CMWT_GET("ch", "C")
 SortBy  = CMWT_GET("s", "DeviceName")
-
+FilterFN = CMWT_GET("fn", "")
+FilterFV = CMWT_GET("fv", "")
 Select Case KeySet
 	Case "1": PageTitle = "Devices"
-	Case "2": PageTitle = "Devices: Servers"
-	Case "3": PageTitle = "Devices: Clients"
+	Case "2": PageTitle = "Windows Servers"
+	Case "3": PageTitle = "Windows Clients"
 	Case "4": PageTitle = "Devices: Desktops"
 	Case "5": PageTitle = "Devices: Laptops"
+	Case "6": PageTitle = "Physical Clients"
+	Case "7": PageTitle = "Virtual Clients"
 End Select
 PageBackLink = "assets.asp"
 PageBackName = "Assets"
@@ -72,19 +75,51 @@ Select Case KeySet
 			"Virtual_Machine_Host_Name0 AS VMHost " & _
 			"FROM (" & q_devices & ") AS T1 " & _
 			"WHERE (T1.ChassisTypes0 IN (9,10,14))"
-	Case Else
-		query = "SELECT Name0 AS DeviceName, ResourceID, " &_
-			"AD_Site_Name0 AS ADSiteName," & _
+	Case "6"
+		query = "SELECT DISTINCT Name0 as DeviceName, " & _
+			"AD_Site_Name0 AS ADSiteName, " & _
 			"Client_Version0 AS ClientVersion, " & _
 			"CPUType0 AS CPUType, " & _
 			"Creation_Date0 AS DateCreated, " & _
 			"Operating_System_Name_and0 AS OSName, " & _
 			"Virtual_Machine_Host_Name0 AS VMHost " & _
-			"FROM dbo.v_R_System " & _
-			"Where (ResourceType = 5)"
+			"FROM (" & q_devices & ") AS T1 " & _
+			"WHERE (T1.Model0 NOT LIKE 'Virtual%')"
+	Case "7"
+		query = "SELECT DISTINCT Name0 as DeviceName, " & _
+			"AD_Site_Name0 AS ADSiteName, " & _
+			"Client_Version0 AS ClientVersion, " & _
+			"CPUType0 AS CPUType, " & _
+			"Creation_Date0 AS DateCreated, " & _
+			"Operating_System_Name_and0 AS OSName, " & _
+			"Virtual_Machine_Host_Name0 AS VMHost " & _
+			"FROM (" & q_devices & ") AS T1 " & _
+			"WHERE (T1.Model0 LIKE 'Virtual%')"
+	Case Else
+		if FilterFN <> "" And FilterFV <> "" Then
+			query = "SELECT DISTINCT Name0 as DeviceName, " & _
+				"AD_Site_Name0 AS ADSiteName, " & _
+				"Client_Version0 AS ClientVersion, " & _
+				"CPUType0 AS CPUType, " & _
+				"Creation_Date0 AS DateCreated, " & _
+				"Operating_System_Name_and0 AS OSName, " & _
+				"Virtual_Machine_Host_Name0 AS VMHost " & _
+				"FROM (" & q_devices & ") AS T1 " & _
+				"WHERE (T1." & FilterFN & "='" & FilterFV & "')"
+		else
+			query = "SELECT Name0 AS DeviceName, ResourceID, " &_
+				"AD_Site_Name0 AS ADSiteName," & _
+				"Client_Version0 AS ClientVersion, " & _
+				"CPUType0 AS CPUType, " & _
+				"Creation_Date0 AS DateCreated, " & _
+				"Operating_System_Name_and0 AS OSName, " & _
+				"Virtual_Machine_Host_Name0 AS VMHost " & _
+				"FROM dbo.v_R_System " & _
+				"Where (ResourceType = 5)"
+		end if
 End Select
 
-If objPFX <> "ALL" Then
+If Ucase(objPFX) <> "ALL" Then
 	query = query & " AND (Name0 LIKE '" & ObjPfx & "%')"
 End If
 
@@ -110,7 +145,7 @@ If Not (rs.BOF and rs.EOF) Then
 			Case Else:
 				Response.Write "<td class=""td6 v10 bgGray"">"
 		End Select
-		Response.Write CMWT_SORTLINK("devices.asp", fn, SortBy) & "</td>"
+		Response.Write CMWT_SORTLINK("devices.asp?ch=" & objPFX, fn, SortBy) & "</td>"
 	Next
 	Response.Write "</tr>"
 	' iterate dataset rows

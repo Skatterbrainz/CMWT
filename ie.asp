@@ -2,13 +2,14 @@
 <%
 '-----------------------------------------------------------------------------
 ' filename....... ie.asp
-' lastupdate..... 11/27/2016
+' lastupdate..... 12/09/2016
 ' description.... microsoft Internet Explorer versions and install counts for each
 '-----------------------------------------------------------------------------
-Response.Expires = -1
 time1 = Timer
 
-PageTitle = "IE Version Installs"
+PageTitle    = "IE Version Installs"
+PageBackLink = "software.asp"
+PageBackName = "Software"
 SortBy  = CMWT_GET("s", "ProductVersion")
 QueryON = CMWT_GET("qq", "")
 
@@ -19,7 +20,7 @@ CMWT_NewPage "", "", ""
 <%
 	
 query = "SELECT DISTINCT " & _
-	"ProductName, ProductVersion, COUNT(*) AS Installs " & _
+	"ProductName AS BrowserName, ProductVersion, COUNT(*) AS Installs " & _
 	"FROM dbo.v_GS_SoftwareProduct " & _
 	"WHERE (ProductName LIKE '%Internet Explorer%') " & _
 	"GROUP BY ProductName, ProductVersion " & _
@@ -30,7 +31,5 @@ CMWT_DB_TABLEGRID rs, "", "ie.asp", "PRODUCTVERSION=ie2.asp?v"
 CMWT_DB_CLOSE()
 CMWT_SHOW_QUERY() 
 CMWT_FOOTER()
+Response.Write "</body></html>"
 %>
-
-</body>
-</html>
