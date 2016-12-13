@@ -2,7 +2,7 @@
 <%
 '-----------------------------------------------------------------------------
 ' filename....... assets.asp
-' lastupdate..... 12/10/2016
+' lastupdate..... 12/12/2016
 ' description.... assets and compliance landing page
 '-----------------------------------------------------------------------------
 time1 = Timer
@@ -30,7 +30,7 @@ CMWT_NewPage "", "", ""
 	<tr class="h50">
 		<td class="m111 w250" onClick="document.location.href='collections.asp?ks=1'" title="User Collections">User Collections</td>
 		<td class="m111 w250" onClick="document.location.href='collections.asp?ks=2'" title="Device Collections">Device Collections</td>
-		<td class="m111 w250"></td>
+		<td class="m111 w250" onClick="document.location.href='collmem.asp'" title="Collection Tools">Collection Tools</td>
 		<td class="m111 w250"></td>
 		<td></td>
 	</tr>

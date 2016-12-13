@@ -2,7 +2,7 @@
 <%
 '-----------------------------------------------------------------------------
 ' filename....... sqlreports.asp
-' lastupdate..... 12/09/2016
+' lastupdate..... 12/12/2016
 ' description.... custom reports list
 '-----------------------------------------------------------------------------
 time1 = Timer
@@ -18,7 +18,6 @@ CMWT_NewPage "", "", ""
 <!-- #include file="_sm.asp" -->
 <!-- #include file="_banner.asp" -->
 <%
-	
 query = "SELECT DISTINCT " & _
 	"ReportID AS RepID, CASE WHEN ReportType=1 THEN 'SQL' WHEN ReportType=2 THEN 'ADDS' ELSE 'OTHER' END AS ReportType, ReportName, " & _
 	"CreatedBy, DateCreated, Comment " & _

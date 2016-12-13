@@ -3,7 +3,7 @@
 '****************************************************************
 ' Filename..: diag.asp
 ' Author....: David M. Stein
-' Date......: 12/03/2016
+' Date......: 12/13/2016
 ' Purpose...: application diagnostics information
 '****************************************************************
 time1 = Timer
@@ -50,26 +50,31 @@ CMWT_NewPage "", "", ""
 	%>
 
 	<br/>
-	<div class="t1000x"><h3>Application Data</h3></div>
+	<div class="tfx"><h3>Application Data</h3></div>
 	
-	<table class="t1000x">
+	<table class="tfx">
 		<tr>
 			<td class="td6 v10 bgGray">Variable</td>
 			<td class="td6 v10 bgGray">Assigned Value</td>
 		</tr>
 		<%
 		For each sv in Application.Contents
+			If Ucase(sv) = "CM_AD_TOOLPASS" Then
+				svv = "***************"
+			Else
+				svv = Application(sv)
+			End If
 			Response.Write "<tr class=""tr1"">" & _
 				"<td class=""td6 v10"">" & sv & "</td>" & _
-				"<td class=""td6 v10"">" & Application(sv) & "</td>" & _
+				"<td class=""td6 v10"">" & svv & "</td>" & _
 				"</tr>"
 		Next
 		%>
 	</table>
 	
-	<div class="t1000x"><h3>Server Configuration</h3></div>
+	<div class="tfx"><h3>Server Configuration</h3></div>
 	
-	<table class="t1000x">
+	<table class="tfx">
 		<tr>
 			<td class="td6 v10 bgGray">Variable</td>
 			<td class="td6 v10 bgGray">Assigned Value</td>

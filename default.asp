@@ -4,7 +4,7 @@
 <%
 '-----------------------------------------------------------------------------
 ' filename....... default.asp
-' lastupdate..... 12/07/2016
+' lastupdate..... 12/13/2016
 ' description.... home page
 '-----------------------------------------------------------------------------
 time1 = Timer
@@ -40,7 +40,6 @@ CMWT_NewPage "", "", ""
 				Response.Write "</tr>"
 				rs.MoveNext
 			Loop
-			'CMWT_DB_TABLEGRID rs, "", "", ""
 			CMWT_DB_CLOSE()
 			Response.Write "</table>"
 			%>
@@ -67,17 +66,13 @@ CMWT_NewPage "", "", ""
 					<td class="td5a v10">Forest: Discovered Groups</td>
 					<td class="td5a v10 w80 right"><a href="adgroups.asp"><%=count_groups%></a></td>
 				</tr>
-			</table>
-			
-		</td>
-		<td class="v10 vtop">
-			
-			<h2><a href="sitestatus.asp" title="Site Status">Status</a></h2>
-			
-			<table class="t1x">
 				<tr class="tr2" onClick="document.location.href='bgroups.asp'" title="View Records">
 					<td class="td5a v10">Site: Site Boundary Groups</td>
 					<td class="td5a v10 w80 right"><a href="bgroups.asp"><%=count_bgs%></a></td>
+				</tr>
+				<tr class="tr2" onClick="document.location.href='dpservers.asp'" title="View Records">
+					<td class="td5a v10">Site: Distribution Points</td>
+					<td class="td5a v10 w80 right"><a href="dpservers.asp"><%=count_dps%></a></td>
 				</tr>
 				<tr class="tr2" onClick="document.location.href='apps.asp'" title="View Records">
 					<td class="td5a v10">Site: Inventoried Applications</td>
@@ -91,9 +86,25 @@ CMWT_NewPage "", "", ""
 						%>
 					</td>
 				</tr>
-				<tr class="tr2" onClick="document.location.href='dpservers.asp'" title="View Records">
-					<td class="td5a v10">Site: Distribution Points</td>
-					<td class="td5a v10 w80 right"><a href="dpservers.asp"><%=count_dps%></a></td>
+			</table>
+			
+		</td>
+		<td class="v10 vtop">
+			
+			<h2>Status</h2>
+			
+			<table class="t1x">
+				<tr class="tr2">
+					<td class="td5a v10"><a href="sitestatus.asp">Site Status Errors</a></td>
+					<td class="td5a v10 w80 right"><%=count_stat1%></td>
+				</tr>
+				<tr class="tr2">
+					<td class="td5a v10"><a href="compstatus.asp">Component Status Errors</a></td>
+					<td class="td5a v10 w80 right"><%=count_stat2%></td>
+				</tr>
+				<tr class="tr2">
+					<td class="td5a v10"></td>
+					<td class="td5a v10 w80 right"> </td>
 				</tr>
 			</table>
 			

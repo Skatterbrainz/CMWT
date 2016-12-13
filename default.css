@@ -2,7 +2,7 @@
 '****************************************************************
 ' Filename..: default.css
 ' Purpose...: base CSS stylesheet
-' Version...: 12/10/2016
+' Version...: 12/13/2016
 '****************************************************************
 */
 body {
@@ -19,7 +19,7 @@ a:hover   {color: #fff; text-decoration: underline;}
 a:active  {color: darkred;}
 
 h1, h2, h3 {
-	color: #c0c0c0;
+	color: #0077b3;
 	font-weight: 300;
 	letter-spacing: -.045em;
 }

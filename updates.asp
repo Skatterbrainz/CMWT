@@ -2,7 +2,7 @@
 <%
 '-----------------------------------------------------------------------------
 ' filename....... updates.asp
-' lastupdate..... 12/08/2016
+' lastupdate..... 12/13/2016
 ' description.... deployment status summary
 '-----------------------------------------------------------------------------
 time1 = Timer
@@ -18,6 +18,7 @@ PageBackName = "Software"
 If FilterFN <> "" And FilterFV <> "" Then
 	subselect = "WHERE (" & FilterFN & "='" & FilterFV & "')"
 	Filtered = True
+	PageTitle = "<a href=""updates.asp"">Software Updates</a>: " & FilterFV
 Else
 	subselect = ""
 End If
@@ -42,8 +43,8 @@ CMWT_DEBUG query
 
 Dim conn, cmd, rs
 CMWT_DB_QUERY Application("DSN_CMDB"), query
-CMWT_DB_TableGrid rs, "", "updates.asp", ""
-'CMWT_DB_TableGridFilter rs, "", "updates.asp", "", colset, "updates.asp?fn=X&fv=Y"
+'CMWT_DB_TableGrid rs, "", "updates.asp", ""
+CMWT_DB_TableGridFilter rs, "", "updates.asp", "", "SeverityName", "updates.asp?fn=X&fv=Y"
 CMWT_DB_CLOSE()
 CMWT_SHOW_QUERY()
 CMWT_FOOTER()

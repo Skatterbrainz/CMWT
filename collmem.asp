@@ -11,7 +11,7 @@ CollectionID1 = CMWT_GET("cid1", "")
 CollectionID2 = CMWT_GET("cid2", "")
 ActionType    = CMWT_GET("xx3", "")
 
-CMWT_VALIDATE CollectionID1, "Source Collection ID was not specified"
+'CMWT_VALIDATE CollectionID1, "Source Collection ID was not specified"
 
 '-----------------------------------------------------------------------------
 ' sub-name: CMWT_CM_ListCollectionMembers
@@ -103,8 +103,16 @@ CMWT_NewPage "", "", ""
 
 Dim conn, cmd, rs, query
 CMWT_DB_OPEN Application("DSN_CMDB")
-CollName = CMWT_CM_ObjectProperty (conn, "v_Collections", "SiteID", KeyValue, "CollectionName")
-CollType = CMWT_CM_ObjectProperty (conn, "v_Collections", "SiteID", KeyValue, "CollectionType")
+If CollectionID1 <> "" Then
+	CollName1 = CMWT_CM_ObjectProperty (conn, "v_Collections", "SiteID", CollectionID1, "CollectionName")
+	cap1 = " <span class=""cMedBlue"">" & CollectionID1 & "</span>"
+End If
+
+If CollectionID2 <> "" Then
+	CollName2 = CMWT_CM_ObjectProperty (conn, "v_Collections", "SiteID", CollectionID2, "CollectionName")
+	cap2 = " <span class=""cMedBlue"">" & CollectionID2 & "</span>"
+End If
+'CollType = CMWT_CM_ObjectProperty (conn, "v_Collections", "SiteID", KeyValue, "CollectionType")
 CMWT_DB_CLOSE()
 
 CMWT_DB_OPEN Application("DSN_CMDB")
@@ -115,7 +123,7 @@ CMWT_DB_OPEN Application("DSN_CMDB")
 <table class="tfx">
 	<tr>
 		<td class="td6 v10 w420">
-			<h2>Source Collection</h2>
+			<h2>Source Collection<%=cap1%></h2>
 			<select name="c1" id="c1" size="1" class="pad5 v10 w400" onChange="if (this.options[this.selectedIndex].value != 'null') { window.open(this.options[this.selectedIndex].value,'_top') }">
 				<option value=""></option>
 				<%
@@ -124,7 +132,7 @@ CMWT_DB_OPEN Application("DSN_CMDB")
 			</select>
 		</td>
 		<td class="td6 v10">
-			<h2>Target Collection</h2>
+			<h2>Target Collection<%=cap2%></h2>
 			<select name="c2" id="c2" size="1" class="pad5 v10 w400" onChange="if (this.options[this.selectedIndex].value != 'null') { window.open(this.options[this.selectedIndex].value,'_top') }">
 				<option value=""></option>
 				<%
@@ -140,8 +148,7 @@ CMWT_DB_OPEN Application("DSN_CMDB")
 				CMWT_CM_ListCollectionMembers conn, CollectionID1
 				%>
 			</select>
-			<select name="a1" id="a1" size="1" class="pad5 v10 w400">
-				<option></option>
+			<select name="a1" id="a1" size="2" class="pad5 v10 w400">
 				<option value="COPY">Copy to Target</option>
 				<option value="MOVE">Move to Target</option>
 			</select>
@@ -152,8 +159,7 @@ CMWT_DB_OPEN Application("DSN_CMDB")
 				CMWT_CM_ListCollectionMembers conn, CollectionID2
 				%>
 			</select>
-			<select name="a2" id="a2" size="1" class="pad5 v10 w400">
-				<option></option>
+			<select name="a2" id="a2" size="2" class="pad5 v10 w400">
 				<option value="COPY">Copy to Source</option>
 				<option value="MOVE">Move to Source</option>
 			</select>
@@ -163,6 +169,7 @@ CMWT_DB_OPEN Application("DSN_CMDB")
 		<td class="td6 v10" colspan="2">
 			<input type="hidden" name="cid1" id="cid1" value="<%=CollectionID1%>" />
 			<input type="hidden" name="cid2" id="cid2" value="<%=CollectionID2%>" />
+			<input type="checkbox" name="w" id="w" value="1" class="h30 w30" /> Test-Run&nbsp;&nbsp;
 			<input type="reset" name="b0" id="b0" class="btx w140 h30" value="Reset" title="Clear Selections" />
 			<input type="submit" name="b1" id="b1" class="btx w140 h30" value="Execute!" title="Execute Now!" />
 		</td>

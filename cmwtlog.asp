@@ -2,19 +2,27 @@
 <%
 '-----------------------------------------------------------------------------
 ' filename....... cmwtlog.asp
-' lastupdate..... 12/04/2016
+' lastupdate..... 12/12/2016
 ' description.... cmwt database log maintenance
 '-----------------------------------------------------------------------------
 time1 = Timer
 QueryOn = CMWT_GET("qq", "")
 KeySet  = CMWT_GET("l", "events")
+LimitTo = CMWT_GET("top", "10")
+
+If Ucase(LimitTo) = "ALL" Then
+	selx = "TOP 100 PERCENT"
+Else
+	selx = "TOP " & LimitTo
+	filtered = True
+End If
 
 select case Ucase(KeySet)
 	case "TASKS":
-		query = "SELECT * FROM dbo.Tasks ORDER BY DateTimeCreated DESC"
+		query = "SELECT " & selx & " * FROM dbo.Tasks ORDER BY DateTimeCreated DESC"
 		PageTitle = "CMWT Task Logs"
 	case "EVENTS":
-		query = "SELECT * FROM dbo.EventLog ORDER BY EventDateTime DESC"
+		query = "SELECT " & selx & " * FROM dbo.EventLog ORDER BY EventDateTime DESC"
 		PageTitle = "CMWT Event Logs"
 end select
 
@@ -29,6 +37,9 @@ PageBackName = "Administration"
 		CMWT - Configuration Manager Web Tools :: Today is <%=FormatDateTime(Now,vbLongDate)%>
 		</td>
 		<td class="v10 pad6 bgDarkGray right">
+			<% If filtered Then %>
+			(Top <%=LimitTo%>) <input type="button" name="b1" id="b1" class="btx w140 h30" value="Show All" onClick="document.location.href='cmwtlog.asp?l=<%=KeySet%>&top=all'" />
+			<% End If %>
 			<input type="button" name="b1" id="b1" class="btx w140 h30" value="Clear Logs" onClick="document.location.href='cmwtlogclear.asp?l=<%=KeySet%>'" />
 		</td>
 	</tr>

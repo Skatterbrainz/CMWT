@@ -2,7 +2,7 @@
 <%
 '-----------------------------------------------------------------------------
 ' filename....... _core.asp
-' lastupdate..... 12/12/2016
+' lastupdate..... 12/13/2016
 ' description.... CMWT core functions library
 '-----------------------------------------------------------------------------
 
@@ -664,6 +664,14 @@ function CMWT_AutoLink (ColumnName, LinkVal)
 				Case 3: result = "3 = Delete"
 				Case Else: result = LinkVal
 			End Select
+		Case "SEVERITYNAME","BULLETINID","ARTICLEID","EXPIRED","SUPERSEDED","DEPLOYED":
+			If LinkVal <> "" Then
+				result = "<a href=""updates.asp?fn=" & ColumnName & "&fv=" & LinkVal & """ title=""Filter on " & LinkVal & """>" & LinkVal & "</a>"
+			End If
+		Case "COMPONENT":
+			If LinkVal <> "" Then
+				result = "<a href=""compstatus.asp?fn=" & ColumnName & "&fv=" & LinkVal & """ title=""Filter on " & LinkVal & """>" & LinkVal & "</a>"
+			End If
 	end select
 	CMWT_AutoLink = result
 end function
@@ -737,7 +745,11 @@ Sub CMWT_DB_TableGrid (rs, Caption, SortLink, AutoLink)
 		Loop
 		Response.Write "<tr>" & _
 			"<td class=""td6 v10 bgGray"" colspan=""" & xcols & """>" & _
-			xrows & " rows returned</td></tr></table>"
+			xrows & " rows returned"
+		If filtered = True Then
+			Response.Write " (Filtered Results)"
+		End If
+		Response.Write "</td></tr></table>"
 	else
 		If CMWT_NotNullString(Caption) Then
 			Response.Write "<h2 class=""tfx"">" & Caption & "</h2>"
@@ -884,7 +896,11 @@ Sub CMWT_DB_TableGridFilter (rs, Caption, SortLink, AutoLink, ColumnSet, FilterL
 		Loop
 		Response.Write "<tr>" & _
 			"<td class=""td6 v10 bgGray"" colspan=""" & xcols & """>" & _
-			xrows & " rows returned</td></tr></table>"
+			xrows & " rows returned"
+		If Filtered = True Then
+			Response.Write " (Filtered Results)"
+		End If
+		Response.Write "</td></tr></table>"
 	else
 		If CMWT_NotNullString(Caption) Then
 			Response.Write "<h2 class=""tfx"">" & Caption & "</h2>"
@@ -2106,9 +2122,9 @@ function CMWT_PageLink (CMCategory, CMID)
 		Case "COMPUTER":
 			CMWT_PageLink = CMWT_GET("t","device.asp?cn=" & CMID & "&set=Notes")
 		Case "COLLECTION":
-			CMWT_PageLink = CMWT_GET("t","collection.asp?id=" & CMID & "&ks=4")
+			CMWT_PageLink = CMWT_GET("t","collection.asp?id=" & CMID & "&ks=5")
 		Case "PACKAGE":
-			CMWT_PageLink = CMWT_GET("t", "package.asp?id=" & CMID & "&ks=4")
+			CMWT_PageLink = CMWT_GET("t", "package.asp?id=" & CMID & "&ks=5")
 		Case Else:
 			CMWT_PageLink = "./"
 	End Select

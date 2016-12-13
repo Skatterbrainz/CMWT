@@ -3,7 +3,7 @@
 '****************************************************************
 ' Filename..: sitestatus.asp
 ' Author....: David M. Stein
-' Date......: 11/30/2016
+' Date......: 12/13/2016
 ' Purpose...: site system status summary
 '****************************************************************
 time1 = Timer
@@ -73,10 +73,10 @@ CMWT_NewPage "", "", ""
 							Case Else:
 								tdc = "bgLightOrange"
 						End Select
-						fx = "<a href=""./?sbx1=2&sbx2=1&sbx4=sitestatus.asp&f=" & fn & "&v=" & fv & """ title=""Filter on " & fv & """>" & fv & "</a>"
+						fx = "<a href=""sitestatus.asp?f=" & fn & "&v=" & fv & """ title=""Filter on " & fv & """>" & fv & "</a>"
 						Response.Write "<td class=""td6 v10 " & tdc & " ctr"">" & fx & "</td>"
 					Else
-						fx = "<a href=""./?sbx1=2&sbx2=1&sbx4=sitestatus.asp&f=" & fn & "&v=" & fv & """ title=""Filter on " & fv & """>" & fv & "</a>"
+						fx = "<a href=""sitestatus.asp?f=" & fn & "&v=" & fv & """ title=""Filter on " & fv & """>" & fv & "</a>"
 						Response.Write "<td class=""td6 v10"">" & fx & "</td>"
 					End If
 				Next
@@ -86,7 +86,7 @@ CMWT_NewPage "", "", ""
 			Response.Write "<tr><td class=""td6 v10 bgGray"" colspan=""" & xcols & """>" & _
 				xrows & " rows returned"
 			If filtered Then
-				Response.Write " (filtered list - <a href=""./?sbx1=2&sbx2=1&sbx4=sitestatus.asp"" title=""Show All"">Show All</a>)"
+				Response.Write " (filtered results - <a href=""sitestatus.asp"" title=""Show All"">Show All</a>)"
 			End If
 			Response.Write "</td></tr>"
 		Else
@@ -99,8 +99,6 @@ CMWT_NewPage "", "", ""
 
 	CMWT_SHOW_QUERY() 
 	CMWT_Footer()
-%>
-	
-</body>
 
-</html>
+Response.Write "</body></html>"
+%>

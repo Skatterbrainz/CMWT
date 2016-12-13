@@ -3,7 +3,7 @@
 '****************************************************************
 ' Filename..: adtools.asp
 ' Author....: David M. Stein
-' Date......: 12/10/2016
+' Date......: 12/13/2016
 ' Purpose...: active directory tools
 '****************************************************************
 time1 = Timer
@@ -23,14 +23,14 @@ CMWT_NewPage "", "", ""
 	<tr class="h50">
 		<td class="m111 w250" onClick="document.location.href='adcomputers.asp'" title="Computers">Computers</td>
 		<td class="m111 w250" onClick="document.location.href='adusers.asp'" title="AD Users">Users</td>
+		<td class="m111 w250" onClick="document.location.href='adgroups.asp'" title="AD Groups">Groups</td>
 		<td class="m111 w250" onClick="document.location.href='adprinters.asp'" title="AD Printers">Printers</td>
-		<td class="m111 w250"></td>
 		<td></td>
 	</tr>
 	<tr class="h50">
 		<td class="m111 w250" onClick="document.location.href='addc.asp'" title="Domain Controllers">Domain Controllers</td>
-		<td class="m111 w250" onClick="document.location.href='adgroups.asp'" title="AD Groups">Groups</td>
 		<td class="m111 w250" onClick="document.location.href='adDisabledUsers.asp'" title="Disabled User Accounts">Disabled Users</td>
+		<td class="m111 w250"></td>
 		<td class="m111 w250"></td>
 		<td></td>
 	</tr>

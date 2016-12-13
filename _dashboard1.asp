@@ -3,7 +3,7 @@
 '****************************************************************
 ' Filename..: _dashboard1.asp
 ' Author....: David M. Stein
-' Date......: 11/27/2015
+' Date......: 12/13/2016
 ' Purpose...: home page
 '****************************************************************
 
@@ -20,6 +20,15 @@ query10 = "SELECT COUNT(*) AS QTY FROM (SELECT DISTINCT AD_Site_Name0 FROM dbo.v
 query11 = "SELECT COUNT(DISTINCT Name) AS QTY FROM dbo.vSMS_BoundaryGroup"
 query12 = "SELECT COUNT(DISTINCT ResourceID) AS QTY FROM dbo.v_GS_SYSTEM_ENCLOSURE WHERE ChassisTypes0 IN (8,9,10,14,18)"
 query13 = "SELECT COUNT(DISTINCT ResourceID) AS QTY FROM dbo.v_GS_SYSTEM_ENCLOSURE WHERE ChassisTypes0 IN (3,4,6,7,13,15,16)"
+query14 = "SELECT COUNT(Role) AS QTY FROM dbo.vSummarizer_SiteSystem WHERE TimeReported > DateAdd(d, -1, GETDATE())	AND	Status <> 0"
+query15 = "SELECT COUNT(*) AS QTY FROM ( SELECT distinct Case v_ComponentSummarizer.Status When 0 Then 'OK' When 1 Then 'Warning' " & _
+	"When 2 Then 'Critical' Else ' ' End As 'Status', SiteCode 'Site Code', MachineName 'Site System', ComponentName 'Component', " & _
+	"Case v_componentSummarizer.State When 0 Then 'Stopped' When 1 Then 'Started' When 2 Then 'Paused' When 3 Then 'Installing' When 4 Then 'Re-Installing' " & _
+	"When 5 Then 'De-Installing' Else ' ' END AS 'Thread State', Errors 'Errors', Warnings 'Warnings', Infos 'Information', Case v_componentSummarizer.Type " & _
+	"When 0 Then 'Autostarting' When 1 Then 'Scheduled' When 2 Then 'Manual' ELSE ' ' END AS 'Startup Type', CASE AvailabilityState When 0 Then 'Online' " & _
+	"When 3 Then 'Offline' ELSE ' ' END AS 'Availability State', NextScheduledTime 'Next Scheduled', LastStarted 'Last Started', LastContacted 'Last Status Message', " & _
+	"LastHeartbeat 'Last Heartbeat', HeartbeatInterval 'Heartbeat Interval', ComponentType 'Type' from v_ComponentSummarizer Where TallyInterval = '0001128000100008') AS T1 " & _
+	"WHERE T1.Status IN ('Warning','Error')"
 
 '----------------------------------------------------------------
 Dim conn, cmd, rs
@@ -38,7 +47,8 @@ count_colls     = CMWT_DB_ROWCOUNT (query9)
 count_sites     = CMWT_DB_ROWCOUNT (query10)
 count_lt        = CMWT_DB_ROWCOUNT (query12)
 count_dt        = CMWT_DB_ROWCOUNT (query13)
-
+count_stat1     = CMWT_DB_ROWCOUNT (query14)
+count_stat2     = CMWT_DB_ROWCOUNT (query15)
 CMWT_DB_CLOSE()
 
 '----------------------------------------------------------------

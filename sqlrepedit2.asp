@@ -1,24 +1,31 @@
 <!-- #include file=_core.asp -->
 <%
 '-----------------------------------------------------------------------------
-' filename....... sqlrepadd2.asp
+' filename....... sqlrepedit2.asp
 ' lastupdate..... 12/12/2016
-' description.... add new custom report query
+' description.... update custom report query
 '-----------------------------------------------------------------------------
 Response.Expires = -1
+RepID    = CMWT_GET("id", "")
 RepName  = CMWT_GET("name", "")
 RepQuery = CMWT_GET("q", "")
 RepComm  = CMWT_GET("comm", "")
-RepType  = CMWT_GET("rt", "1")
-
+RepType  = CMWT_GET("rtype", "1")
+CMWT_VALIDATE RepID, "Report Record ID was not provided"
 CMWT_VALIDATE RepName, "Report Name was not provided"
 CMWT_VALIDATE RepQuery, "Report Query Statement was not provided"
 'CMWT_VALIDATE RepComm, "Comment was not provided"
 
-query = "INSERT INTO dbo.Reports2 " & _
-	"(ReportType,ReportName,Query,CreatedBy,DateCreated,Comment) " & _
-	"VALUES (" & RepType & ",'" & RepName & "','" & Replace(RepQuery,"'","''") & _
-	"','" & CMWT_USERNAME() & "','" & NOW & "','" & RepComm & "')"
+query = "UPDATE dbo.Reports2 " & _
+	"SET ReportName='" & RepName & "'," & _
+	"ReportType=" & RepType & "," & _
+	"Query='" & Replace(RepQuery,"'","''") & "'," & _
+	"Comment='" & RepComm & "', " & _
+	"CreatedBy='" & CMWT_USERNAME() & "'," & _
+	"DateCreated='" & NOW & "' " & _
+	"WHERE ReportID=" & RepID
+'response.write query
+'response.end
 On Error Resume Next
 Set conn = Server.CreateObject("ADODB.Connection")
 conn.ConnectionTimeOut = 5
@@ -32,7 +39,7 @@ Set conn = Nothing
 
 targetURL = "sqlreports.asp"
 
-Caption = "Adding SQL Report"
+Caption = "Updating SQL Report"
 PageTitle = "ConfigMgr Web Tools"
 CMWT_PageRedirect TargetURL, 2
 '-----------------------------------------------------------------------------

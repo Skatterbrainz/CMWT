@@ -2,7 +2,7 @@
 <%
 '-----------------------------------------------------------------------------
 ' filename....... package.asp
-' lastupdate..... 12/09/2016
+' lastupdate..... 12/13/2016
 ' description.... package details report
 '-----------------------------------------------------------------------------
 time1 = Timer
@@ -130,7 +130,7 @@ Select Case KeySet
 					fv = rs.Fields(i).Value
 					Select Case Ucase(fn)
 						Case "NOTEID":
-							fv = CMWT_IMG_LINK (TRUE, "icon_del2", "icon_del1", "icon_del3", "confirm.asp?id=" & fv & "&tn=notes&pk=noteid&t=package.asp|id=" & RecID & "^set=10", "Remove") & " " & _
+							fv = CMWT_IMG_LINK (TRUE, "icon_del2", "icon_del1", "icon_del3", "confirm.asp?id=" & fv & "&tn=notes&pk=noteid&t=package.asp|id=" & RecID & "^set=5", "Remove") & " " & _
 								CMWT_IMG_LINK (TRUE, "icon_edit2", "icon_edit1", "icon_edit2", "noteedit.asp?id=" & fv, "Edit")
 							Response.Write "<td class=""td6 v10 w50"">" & fv & "</td>"
 						Case Else:

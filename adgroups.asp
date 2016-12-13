@@ -3,7 +3,7 @@
 <%
 '****************************************************************
 ' Filename..: adgroups.asp
-' Date......: 12/10/2016
+' Date......: 12/13/2016
 ' Purpose...: active directory groups list
 '****************************************************************
 time1 = Timer
@@ -51,7 +51,9 @@ objCommand.CommandText = query
 
 Set objRecordSet = objCommand.Execute
 If Not(objRecordSet.BOF AND objRecordSet.EOF) Then
+	objRecordSet.Sort = "Name"
 	objRecordSet.MoveFirst
+	
 	xrows = objRecordSet.RecordCount
 	
 	Response.Write "<tr><td class=""td6 v10 bgGray"">Name</td>" & _
