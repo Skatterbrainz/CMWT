@@ -103,7 +103,19 @@ CMWT_NewPage "", "", ""
 					<td class="td5a v10 w80 right"><%=count_stat2%></td>
 				</tr>
 				<tr class="tr2">
-					<td class="td5a v10"></td>
+					<td class="td5a v10">.</td>
+					<td class="td5a v10 w80 right"> </td>
+				</tr>
+				<tr class="tr2">
+					<td class="td5a v10">.</td>
+					<td class="td5a v10 w80 right"> </td>
+				</tr>
+				<tr class="tr2">
+					<td class="td5a v10">.</td>
+					<td class="td5a v10 w80 right"> </td>
+				</tr>
+				<tr class="tr2">
+					<td class="td5a v10">.</td>
 					<td class="td5a v10 w80 right"> </td>
 				</tr>
 			</table>
