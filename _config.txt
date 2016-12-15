@@ -1,0 +1,19 @@
+; CMWT Configuration Settings File
+CMWT_DOMAIN~<<DOMAIN>>
+CMWT_DOMAINSUFFIX~<<DOMAIN>>.<<DOMSUFFIX>>
+CMWT_ADMINS~dstein,sccmadmin
+DSN_CMDB~DRIVER=SQL Server;SERVER=<<DBSERVER1>>;DATABASE=CM_<<SITECODE>>;Trusted_Connection=True;
+DSN_CMWT~DRIVER=SQL Server;SERVER=<<DBSERVER2>>;database=CMWT;Trusted_Connection=True;
+CMWT_PhysicalPath~F:\CMWT
+CMWT_DomainPath~dc=<<DOMAIN>>,dc=<<DOMSUFFIX>>
+CMWT_MailServer~smtp.<<DOMAIN>>.<<DOMSUFFIX>>
+CMWT_MailSender~cmwtalerts@<<DOMAIN>>.<<DOMSUFFIX>>
+CMWT_SupportMail~ds0934@gmail.com
+CMWT_ENABLE_LOGGING~TRUE
+CMWT_MAX_LOG_AGE_DAYS~90
+CM_SITECODE~<<SITECODE>>
+CM_AD_TOOLS~TRUE
+CM_AD_TOOLS_SAFETY~TRUE
+CM_AD_TOOLS_ADMINGROUPS~Domain Admins,Enterprise Admins,Schema Admins,Domain Users,Authenticated Users,Protected Users,Domain Computers,Domain Controllers,DnsUpdateProxy,Allowed RODC Password Replication Group,Denied RODC Password Replication Group,Cloneable Domain Contollers,Cert Publishers,RAS and IAS Servers,WinRMRemoteWMIUsers__,Read-only Domain Controllers
+CM_AD_TOOLUSER~<<DOMAIN>>\<<USERNAME>>
+CM_AD_TOOLPASS~<<PASSWORD>>
