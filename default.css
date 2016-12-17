@@ -2,7 +2,7 @@
 '****************************************************************
 ' Filename..: default.css
 ' Purpose...: base CSS stylesheet
-' Version...: 12/13/2016
+' Version...: 12/15/2016
 '****************************************************************
 */
 body {
@@ -97,9 +97,9 @@ li {margin-bottom: 6px;}
 .w60x {width: 640px;}
 
 .tr1 {background-color:#404040;color:#fff;}
-.tr1:hover {background-color: #336699;color:#fff;}
+.tr1:hover {background-color: #336699;color:#fff;cursor:pointer;}
 .tr2 {background-color:#1f1f1f;color:#fff;}
-.tr2:hover {background-color: #336699;color:#fff;}
+.tr2:hover {background-color: #336699;color:#fff;cursor:pointer;}
 
 .t1000 {
 	width: 1000px;
@@ -135,6 +135,12 @@ li {margin-bottom: 6px;}
 .t3 {
 	border-collapse: collapse;
 	padding: 4;
+}
+.t4 {
+	width: 600px;
+	background-color: #19334d;
+	margin-left: auto;
+	margin-right: auto;
 }
 	
 .td4 {

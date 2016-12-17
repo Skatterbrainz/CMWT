@@ -91,6 +91,9 @@ Sub CMWT_CM_ListDirectCollections (c, DefaultID, IdNum, ExcludeID)
 	rs.Close
 End Sub
 
+ActionsList1 = "COPY=Copy to Target,MOVE=Move to Target,REMOVE=Remove from Source"
+ActionsList2 = "COPY=Copy to Source,MOVE=Move to Source,REMOVE=Remove from Target"
+
 PageTitle    = "Collection Tools"
 PageBackLink = "assets.asp"
 PageBackName = "Assets"
@@ -148,9 +151,13 @@ CMWT_DB_OPEN Application("DSN_CMDB")
 				CMWT_CM_ListCollectionMembers conn, CollectionID1
 				%>
 			</select>
-			<select name="a1" id="a1" size="2" class="pad5 v10 w400">
-				<option value="COPY">Copy to Target</option>
-				<option value="MOVE">Move to Target</option>
+			<select name="a1" id="a1" size="3" class="pad5 v10 w400">
+				<%
+				For each actSet in Split(ActionsList1, ",")
+					actPair = Split(actSet,"=")
+					Response.Write "<option value=""" & actPair(0) & """>" & actPair(1) & "</option>"
+				Next
+				%>
 			</select>
 		</td>
 		<td class="td6 v10">
@@ -159,9 +166,13 @@ CMWT_DB_OPEN Application("DSN_CMDB")
 				CMWT_CM_ListCollectionMembers conn, CollectionID2
 				%>
 			</select>
-			<select name="a2" id="a2" size="2" class="pad5 v10 w400">
-				<option value="COPY">Copy to Source</option>
-				<option value="MOVE">Move to Source</option>
+			<select name="a2" id="a2" size="3" class="pad5 v10 w400">
+				<%
+				For each actSet in Split(ActionsList2, ",")
+					actPair = Split(actSet,"=")
+					Response.Write "<option value=""" & actPair(0) & """>" & actPair(1) & "</option>"
+				Next
+				%>
 			</select>
 		</td>
 	</tr>

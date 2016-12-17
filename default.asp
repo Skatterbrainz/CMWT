@@ -4,7 +4,7 @@
 <%
 '-----------------------------------------------------------------------------
 ' filename....... default.asp
-' lastupdate..... 12/13/2016
+' lastupdate..... 12/14/2016
 ' description.... home page
 '-----------------------------------------------------------------------------
 time1 = Timer
@@ -74,14 +74,14 @@ CMWT_NewPage "", "", ""
 					<td class="td5a v10">Site: Distribution Points</td>
 					<td class="td5a v10 w80 right"><a href="dpservers.asp"><%=count_dps%></a></td>
 				</tr>
-				<tr class="tr2" onClick="document.location.href='apps.asp'" title="View Records">
+				<tr class="tr2" onClick="document.location.href='products.asp'" title="View Records">
 					<td class="td5a v10">Site: Inventoried Applications</td>
 					<td class="td5a v10 w80 right">
 						<%
 						If count_apps > 50 Then
-							Response.Write "<a href=""apps.asp?ch=A"">" & count_apps & "</a>"
+							Response.Write "<a href=""products.asp?ch=A"">" & count_apps & "</a>"
 						Else
-							Response.Write "<a href=""apps.asp?ch=ALL"">" & count_apps & "</a>"
+							Response.Write "<a href=""products.asp?ch=ALL"">" & count_apps & "</a>"
 						End If
 						%>
 					</td>
@@ -94,25 +94,25 @@ CMWT_NewPage "", "", ""
 			<h2>Status</h2>
 			
 			<table class="t1x">
-				<tr class="tr2">
-					<td class="td5a v10"><a href="sitestatus.asp">Site Status Errors</a></td>
+				<tr class="tr2" onClick="document.location.href='sitestatus.asp'">
+					<td class="td5a v10">Site Status Errors</td>
 					<td class="td5a v10 w80 right"><%=count_stat1%></td>
 				</tr>
-				<tr class="tr2">
-					<td class="td5a v10"><a href="compstatus.asp">Component Status Errors</a></td>
+				<tr class="tr2" onClick="document.location.href='compstatus.asp'">
+					<td class="td5a v10">Component Status Errors</td>
 					<td class="td5a v10 w80 right"><%=count_stat2%></td>
 				</tr>
-				<tr class="tr2">
-					<td class="td5a v10">.</td>
-					<td class="td5a v10 w80 right"> </td>
+				<tr class="tr2" onClick="document.location.href='collections.asp?ks=2&ch=all'">
+					<td class="td5a v10">Device Collections</td>
+					<td class="td5a v10 w80 right"><%=count_dcolls%></td>
 				</tr>
-				<tr class="tr2">
-					<td class="td5a v10">.</td>
-					<td class="td5a v10 w80 right"> </td>
+				<tr class="tr2" onClick="document.location.href='collections.asp?ks=1&ch=all'">
+					<td class="td5a v10">User Collections</td>
+					<td class="td5a v10 w80 right"><%=count_ucolls%></td>
 				</tr>
-				<tr class="tr2">
-					<td class="td5a v10">.</td>
-					<td class="td5a v10 w80 right"> </td>
+				<tr class="tr2" onClick="document.location.href='tasksequences.asp'">
+					<td class="td5a v10">Task Sequences</td>
+					<td class="td5a v10 w80 right"><%=count_tseqs%></td>
 				</tr>
 				<tr class="tr2">
 					<td class="td5a v10">.</td>

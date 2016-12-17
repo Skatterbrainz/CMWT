@@ -2,12 +2,14 @@
 <%
 '-----------------------------------------------------------------------------
 ' filename....... collection.asp
-' lastupdate..... 12/12/2016
+' lastupdate..... 12/15/2016
 ' description.... collection details report
 '-----------------------------------------------------------------------------
+Response.Expires = -1
+Response.Buffer = False
 time1 = Timer
+KeyValue = CMWT_GETX("id", "", "Collection ID was not provided")
 SortBy   = CMWT_GET("s", "CollectionName")
-KeyValue = CMWT_GET("id", "")
 AltValue = CMWT_GET("cn", "")
 KeySet   = CMWT_GET("ks", "1")
 QueryOn  = CMWT_GET("qq", "")
@@ -218,7 +220,8 @@ Select Case KeySet
 		CMWT_DB_CLOSE()
 	
 	Case "2":
-
+		' Section = MEMBERS 
+		
 		query = "SELECT DISTINCT " & _
 			"dbo.v_FullCollectionMembership.Name AS MemberName, " & _
 			"dbo.v_FullCollectionMembership.ResourceID, " & _
@@ -297,11 +300,8 @@ Select Case KeySet
 					"<form name=""form3"" id=""form3"" method=""post"" action=""cmcx.asp"">" & _
 					"<input type=""hidden"" name=""mx"" id=""mx"" value=""ADD"" />" & _
 					"<table class=""tfx""><tr><td class=""pad6 v10"">" & _
-					"<select name=""cn"" id=""cn"" size=""1"" class=""w400 pad6"" title=""Select Device to Add..."">" & _
-						"<option value=""""></option>"
-
-				CMWT_CM_ListCollectionMembers conn, 2, ""
-
+					"<select name=""cn"" id=""cn"" size=""6"" class=""w400 pad6"" title=""Select Devices to Add..."" multiple=true>"
+					CMWT_CM_ListCollectionMembers conn, 2, ""
 				Response.Write "</select> " & _
 					"<input type=""submit"" name=""bx1"" id=""bx1"" class=""w140 h32 btx"" value=""Add"" />" & _
 					"</form></td></tr></table>"
@@ -311,7 +311,8 @@ Select Case KeySet
 		CMWT_DB_CLOSE()
 		
 	Case "3":
-			
+		' Section = QUERY RULES 
+		
 		Response.Write "<table class=""tfx"">"
 
 		query = "SELECT DISTINCT RuleName, QueryID, QueryExpression " & _
@@ -355,7 +356,8 @@ Select Case KeySet
 		Response.Write "</table>"
 	
 	Case "4":
-	
+		' Section = VARIABLES
+		
 		query = "SELECT DISTINCT Name,Value,CASE WHEN IsMasked=1 THEN 'YES' ELSE 'NO' END AS Masked FROM dbo.v_CollectionVariable " & _
 			"WHERE CollectionID='" & KeyValue & "' ORDER BY Name"
 
@@ -402,6 +404,7 @@ Select Case KeySet
 		Response.Write "</table>"			
 
 	Case "5":
+		' Section = NOTES
 		
 		query = "SELECT NoteID, Comment, DateCreated, CreatedBy " & _
 			"FROM dbo.Notes " & _
@@ -459,6 +462,7 @@ Select Case KeySet
 		CMWT_DB_CLOSE()
 	
 	Case "6":
+		' Section = TOOLS
 		
 		CMWT_Hide_QueryLink = True
 		Response.Write "<table class=""tfx"">"
@@ -515,13 +519,14 @@ Select Case KeySet
 						<input type="hidden" name="group" id="group" value="1" />
 						<input type="hidden" name="cid" id="cid" value="<%=KeyValue%>" />
 						<input type="hidden" name="atyp" id="atyp" value="COLLECTION" />
-						<select name="xx1" id="xx1" size="6" class="pad5 v10 w200">
+						<select name="act" id="act" size="6" class="pad5 v10 w200">
 							<option value="MACHINEPOL">Client Machine Policy Refresh</option>
 							<option value="USERPOL">Client User Policy Refresh</option>
 							<option value="DISCOVER">Client Discovery Cycle</option>
 							<option value="HWINV">Hardware Inventory Cycle</option>
 							<option value="SWINV">Software Inventory Cycle</option>
 							<option value="UPSCAN">Software Updates Scan Cycle</option>
+							<option value="FILECOLL">File Collection Cycle</option>
 						</select>
 						<p><input type="submit" name="bx1" id="bx1" class="btx w200 h30" value="Execute" title="Execute" /></p>
 					</form>
@@ -533,10 +538,10 @@ Select Case KeySet
 						<input type="hidden" name="cid" id="cid" value="<%=KeyValue%>" />
 						<input type="hidden" name="atyp" id="atyp" value="COLLECTION" />
 						<select name="xx2" id="xx2" size="6" class="pad5 v10 w200">
+							<option value="GPUPDATE">Group Policy Update</option>
+							<option value="RESTART">Restart CM Client</option>
 							<option value="RESTART">Restart Members</option>
 							<option value="SHUTDOWN">Shutdown Members</option>
-							<option value="GPUPDATE">Group Policy Update</option>
-							<option value="RESTART">Restart SMSAgent Service</option>
 						</select>
 						<p><input type="submit" name="bx2" id="bx2" class="btx w200 h30" value="Execute" title="Execute" /></p>
 					</form>

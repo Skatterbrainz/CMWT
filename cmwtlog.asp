@@ -2,7 +2,7 @@
 <%
 '-----------------------------------------------------------------------------
 ' filename....... cmwtlog.asp
-' lastupdate..... 12/12/2016
+' lastupdate..... 12/15/2016
 ' description.... cmwt database log maintenance
 '-----------------------------------------------------------------------------
 time1 = Timer
@@ -19,7 +19,7 @@ End If
 
 select case Ucase(KeySet)
 	case "TASKS":
-		query = "SELECT " & selx & " * FROM dbo.Tasks ORDER BY DateTimeCreated DESC"
+		query = "SELECT " & selx & " * FROM dbo.ClientTasks ORDER BY DateTimeCreated DESC"
 		PageTitle = "CMWT Task Logs"
 	case "EVENTS":
 		query = "SELECT " & selx & " * FROM dbo.EventLog ORDER BY EventDateTime DESC"

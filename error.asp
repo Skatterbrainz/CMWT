@@ -15,7 +15,14 @@ CMWT_NewPage "", "", ""
 			
 			<h2>Error / Exception Report</h2>
 			
-			<p><%=Msg%></p>
+			<table class="t4">
+				<tr>
+					<td class="td6a v10 w400 h50 ctr">
+						<p><%=Msg%></p>
+						<p><%=Request.ServerVariables("HTTP_REFERRER")%></p>
+					</td>
+				</tr>
+			</table>
 			
 			<p><a href="javascript:history.back(1);" title="Go Back">Go Back</a></p>
 			

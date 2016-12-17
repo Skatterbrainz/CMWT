@@ -3,14 +3,14 @@
 <%
 '-----------------------------------------------------------------------------
 ' filename....... devices.asp
-' lastupdate..... 12/10/2016
+' lastupdate..... 12/16/2016
 ' description.... devices listing page
 '-----------------------------------------------------------------------------
 time1 = Timer
-KeySet  = CMWT_GET("ks", "1")
-QueryOn = CMWT_GET("qq", "")
-ObjPfx  = CMWT_GET("ch", "C")
-SortBy  = CMWT_GET("s", "DeviceName")
+KeySet   = CMWT_GET("ks", "1")
+QueryOn  = CMWT_GET("qq", "")
+ObjPfx   = CMWT_GET("ch", "C")
+SortBy   = CMWT_GET("s", "DeviceName")
 FilterFN = CMWT_GET("fn", "")
 FilterFV = CMWT_GET("fv", "")
 Select Case KeySet
@@ -182,16 +182,16 @@ End If
 
 'CMWT_DB_TableGrid2 rs, "", "devices.asp", "", "cn=devicename"
 
-Response.Write "<table class=""tfx""><tr><td class=""v10 pad6"">" & _
-	"<input type=""button"" name=""b0"" id=""b0"" class=""btx w140 h30"" value=""Clear All"" " & _
-	"onClick=""document.location.href='devices.asp?ks=" & KeySet & "&ch=" & objPfx & "'"" title=""Clear All"" />&nbsp;" & _
-	"<select name=""cid"" id=""cid"" size=""1"" class=""pad5 h30 w300"">" & _
-	"<option value=""""></option>"
+Response.Write "<h3>Collections</h3>" & _
+	"<table class=""tfx""><tr><td class=""v10 pad6 top w420"">" & _
+	"<select name=""cid"" id=""cid"" size=""6"" class=""pad5 w400"" multiple=true>"
 	CMWT_CM_ListCollections conn, "", 2, ""
-Response.Write "</select>" & _
-	"&nbsp;<input type=""submit"" name=""b1"" id=""b1"" class=""btx w140 h30"" " & _
-	"value=""Add Members"" title=""Add Selected Members to Collection"" />" & _
-	" (only Direct-Membership Collections can be modified)</td></tr></table></form>"
+Response.Write "</select></td><td class=""v10 pad6 top"">" & _
+	"<p><input type=""button"" name=""b0"" id=""b0"" class=""btx w140 h30"" value=""Clear All"" " & _
+	"onClick=""document.location.href='devices.asp?ks=" & KeySet & "&ch=" & objPfx & "'"" title=""Clear All"" /></p>" & _
+	"<p><input type=""submit"" name=""b1"" id=""b1"" class=""btx w140 h30"" " & _
+	"value=""Add Members"" title=""Add Selected Members to Collection"" /></p>" & _
+	"</br>(only Direct-Membership Collections can be modified)</td></tr></table></form>"
 
 CMWT_DB_CLOSE()
 CMWT_SHOW_QUERY() 

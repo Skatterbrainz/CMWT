@@ -2,21 +2,24 @@
 <%
 '-----------------------------------------------------------------------------
 ' filename....... cmcx.asp
-' lastupdate..... 12/04/2016
+' lastupdate..... 12/16/2016
 ' description.... add or remove resources to/from a collection
 '-----------------------------------------------------------------------------
 Response.Expires = -1
 
-cnx = CMWT_GET("cn", "")
-mx  = CMWT_GET("mx", "")
-cid = CMWT_GET("cid", "")
+cnx = CMWT_GETX("cn", "", "Resources were not selected")
+mx  = CMWT_GETX("mx", "", "Operation Type was not selected")
+cdd = CMWT_GETX("cid", "", "Collection IDs were not selected")
 zz  = CMWT_GET("z", "device")
 
-PageTitle = "Collection Membership"
+'CMWT_VALIDATE cnx, "Resource Names were not provided"
+'CMWT_VALIDATE mx, "Operation Type parameter was not provided"
+'CMWT_VALIDATE cid, "Collection ID was not provided"
 
-CMWT_VALIDATE cnx, "Resource Names were not provided"
-CMWT_VALIDATE mx, "Operation Type parameter was not provided"
-CMWT_VALIDATE cid, "Collection ID was not provided"
+cnx = Replace(cnx, " ", "")
+cdd = Replace(cdd, " ", "")
+
+PageTitle = "Collection Membership"
 
 CMWT_NewPage "", "", ""
 %>
@@ -34,47 +37,51 @@ Dim conn, cmd, rs
 Select Case Ucase(mx)
 	Case "ADD":
 		CMWT_DB_OPEN Application("DSN_CMDB")
-		For each cnn in Split(cnx, ",")
-			If CMWT_CM_IsCollectionMember(conn, cnn, cid) = True Then
-				caption = "Already a member of this collection"
-			Else
-				try = CMWT_CM_AddCollectionMember (cid, cnn)
-				If try = 1 Then
-					caption = "Added Resource to Collection"
-					CMWT_LogEvent "", "INFO", "CM COLLECTION ADD", cnn & " was added to collection: " & cid
+		For each cid in Split(cdd, ",")
+			For each cnn in Split(cnx, ",")
+				If CMWT_CM_IsCollectionMember(conn, cnn, cid) = True Then
+					caption = "Warning: " & cnn & " is already a member of collection: " & cid
 				Else
-					caption = "ERROR: Failed to add Resource to Collection"
-					CMWT_LogEvent "", "ERROR", "CM COLLECTION ADD", cnn & " was not added to collection: " & cid & " (" & try & ")"
+					try = CMWT_Add_CmCollectionMember (cnn, cid)
+					If try = 0 Then
+						caption = "Success: Added Resource " & cnn & " to Collection " & cid
+						CMWT_LogEvent "", "INFO", "CM COLLECTION ADD", cnn & " was added to collection: " & cid
+					Else
+						caption = "ERROR: Failed to add Resource " & cnn & " to Collection " & cid
+						CMWT_LogEvent "", "ERROR", "CM COLLECTION ADD", cnn & " was not added to collection: " & cid & " (" & try & ")"
+					End If
 				End If
-			End If
-			Response.Write "<tr class=""tr1"">" & _
-				"<td class=""td6 v10"">" & cnn & "</td>" & _
-				"<td class=""td6 v10"">" & mx & "</td>" & _
-				"<td class=""td6 v10"">" & caption & "</td></tr>"
-			CMWT_WAIT(2)
+				Response.Write "<tr class=""tr1"">" & _
+					"<td class=""td6 v10"">" & cnn & "</td>" & _
+					"<td class=""td6 v10"">" & mx & "</td>" & _
+					"<td class=""td6 v10"">" & caption & "</td></tr>"
+				CMWT_WAIT(2)
+			Next
 		Next
 		CMWT_DB_CLOSE()
 	Case "REM","REMOVE":
 		CMWT_DB_OPEN Application("DSN_CMDB")
-		For each cnn in Split(cnx, ",")
-			try = CMWT_CM_RemoveCollectionMember (cid, cnn)
-			If try = 1 Then
-				caption = "Removed Resource from Collection"
-				CMWT_LogEvent "", "INFO", "CM COLLECTION REMOVE", cnn & " was removed from collection: " & cid
-			Else
-				caption = "ERROR: Failed to remove Resource from Collection"
-				CMWT_LogEvent "", "ERROR", "CM COLLECTION REMOVE", cnn & " was not removed from collection: " & cid & " (" & try & ")"
-				If eventList <> "" Then
-					eventList = eventList & "|ERROR,CM COLLECTION REMOVE," & cn & " was not removed from collection: " & cid
+		For each cid in Split(cdd, ",")
+			For each cnn in Split(cnx, ",")
+				try = CMWT_CM_RemoveCollectionMember (cid, cnn)
+				If try = 1 Then
+					caption = "Success: Removed Resource " & cnn & " from Collection " & cid
+					CMWT_LogEvent "", "INFO", "CM COLLECTION REMOVE", cnn & " was removed from collection: " & cid
 				Else
-					eventList = "ERROR,CM COLLECTION REMOVE," & cn & " was not removed from collection: " & cid
+					caption = "ERROR: Failed to remove Resource " & cnn & " from Collection " & cid
+					CMWT_LogEvent "", "ERROR", "CM COLLECTION REMOVE", cnn & " was not removed from collection: " & cid & " (" & try & ")"
+					If eventList <> "" Then
+						eventList = eventList & "|ERROR,CM COLLECTION REMOVE," & cn & " was not removed from collection: " & cid
+					Else
+						eventList = "ERROR,CM COLLECTION REMOVE," & cn & " was not removed from collection: " & cid
+					End If
 				End If
-			End If
-			Response.Write "<tr class=""tr1"">" & _
-				"<td class=""td6 v10"">" & cnn & "</td>" & _
-				"<td class=""td6 v10"">" & mx & "</td>" & _
-				"<td class=""td6 v10"">" & caption & "</td></tr>"
-			CMWT_WAIT 2
+				Response.Write "<tr class=""tr1"">" & _
+					"<td class=""td6 v10"">" & cnn & "</td>" & _
+					"<td class=""td6 v10"">" & mx & "</td>" & _
+					"<td class=""td6 v10"">" & caption & "</td></tr>"
+				CMWT_WAIT 2
+			Next
 		Next
 		CMWT_DB_CLOSE()
 	Case Else:

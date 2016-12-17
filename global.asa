@@ -1,7 +1,7 @@
 <script language="vbscript" runat="server">
 '-----------------------------------------------------------------------------
 ' filename....... global.asa
-' lastupdate..... 12/13/2016
+' lastupdate..... 12/16/2016
 ' description.... global declarations
 '-----------------------------------------------------------------------------
 
@@ -38,7 +38,7 @@ Sub Application_OnStart
 			end if
 		Next
 		Application("cmwt_version")  = "1611"
-		Application("cmwt_build")    = "2016.12.13.01"
+		Application("cmwt_build")    = "2016.12.16.01"
 		Application("CMWT_USERCOUNT") = 0
 		Application("CMWT_USERLIST")  = ""
 		Application("CMWT_Title")     = "CMWT"
@@ -77,6 +77,15 @@ Sub Application_OnStart
 End Sub
 
 '----------------------------------------------------------------
+' sub-name: Application_OnEnd
+' sub-desc: 
+'----------------------------------------------------------------
+
+Sub Application_OnEnd()
+	Application("CMWT_USERCOUNT") = 0
+End Sub
+
+'----------------------------------------------------------------
 ' sub-name: Session_OnStart
 ' sub-desc: 
 '----------------------------------------------------------------
@@ -106,7 +115,7 @@ End Sub
 Sub Session_OnEnd
 	Application.Lock
 	Application("CMWT_USERCOUNT") = Application("CMWT_USERCOUNT")-1
-	user = Request.ServerVariables("REMOTE_USER")
+	user = Session("CMWT_USERNAME")
 	If Application("CMWT_USERLIST") <> "" And user <> "" Then
 		tmp = Application("CMWT_USERLIST")
 		tmp = Replace(tmp, user, "")

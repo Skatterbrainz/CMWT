@@ -2,7 +2,7 @@
 <%
 '-----------------------------------------------------------------------------
 ' filename....... collections.asp
-' lastupdate..... 12/07/2016
+' lastupdate..... 12/14/2016
 ' description.... collections listing page
 '-----------------------------------------------------------------------------
 time1 = Timer
@@ -10,7 +10,7 @@ SortBy  = CMWT_GET("s", "Name")
 KeySet  = CMWT_GET("ks", "1")
 KeySet2 = CMWT_GET("k2", "0")
 QueryOn = CMWT_GET("qq", "")
-ObjPFX  = CMWT_GET("ch", "ALL")
+ObjPFX  = CMWT_GET("ch", "A")
 
 If (KeySet = "1") Then
 	PageTitle = "User Collections"

@@ -2,7 +2,7 @@
 ' filename: config.vbs
 ' author: David Stein
 ' date created: 11/30/2016
-' date modified: 12/12/2016
+' date modified: 12/16/2016
 '----------------------------------------------------------------------
 
 Dim ScriptPath, objFSO, objFile, strFileContents, InputFile, OutputFile
@@ -57,7 +57,7 @@ If err.Number = 0 Then
 	objFile.Close
 	
 	keys = "CMWT_DOMAIN,CMWT_DOMAINSUFFIX,CMWT_ADMINS,DSN_CMDB," & _
-		"DSN_CMWT,CMWT_PhysicalPath,CMWT_DomainPath,CMWT_MailServer," & _
+		"DSN_CMWT,CMWT_PhysicalPath,CMWT_SiteServer,CMWT_DomainPath,CMWT_MailServer," & _
 		"CMWT_MailSender,CMWT_SupportMail,CMWT_ENABLE_LOGGING,CMWT_MAX_LOG_AGE_DAYS," & _
 		"CM_SITECODE,CM_AD_TOOLS,CM_AD_TOOLS_SAFETY," & _
 		"CM_AD_TOOLS_ADMINGROUPS,CM_AD_TOOLUSER,CM_AD_TOOLPASS"
