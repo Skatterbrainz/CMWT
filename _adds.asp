@@ -190,7 +190,6 @@ Function CMWT_AD_EnumGroupMembers (strGroupName)
 	If Not ObjRS.EOF Then 
 		ObjRS.MoveFirst 
 		adpath = Trim(ObjRS.Fields("ADsPath").Value)
-		response.write "ads path: " & adpath
 		Set objGroup = GetObject (adpath)
 		if err.number <> 0 then
 			response.write "error"

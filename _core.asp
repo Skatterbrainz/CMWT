@@ -2,7 +2,7 @@
 <%
 '-----------------------------------------------------------------------------
 ' filename....... _core.asp
-' lastupdate..... 12/13/2016
+' lastupdate..... 12/16/2016
 ' description.... CMWT core functions library
 '-----------------------------------------------------------------------------
 
@@ -121,20 +121,6 @@ Sub CMWT_FOOTER ()
 End Sub
 
 '-----------------------------------------------------------------------------
-' function-name: CMWT_PageTitle
-' function-desc: 
-'-----------------------------------------------------------------------------
-
-Function CMWT_PageTitle ()
-	Dim result
-	result = Application("CMWT_Title")
-	If PageTitle <> "" Then
-		result = result & " : " & PageTitle
-	End If
-	CMWT_PageTitle = result
-End Function
-
-'-----------------------------------------------------------------------------
 ' function-name: CMWT_PageFile
 ' function-desc: 
 '-----------------------------------------------------------------------------
@@ -161,22 +147,6 @@ Sub CMWT_PageHeading (caption, MoreButtons)
 End Sub
 
 '-----------------------------------------------------------------------------
-' function-name: CMWT_GET_Submenus
-' function-desc: 
-'-----------------------------------------------------------------------------
-
-Function CMWT_GET_Submenus (subcode)
-	Dim x, result : result = ""
-	For each x in Split(Application("cmwt_sb_subs"),"|")
-		y = Split(x,":")
-		If y(0) = subcode Then
-			result =y(1)
-		End If
-	Next
-	CMWT_GET_Submenus = result
-End Function
-
-'-----------------------------------------------------------------------------
 ' function-name: CMWT_UserName
 ' function-desc: 
 '-----------------------------------------------------------------------------
@@ -190,7 +160,7 @@ End Function
 ' function-desc: 
 '-----------------------------------------------------------------------------
 
-Function CMWT_ADMIN()
+Function CMWT_ADMIN ()
 	If Session("CMWT_ADMIN") = "TRUE" Then
 		CMWT_ADMIN = True
 	ElseIf InStr(Application("CMWT_ADMINS"), CMWT_USERNAME()) > 0 OR Application("CMWT_ADMINS") = CMWT_USERNAME() Then
@@ -279,6 +249,28 @@ Function CMWT_GET (KeyName, DefaultValue)
 		result = DefaultValue
 	End If
 	CMWT_GET = result
+End Function
+
+'-----------------------------------------------------------------------------
+' function-name: CMWT_GETX
+' function-desc: 
+'-----------------------------------------------------------------------------
+
+Function CMWT_GETX (x, v, m)
+	Dim result : result = ""
+	result = Trim(Request.Form(x))
+	If result = "" Then
+		result = Trim(Request.QueryString(x))
+	End If
+	If result = "" Then
+		If v <> "" Then
+			result = v
+		End If
+	End If
+	If result = "" And m <> "" Then
+		CMWT_STOP m
+	End If
+	CMWT_GETX = result
 End Function
 
 '-----------------------------------------------------------------------------
@@ -1250,6 +1242,40 @@ Function CMWT_CM_AddCollectionMember (CollectionID, MachineName)
 	CMWT_CM_AddCollectionMember = result
 End Function
 
+Function CMWT_Add_CmCollectionMember (strCompName, strCollID)
+	Dim objSWbemLocator, objSWbemServices, ProviderLoc, Location, query
+	Dim colCompResourceID, strNewResourceID, insCompResource
+	Dim instColl, instDirectRule
+	On Error Resume Next
+	Set objSWbemLocator = CreateObject("WbemScripting.SWbemLocator") 
+	Set objSWbemServices= objSWbemLocator.ConnectServer(Application("CMWT_SiteServer"),"root\sms") 
+	 
+	Set ProviderLoc = objSWbemServices.InstancesOf("SMS_ProviderLocation") 
+	For Each Location In ProviderLoc 
+		If Location.ProviderForLocalSite = True Then 
+			Set objSWbemServices = objSWbemLocator.ConnectServer _ 
+				(Location.Machine, "root\sms\site_" + Location.SiteCode) 
+		End If 
+	Next 
+
+	query = "SELECT ResourceID FROM SMS_R_System WHERE NetbiosName='" & strCompName & "'"
+
+	Set colCompResourceID = objSWbemServices.ExecQuery(query) 
+	 
+	For each insCompResource in colCompResourceID 
+		strNewResourceID = insCompResource.ResourceID 
+	Next 
+	 
+	Set instColl = objSWbemServices.Get("SMS_Collection.CollectionID=""" & strCollID & """") 
+	Set instDirectRule = objSWbemServices.Get("SMS_CollectionRuleDirect").SpawnInstance_() 
+	 
+	instDirectRule.ResourceClassName = "SMS_R_System" 
+	instDirectRule.ResourceID = strNewResourceID 
+	instDirectRule.RuleName = strComputerName 
+	instColl.AddMembershipRule instDirectRule
+	CMWT_Add_CmCollectionMember = err.Number
+End Function
+
 '-----------------------------------------------------------------------------
 ' function-name: DPMS_CM_RemoveCollectionMember
 ' function-desc: 
@@ -1283,6 +1309,40 @@ Function CMWT_CM_RemoveCollectionMember (CollectionID, MachineName)
 		End If 
 	End If
 	CMWT_CM_RemoveCollectionMember = result
+End Function
+
+Function CMWT_Remove_CmCollectionMember (strCompName, strCollID)
+	Dim objSWbemLocator, objSWbemServices, ProviderLoc, Location, query
+	Dim colCompResourceID, strNewResourceID, insCompResource
+	Dim instColl, instDirectRule
+	On Error Resume Next
+	Set objSWbemLocator = CreateObject("WbemScripting.SWbemLocator") 
+	Set objSWbemServices= objSWbemLocator.ConnectServer(Application("CMWT_SiteServer"),"root\sms") 
+	 
+	Set ProviderLoc = objSWbemServices.InstancesOf("SMS_ProviderLocation") 
+	For Each Location In ProviderLoc 
+		If Location.ProviderForLocalSite = True Then 
+			Set objSWbemServices = objSWbemLocator.ConnectServer _ 
+				(Location.Machine, "root\sms\site_" + Location.SiteCode) 
+		End If 
+	Next 
+
+	query = "SELECT ResourceID FROM SMS_R_System WHERE NetbiosName='" & strCompName & "'"
+
+	Set colCompResourceID = objSWbemServices.ExecQuery(query) 
+	 
+	For each insCompResource in colCompResourceID 
+		strNewResourceID = insCompResource.ResourceID 
+	Next 
+	 
+	Set instColl = objSWbemServices.Get("SMS_Collection.CollectionID=""" & strCollID & """") 
+	Set instDirectRule = objSWbemServices.Get("SMS_CollectionRuleDirect").SpawnInstance_() 
+	 
+	instDirectRule.ResourceClassName = "SMS_R_System" 
+	instDirectRule.ResourceID = strNewResourceID 
+	instDirectRule.RuleName = strComputerName 
+	instColl.DeleteMembershipRule instDirectRule
+	CMWT_Remove_CmCollectionMember = err.Number
 End Function
 
 '-----------------------------------------------------------------------------
@@ -1467,7 +1527,7 @@ Sub CMWT_SHOW_QUERY ()
 	End If
 	If QueryOn = "1" Then
 		Response.Write "<br/><div class=""tfx""><h3>T-SQL Statement</h3><table class=""tfx""><tr>" & _
-			"<td class=""td6 v8 cOrange"">" & CMWT_PrettySQL(query) & "</td></tr></table><br/>" & _
+			"<td class=""td6a v8 cYellow"">" & CMWT_PrettySQL(query) & "</td></tr></table><br/>" & _
 			"<input type=""button"" name=""bq"" id=""bq"" class=""w150 h32 btx"" " & _
 			"value=""Hide Query"" onClick=""document.location.href='" & Replace(rlink,"qq=1","") & "'"" />" & _
 			"</div>"

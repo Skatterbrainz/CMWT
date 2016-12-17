@@ -3,7 +3,7 @@
 '****************************************************************
 ' Filename..: _dashboard1.asp
 ' Author....: David M. Stein
-' Date......: 12/13/2016
+' Date......: 12/14/2016
 ' Purpose...: home page
 '****************************************************************
 
@@ -15,7 +15,8 @@ query5  = "SELECT COUNT(*) AS QTY FROM (SELECT DISTINCT DisplayName0 FROM dbo.v_
 query6  = "SELECT COUNT(*) AS QTY FROM (SELECT DISTINCT Full_Domain_Name0 FROM dbo.v_R_System) AS T1"
 query7  = "SELECT COUNT(*) AS QTY FROM (SELECT DISTINCT DPname FROM dbo.vDPStatusPerDP) AS T1"
 query8  = "SELECT COUNT(*) AS QTY FROM (SELECT DISTINCT ProductName FROM dbo.v_CM_AppDeployments) AS T1"
-query9  = "SELECT COUNT(*) AS QTY FROM (SELECT DISTINCT CollectionID FROM dbo.v_Collection) AS T1"
+query9  = "SELECT COUNT(DISTINCT CollectionID) AS QTY FROM v_Collection WHERE CollectionType = 1"
+query9a = "SELECT COUNT(DISTINCT CollectionID) AS QTY FROM v_Collection WHERE CollectionType <> 1"
 query10 = "SELECT COUNT(*) AS QTY FROM (SELECT DISTINCT AD_Site_Name0 FROM dbo.v_R_System) AS T1"
 query11 = "SELECT COUNT(DISTINCT Name) AS QTY FROM dbo.vSMS_BoundaryGroup"
 query12 = "SELECT COUNT(DISTINCT ResourceID) AS QTY FROM dbo.v_GS_SYSTEM_ENCLOSURE WHERE ChassisTypes0 IN (8,9,10,14,18)"
@@ -29,6 +30,7 @@ query15 = "SELECT COUNT(*) AS QTY FROM ( SELECT distinct Case v_ComponentSummari
 	"When 3 Then 'Offline' ELSE ' ' END AS 'Availability State', NextScheduledTime 'Next Scheduled', LastStarted 'Last Started', LastContacted 'Last Status Message', " & _
 	"LastHeartbeat 'Last Heartbeat', HeartbeatInterval 'Heartbeat Interval', ComponentType 'Type' from v_ComponentSummarizer Where TallyInterval = '0001128000100008') AS T1 " & _
 	"WHERE T1.Status IN ('Warning','Error')"
+query16 = "SELECT COUNT (DISTINCT SMS_TASKSEQUENCEPACKAGE.NAME) AS QTY FROM VSMS_TASKSEQUENCEPACKAGE AS SMS_TASKSEQUENCEPACKAGE"
 
 '----------------------------------------------------------------
 Dim conn, cmd, rs
@@ -43,12 +45,14 @@ count_apps      = CMWT_DB_ROWCOUNT (query5)
 count_doms      = CMWT_DB_ROWCOUNT (query6)
 count_dps       = CMWT_DB_ROWCOUNT (query7)
 count_bgs       = CMWT_DB_ROWCOUNT (query11)
-count_colls     = CMWT_DB_ROWCOUNT (query9)
+count_ucolls    = CMWT_DB_ROWCOUNT (query9)
+count_dcolls    = CMWT_DB_ROWCOUNT (query9a)
 count_sites     = CMWT_DB_ROWCOUNT (query10)
 count_lt        = CMWT_DB_ROWCOUNT (query12)
 count_dt        = CMWT_DB_ROWCOUNT (query13)
 count_stat1     = CMWT_DB_ROWCOUNT (query14)
 count_stat2     = CMWT_DB_ROWCOUNT (query15)
+count_tseqs     = CMWT_DB_ROWCOUNT (query16)
 CMWT_DB_CLOSE()
 
 '----------------------------------------------------------------
