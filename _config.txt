@@ -1,9 +1,10 @@
 ; CMWT Configuration Settings File
 CMWT_DOMAIN~<<DOMAIN>>
 CMWT_DOMAINSUFFIX~<<DOMAIN>>.<<DOMSUFFIX>>
-CMWT_ADMINS~dstein,sccmadmin
+CMWT_ADMINS~sccmadmin,yourname
 DSN_CMDB~DRIVER=SQL Server;SERVER=<<DBSERVER1>>;DATABASE=CM_<<SITECODE>>;Trusted_Connection=True;
 DSN_CMWT~DRIVER=SQL Server;SERVER=<<DBSERVER2>>;database=CMWT;Trusted_Connection=True;
+DSN_CMM~DRIVER=SQL Server;SERVER=<<DBSERVER1>>;database=CMMonitor;Trusted_Connection=True;
 CMWT_PhysicalPath~F:\CMWT
 CMWT_SiteServer~<<DBSERVER1>>
 CMWT_DomainPath~dc=<<DOMAIN>>,dc=<<DOMSUFFIX>>

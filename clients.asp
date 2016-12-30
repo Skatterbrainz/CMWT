@@ -3,7 +3,7 @@
 <%
 '-----------------------------------------------------------------------------
 ' filename....... clients.asp
-' lastupdate..... 12/04/2016
+' lastupdate..... 12/29/2016
 ' description.... computers with or without clients installed
 '-----------------------------------------------------------------------------
 time1 = Timer
@@ -53,6 +53,7 @@ Select Case cm
 			"Virtual_Machine_Host_Name0 AS VMHost " & _
 			"FROM dbo.v_R_System"
 End Select
+query = query & " ORDER BY " & SortBy
 
 Dim conn, cmd, rs
 CMWT_DB_QUERY Application("DSN_CMDB"), query
@@ -60,6 +61,5 @@ CMWT_DB_TABLEGRID rs, "", "clients.asp", ""
 CMWT_DB_CLOSE()
 CMWT_SHOW_QUERY() 
 CMWT_Footer()
-
 Response.Write "</body></html>"
 %>

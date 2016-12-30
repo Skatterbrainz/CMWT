@@ -28,7 +28,7 @@ function manage (computer) {
 }
 
 function winrs (computer) {
-	var cmd = "file://sfcpmsfscdp01/tools/scripts/winrs.bat";
+	var cmd = "./tools/scripts/winrs.bat";
   	try   {
   		var objShell = new ActiveXObject("wscript.shell");
   		objShell.Run(cmd+" "+computer);

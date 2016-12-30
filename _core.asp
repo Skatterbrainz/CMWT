@@ -2,7 +2,7 @@
 <%
 '-----------------------------------------------------------------------------
 ' filename....... _core.asp
-' lastupdate..... 12/16/2016
+' lastupdate..... 12/29/2016
 ' description.... CMWT core functions library
 '-----------------------------------------------------------------------------
 
@@ -624,6 +624,8 @@ function CMWT_AutoLink (ColumnName, LinkVal)
 				CMWT_IMG_LINK (True, "icon_del2", "icon_del1", "icon_del2", "reportdel.asp?id=" & LinkVal, "Delete Report")
 		Case "FILENAME":
 			result = "<a href=""dupefiles.asp?cn=" & cn & "&fn=" & LinkVal & """ title=""View Instances"">" & LinkVal & "</a>"
+		Case "COMPONENTNAME":
+			result = "<a href=""ss2.asp?id=" & LinkVal & """ title=""View Details"">" & LinkVal & "</a>"
 		Case "INFOURL":
 			If CMWT_NotNullString(LinkVal) Then
 				If PageTitle = "Software Update" Then
@@ -865,23 +867,12 @@ Sub CMWT_DB_TableGridFilter (rs, Caption, SortLink, AutoLink, ColumnSet, FilterL
 				Response.Write "</tr>"
 		end if
 		Response.Write "</tr>"
-		If AutoLink <> "" Then 
-			alx = Split(AutoLink, "=")
-			afn = alx(0)
-			afl = alx(1)
-		Else
-			afn = ""
-		End If
 		Do Until rs.EOF
 			Response.Write "<tr class=""tr1"">"
 			For i = 0 to xcols-1
 				fn = rs.Fields(i).Name
 				fv = rs.Fields(i).Value
-				If Ucase(afn) = Ucase(fn) Then
-					fv = "<a href=""" & afl & "=" & fv & """>" & fv & "</a>"
-				Else
-					fv = CMWT_AutoLink (fn, fv)
-				End If
+				fv = "<a href=""" & FilterLink & "?fn=" & fn & "&fv=" & fv & """ title=""Filter on " & fv & """>" & fv & "</a>"
 				response.write "<td class=""td6 v10 " & CMWT_DB_ColumnJustify(fn) & """>" & fv & "</td>"
 			next
 			rs.MoveNext
@@ -890,7 +881,7 @@ Sub CMWT_DB_TableGridFilter (rs, Caption, SortLink, AutoLink, ColumnSet, FilterL
 			"<td class=""td6 v10 bgGray"" colspan=""" & xcols & """>" & _
 			xrows & " rows returned"
 		If Filtered = True Then
-			Response.Write " (Filtered Results)"
+			Response.Write " (Filtered Results) - <a href=""" & FilterLink & """ title=""Show All"">Show All</a>"
 		End If
 		Response.Write "</td></tr></table>"
 	else
@@ -923,6 +914,43 @@ Sub CMWT_DB_TABLEROWGRID (objRS, CaptionText, SortLink, AutoLink)
 				Response.Write "<tr class=""tr1"">" & _
 					"<td class=""td6 v10 w180 bgGray"">" & fn & "</td>" & _
 					"<td class=""td6 v10"">" & CMWT_AutoLink(fn, fv) & "</td></tr>"
+			Next
+		
+			objRS.MoveNext
+		Loop
+		Response.Write "</table>"
+	Else
+		If CMWT_NotNullString(CaptionText) Then
+			Response.Write "<h2 class=""tfx"">" & CaptionText & "</h2>"
+		End If
+		Response.Write "<table class=""tfx""><tr class=""h100 tr1"">" & _
+			"<td class=""td6 v10 ctr"">No matching rows found</td></tr></table>"
+	End If
+	
+End Sub
+
+'-----------------------------------------------------------------------------
+' sub-name: CMWT_DB_TABLEROWGRIDFilter
+' sub-desc: 
+'-----------------------------------------------------------------------------
+
+Sub CMWT_DB_TABLEROWGRIDFilter (objRS, CaptionText, FilterLink)
+	Dim fn, fv, xrows, xcols, i, arrX, alx, x1, x2
+	If Not(objRS.BOF And objRS.EOF) Then
+		xrows = objRS.RecordCount
+		xcols = objRS.Fields.Count
+		If CMWT_NotNullString(CaptionText) Then
+			Response.Write "<h2 class=""tfx"">" & CaptionText & "</h2>"
+		End If
+		Response.Write "<table class=""tfx"">"
+		Do Until objRS.EOF
+			For i = 0 to xcols-1
+				fn = objRS.Fields(i).Name
+				fv = objRS.Fields(i).Value
+				fv = "<a href=""" & FilterLink & "?fn=" & fn & "&fv=" & fv & """ title=""Filter on " & fv & """>" & fv & "</a>"
+				Response.Write "<tr class=""tr1"">" & _
+					"<td class=""td6 v10 w180 bgGray"">" & fn & "</td>" & _
+					"<td class=""td6 v10"">" & fv & "</td></tr>"
 			Next
 		
 			objRS.MoveNext

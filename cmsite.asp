@@ -3,7 +3,7 @@
 '****************************************************************
 ' Filename..: cmsite.asp
 ' Author....: David M. Stein
-' Date......: 12/10/2016
+' Date......: 12/29/2016
 ' Purpose...: cm site hierarchy landing page
 '****************************************************************
 time1 = Timer
@@ -62,14 +62,14 @@ CMWT_NewPage "", "", ""
 		<td class="m111 w250" onClick="document.location.href='sitestatus.asp'" title="Site Status">Site Status</td>
 		<td class="m111 w250" onClick="document.location.href='clientsummary.asp'" title="Client Summary">Client Summary</td>
 		<td class="m111 w250" onClick="document.location.href='sitelogs.asp'" title="Site Log Files">Site Logs</td>
-		<td class="m111 w250"></td>
+		<td class="m111 w250" onClick="document.location.href='cmm1.asp'" title="CM Monitor Commands">CM Monitor Commands</td>
 		<td></td>
 	</tr>
 	<tr class="h50">
-		<td class="m111 w250" onClick="document.location.href='compstatus.asp'" title="Component Status">Component Status</td>
-		<td class="m111 w250" onClick="document.location.href='dbstatus.asp'" title="Database Fragmentation">Database Fragmentation</td>
+		<td class="m111 w250" onClick="document.location.href='compstatus1.asp'" title="Component Status">Component Status</td>
+		<td class="m111 w250" onClick="document.location.href='compstatus.asp'" title="Component Status Summary">Component Summary</td>
 		<td class="m111 w250" onClick="document.location.href='services.asp'" title="Site Server Windows Services Status">Windows Services</td>
-		<td class="m111 w250"></td>
+		<td class="m111 w250" onClick="document.location.href='dbstatus.asp'" title="Database Fragmentation">Database Fragmentation</td>
 		<td></td>
 	</tr>
 </table>
