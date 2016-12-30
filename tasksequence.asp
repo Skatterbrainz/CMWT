@@ -2,7 +2,7 @@
 <%
 '-----------------------------------------------------------------------------
 ' filename....... tasksequence.asp
-' lastupdate..... 12/12/2016
+' lastupdate..... 12/29/2016
 ' description.... task sequence details
 '-----------------------------------------------------------------------------
 time1 = Timer
@@ -22,7 +22,7 @@ CMWT_NewPage "", "", ""
 <!-- #include file="_sm.asp" -->
 <!-- #include file="_banner.asp" -->
 <%
-menulist = "1=General,2=History"
+menulist = "1=General,2=History,3=Detailed"
 
 Response.Write "<table class=""t2""><tr>"
 For each m in Split(menulist,",")
@@ -91,17 +91,23 @@ Select Case PSet
 			"SMS_TaskSequencePackage.TS_Type," & _
 			"SMS_TaskSequencePackage.Version " & _
 			"FROM vSMS_TaskSequencePackage AS SMS_TaskSequencePackage " & _
-			"WHERE SMS_TaskSequencePackage.PkgID NOT IN " & _
-				"(SELECT ALL Folder##Alias##810314.InstanceKey " & _
-				"FROM vFolderMembers AS Folder##Alias##810314 " & _
-				"WHERE Folder##Alias##810314.ObjectTypeName = N'SMS_TaskSequencePackage') " & _
-				"AND SMS_TaskSequencePackage.PkgID = '" & PkgID & "'"
+			"WHERE SMS_TaskSequencePackage.PkgID = '" & PkgID & "'"
 			
 		CMWT_DB_QUERY Application("DSN_CMDB"), query
 		CMWT_DB_TABLEROWGRID rs, "", "", ""
 		'CMWT_DB_TABLEGRID rs, "", "tasksequences.asp", ""
 		CMWT_DB_CLOSE()
 	Case "2":
+		query = "SELECT DISTINCT " & _
+			"Step,ExecutionTime,GroupName,ActionName," & _
+			"LastStatusMsgID,LastStatusMsgName,ExitCode " & _
+			"FROM dbo.vSMS_TaskSequenceExecutionStatus " & _
+			"WHERE PackageID='" & PkgID & "' " & _
+			"ORDER BY " & SortBY
+		CMWT_DB_QUERY Application("DSN_CMDB"), query
+		CMWT_DB_TABLEGRID rs, "", "tasksequence.asp?id=" & PkgID & "&set=2", ""
+		CMWT_DB_CLOSE()
+	Case "3"
 		query = "SELECT DISTINCT " & _
 			"ExecutionTime,Step,GroupName,ActionName," & _
 			"LastStatusMsgID,LastStatusMsgName,ExitCode," & _
