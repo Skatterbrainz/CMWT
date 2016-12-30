@@ -1,7 +1,7 @@
 <!-- #include file=_core.asp -->
 <%
 '-----------------------------------------------------------------------------
-' filename....... compstatus.asp
+' filename....... compstatus1.asp
 ' lastupdate..... 12/29/2016
 ' description.... component status summary
 '-----------------------------------------------------------------------------
@@ -59,31 +59,51 @@ End Sub
 
 Dim conn, cmd, rs
 
-query = "SELECT com.SiteCode, com.MachineName, stat.MessageID, com.ComponentName,  COUNT(*) as 'Error Count' " & _
-	"FROM v_StatusMessage stat " & _
-	"JOIN v_ServerComponents com on stat.SiteCode=com.SiteCode AND stat.MachineName=com.MachineName AND stat.Component=com.ComponentName " & _
-	"WHERE Time > DATEADD(ss,-240-(24*3600),GetDate()) AND Severity='-1073741824' " & _
-	"GROUP BY com.SiteCode, com.MachineName, com.ComponentName,stat.MessageID " & _
-	"ORDER BY COUNT(*) DESC"
+query = "SELECT " & _
+		"T1.SiteCode, " & _
+		"T1.ComponentName, " & _
+		"T1.MachineName, " & _
+		"SUM(CASE WHEN T1.Category='ERROR' THEN 1 ELSE 0 END) AS Errors, " & _
+		"SUM(CASE WHEN T1.Category='WARNING' THEN 1 ELSE 0 END) AS Warnings, " & _
+		"SUM(CASE WHEN T1.Category='INFO' THEN 1 ELSE 0 END) AS Info " & _
+	"FROM ( " & _
+	"SELECT DISTINCT " & _
+		"com.SiteCode, " & _
+		"com.ComponentName, " & _
+		"com.MachineName, " & _
+		"CASE " & _
+			"WHEN Severity='-2147483648' THEN 'WARNING' " & _
+			"WHEN Severity='-1073741824' THEN 'ERROR' " & _
+			"ELSE 'INFO' " & _
+			"END AS Category " & _
+	"FROM " & _
+		"dbo.v_StatusMessage stat " & _
+			"JOIN v_ServerComponents com ON " & _
+				"stat.SiteCode = com.SiteCode " & _
+				"AND " & _
+				"stat.MachineName = com.MachineName " & _
+				"AND " & _
+				"stat.Component = com.ComponentName " & _
+	"WHERE " & _
+		"Time > DATEADD(ss,-240-(24*3600),GetDate()) " & _
+	"GROUP BY " & _
+		"com.SiteCode, " & _
+		"com.MachineName, " & _
+		"com.ComponentName, " & _
+		"Severity " & _
+	") AS T1 " & _
+	"GROUP BY " & _
+		"T1.SiteCode, " & _
+		"T1.ComponentName, " & _
+		"T1.MachineName " & _
+	"ORDER BY " & _
+		"T1.ComponentName"
+	
 CMWT_DB_QUERY Application("DSN_CMDB"), query
-CMWT_DB_IntTableGrid rs, "Errors in past 24 hours", "ComponentName", "1073741824"
+CMWT_DB_IntTableGrid rs, "", "", ""
 CMWT_DB_CLOSE()
 
-query = "SELECT com.SiteCode, " & _
-	"com.MachineName, " & _
-	"stat.MessageID, " & _
-	"com.ComponentName, " & _
-	"COUNT(*) as 'Warning Count' " & _
-	"FROM v_StatusMessage stat " & _
-	"JOIN v_ServerComponents com ON stat.SiteCode=com.SiteCode AND stat.MachineName=com.MachineName AND stat.Component=com.ComponentName " & _
-	"WHERE Time > DATEADD(ss,-240-(24*3600),GETDATE()) AND Severity='-2147483648' " & _
-	"GROUP BY com.SiteCode,com.MachineName,com.ComponentName,stat.MessageID " & _
-	"ORDER BY COUNT(*) desc"
-CMWT_DB_QUERY Application("DSN_CMDB"), query
-CMWT_DB_IntTableGrid rs, "Warnings in past 24 hours", "ComponentName", "2147483648"
-CMWT_DB_CLOSE()
-
-'CMWT_SHOW_Query()
+CMWT_SHOW_Query()
 CMWT_Footer()
 Response.Write "</body></html>"
 %>
