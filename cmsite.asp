@@ -3,7 +3,7 @@
 '****************************************************************
 ' Filename..: cmsite.asp
 ' Author....: David M. Stein
-' Date......: 12/29/2016
+' Date......: 01/02/2017
 ' Purpose...: cm site hierarchy landing page
 '****************************************************************
 time1 = Timer
@@ -49,7 +49,7 @@ CMWT_NewPage "", "", ""
 	<tr class="h50">
 		<td class="m111 w250" onClick="document.location.href='boundaries.asp'" title="Site Boundaries">Site Boundaries</td>
 		<td class="m111 w250" onClick="document.location.href='dpgroups.asp'" title="DP Server Groups">Distribution Groups</td>
-		<td class="m111 w250"></td>
+		<td class="m111 w250" onClick="document.location.href='wsfb.asp'" title="Windows Store for Business">Windows Store for Business</td>
 		<td class="m111 w250"></td>
 		<td></td>
 	</tr>

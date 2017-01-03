@@ -3,7 +3,7 @@
 '****************************************************************
 ' Filename..: adtools.asp
 ' Author....: David M. Stein
-' Date......: 12/13/2016
+' Date......: 01/02/2017
 ' Purpose...: active directory tools
 '****************************************************************
 time1 = Timer
@@ -42,7 +42,7 @@ CMWT_NewPage "", "", ""
 	<tr class="h50">
 		<td class="m111 w250" onClick="document.location.href='adsites.asp'" title="AD Sites">AD Sites</td>
 		<td class="m111 w250" onClick="document.location.href='adattributes.asp'" title="Schema Attributes">Schema Attributes</td>
-		<td class="m111 w250" onClick="document.location.href='adgpos.asp'" title="Group Policy Objects">GPOs</td>
+		<td class="m111 w250" onClick="document.location.href='adgpos.asp'" title="Group Policy Objects">Group Policies</td>
 		<td class="m111 w250"></td>
 		<td></td>
 	</tr>

@@ -2,7 +2,7 @@
 <%
 '-----------------------------------------------------------------------------
 ' filename....... _core.asp
-' lastupdate..... 12/29/2016
+' lastupdate..... 01/02/2017
 ' description.... CMWT core functions library
 '-----------------------------------------------------------------------------
 
@@ -540,133 +540,119 @@ End Sub
 
 function CMWT_AutoLink (ColumnName, LinkVal)
 	dim result : result = LinkVal
-	select case Ucase(ColumnName)
-		Case "COMPUTER","COMPUTERNAME","NETBIOSNAME","DEVICENAME","VMHOST":
-			result = "<a href=""device.asp?cn=" & LinkVal & """ title=""Details for " & LinkVal & """>" & LinkVal & "</a>"
-		Case "ADSITENAME":
-			if CMWT_NotNullString(LinkVal) Then
+	if CMWT_NotNullString(LinkVal) then
+		select case Ucase(ColumnName)
+			Case "COMPUTER","COMPUTERNAME","NETBIOSNAME","DEVICENAME","VMHOST":
+				result = "<a href=""device.asp?cn=" & LinkVal & """ title=""Details for " & LinkVal & """>" & LinkVal & "</a>"
+			Case "ADSITENAME":
 				result = "<a href=""cmadsite.asp?sn=" & LinkVal & """ title=""Computers in Site " & LinkVal & """>" & LinkVal & "</a>"
-			End If
-		Case "ASSIGNMENTID":
-			If CMWT_NotNullString(LinkVal) Then
+			Case "ASSIGNMENTID":
 				result = "<a href=""deptype.asp?id=" & LinkVal & """ title=""Deployment Type Details"">" & LinkVal & "</a>"
-			End If
-		Case "ADSITE":
-			if CMWT_NotNullString(LinkVal) Then
+			Case "ADSITE":
 				result = "<a href=""adsite.asp?sn=" & LinkVal & """ title=""Computers in AD Site " & LinkVal & """>" & LinkVal & "</a>"
-			End If
-		Case "USERNAME","USERID","SAMACCOUNTNAME","LOGONNAME":
-			if CMWT_NotNullString(LinkVal) Then
+			Case "USERNAME","USERID","SAMACCOUNTNAME","LOGONNAME":
 				result = "<a href=""aduser.asp?uid=" & LinkVal & """ title=""User Account: " & LinkVal & """>" & LinkVal & "</a>"
-			End If
-		Case "GROUPNAME","GROUPNAME2":
-			result = "<a href=""adgroup.asp?gn=" & LinkVal & """ title=""Details for " & LinkVal & """>" & LinkVal & "</a>"
-		Case "MODEL0","MODELNAME","MODEL":
-			If CMWT_NotNullString(LinkVal) Then
+			Case "GROUPNAME","GROUPNAME2":
+				result = "<a href=""adgroup.asp?gn=" & LinkVal & """ title=""Details for " & LinkVal & """>" & LinkVal & "</a>"
+			Case "MODEL0","MODELNAME","MODEL":
 				result = "<a href=""model.asp?m=" & LinkVal & """ title=""Computers with model: " & LinkVal & """>" & LinkVal & "</a>"
-			End If
-		Case "MANUFACTURER":
-			result = "<a href=""mfr.asp?mfr=" & LinkVal & """ title=""Devices by " & LinkVal & """>" & LinkVal & "</a>"
-		Case "WINDOWS","WINDOWSTYPE","WINDOWSNAME","OSNAME":
-			result = "<a href=""os.asp?on=" & LinkVal & """ title=""Computers with: " & LinkVal & """>" & LinkVal & "</a>"
-		Case "OSCAPTION":
-			result = "<a href=""os.asp?on=" & LinkVal & """ title=""Show Devices with " & LinkVal & """>" & LinkVal & "</a></td>"
-		Case "CLIENT","ISACTIVE","ISPXE":
-			result = CMWT_YESNO(LinkVal, True)
-		Case "MEMORY":
-			If CMWT_NotNullString(LinkVal) Then
+			Case "MANUFACTURER":
+				result = "<a href=""mfr.asp?mfr=" & LinkVal & """ title=""Devices by " & LinkVal & """>" & LinkVal & "</a>"
+			Case "WINDOWS","WINDOWSTYPE","WINDOWSNAME","OSNAME":
+				result = "<a href=""os.asp?on=" & LinkVal & """ title=""Computers with: " & LinkVal & """>" & LinkVal & "</a>"
+			Case "OSCAPTION":
+				result = "<a href=""os.asp?on=" & LinkVal & """ title=""Show Devices with " & LinkVal & """>" & LinkVal & "</a></td>"
+			Case "CLIENT","ISACTIVE","ISPXE":
+				result = CMWT_YESNO(LinkVal, True)
+			Case "MEMORY":
 				result = CMWT_KB2GB(LinkVal) & " GB"
-			End If
-		Case "UID":
-			result = "<a href=""update.asp?id=" & LinkVal & """ title=""View Details"">" & LinkVal & "</a>"
-		Case "COMPLIANT":
-			result = LinkVal & "%"
-		Case "DISCOVERY":
-			result = "<a href=""discovery.asp?dm=" & LinkVal & """ title=""View Details"">" & LinkVal & "</a>"
-		Case "ROLENAME":
-			result = "<a href=""cmrole.asp?rn=" & LinkVal & """ title=""View Details"">" & LinkVal & "</a>"
-		Case "PUBLISHER0","PUBLISHER","VENDOR","VENDORNAME":
-			result = "<a href=""vendorapps.asp?vn=" & LinkVal & """ title=""Products by " & LinkVal & """>" & LinkVal & "</a>"
-		Case "DISPLAYNAME0","PRODUCTNAME":
-			result = "<a href=""app.asp?pn=" & Server.URLEncode(LinkVal) & """ title=""Installations of " & LinkVal & """>" & LinkVal & "</a>"
-		Case "COLLECTIONID","SITEID","LIMITTOCOLLECTIONID":
-			result = "<a href=""collection.asp?id=" & LinkVal & """ title=""Collection"">" & LinkVal & "</a>"
-		Case "BOUNDARYGROUP":
-			result = "<a href=""bgroup.asp?gn=" & LinkVal & """ title=""Boundary " & LinkVal & """>" & LinkVal & "</a>"
-		Case "CHASSISTYPE":
-			result = "<a href=""chassistype.asp?ct=" & LinkVal & """ title=""Computers of type " & LinkVal & """>" & LinkVal & "</a>"
-		Case "DPSERVER":
-			result = "<a href=""dpapplist.asp?dp=" & LinkVal & """ title=""View Applications..."">" & LinkVal & "</a>"
-		Case "DPGROUP":
-			result = "<a href=""dpgroup.asp?gn=" & LinkVal & """ title=""View Details..."">" & LinkVal & "</a>"
-		Case "PACKAGEID","PKGID":
-			result = "<a href=""package.asp?id=" & LinkVal & """ title=""View Details..."">" & LinkVal & "</a>"
-		Case "TSPKGID":
-			result = "<a href=""tasksequence.asp?id=" & LinkVal & """ title=""View Details..."">" & LinkVal & "</a>"
-		Case "APPID":
-			result = "<a href=""package.asp?k2=8&id=" & LinkVal & """ title=""Application Details..."">" & LinkVal & "</a>"
-		Case "PUBLISHED","DISCOVERYENABLED","ISDEPLOYED","ISSUPERSEDED":
-			result = CMWT_YESNO(LinkVal, True)
-		Case "ISENABLED","ISACTIVE","ISDELETED","ISOBSOLETE","ISEXPIRED","ISHIDDEN","EULAEXISTS":
-			result = CMWT_YESNO(LinkVal,True)
-		Case "TASKNAME":
-			result = "<a href=""cmtask.asp?tn=" & LinkVal & """ title=""View Details"">" & LinkVal & "</a>"
-		Case "QUERYID":
-			result = "<a href=""cmquery.asp?id=" & LinkVal & """ title=""View Details"">" & LinkVal & "</a>"
-		Case "REPID":
-			result = "<a href=""sqlrun.asp?id=" & LinkVal & """ title=""Run Report"">Run</a> . " & _
-				"<a href=""sqlrepedit.asp?id=" & LinkVal & """ title=""Modify Report"">Edit</a> . " & _
-				"<a href=""sqlrepdel.asp?id=" & LinkVal & """ title=""Delete Report"">Del</a>"
-		Case "REPORTID":
-			result = LinkVal & " ... " & _
-				CMWT_IMG_LINK (True, "icon_add2", "icon_add1", "icon_add2", "reportrun.asp?id=" & LinkVal & "&rm=0", "Run Report") & " " & _
-				CMWT_IMG_LINK (True, "icon_edit2", "icon_edit1", "icon_edit2", "reportedit.asp?id=" & LinkVal, "Edit Report") & " " & _
-				CMWT_IMG_LINK (True, "icon_del2", "icon_del1", "icon_del2", "reportdel.asp?id=" & LinkVal, "Delete Report")
-		Case "FILENAME":
-			result = "<a href=""dupefiles.asp?cn=" & cn & "&fn=" & LinkVal & """ title=""View Instances"">" & LinkVal & "</a>"
-		Case "COMPONENTNAME":
-			result = "<a href=""ss2.asp?id=" & LinkVal & """ title=""View Details"">" & LinkVal & "</a>"
-		Case "INFOURL":
-			If CMWT_NotNullString(LinkVal) Then
+			Case "SIZE":
+				result = LinkVal & " GB"
+			Case "UID":
+				result = "<a href=""update.asp?id=" & LinkVal & """ title=""View Details"">" & LinkVal & "</a>"
+			Case "COMPLIANT":
+				result = LinkVal & "%"
+			Case "DISCOVERY":
+				result = "<a href=""discovery.asp?dm=" & LinkVal & """ title=""View Details"">" & LinkVal & "</a>"
+			Case "ROLENAME":
+				result = "<a href=""cmrole.asp?rn=" & LinkVal & """ title=""View Details"">" & LinkVal & "</a>"
+			Case "PUBLISHER0","PUBLISHER","VENDOR","VENDORNAME":
+				result = "<a href=""vendorapps.asp?vn=" & LinkVal & """ title=""Products by " & LinkVal & """>" & LinkVal & "</a>"
+			Case "DISPLAYNAME0","PRODUCTNAME":
+				result = "<a href=""app.asp?pn=" & Server.URLEncode(LinkVal) & """ title=""Installations of " & LinkVal & """>" & LinkVal & "</a>"
+			Case "COLLECTIONID","SITEID","LIMITTOCOLLECTIONID":
+				result = "<a href=""collection.asp?id=" & LinkVal & """ title=""Collection"">" & LinkVal & "</a>"
+			Case "BOUNDARYGROUP":
+				result = "<a href=""bgroup.asp?gn=" & LinkVal & """ title=""Boundary " & LinkVal & """>" & LinkVal & "</a>"
+			Case "CHASSISTYPE":
+				result = "<a href=""chassistype.asp?ct=" & LinkVal & """ title=""Computers of type " & LinkVal & """>" & LinkVal & "</a>"
+			Case "DPSERVER":
+				result = "<a href=""dpapplist.asp?dp=" & LinkVal & """ title=""View Applications..."">" & LinkVal & "</a>"
+			Case "DPGROUP":
+				result = "<a href=""dpgroup.asp?gn=" & LinkVal & """ title=""View Details..."">" & LinkVal & "</a>"
+			Case "PACKAGEID","PKGID":
+				result = "<a href=""package.asp?id=" & LinkVal & """ title=""View Details..."">" & LinkVal & "</a>"
+			Case "TSPKGID":
+				result = "<a href=""tasksequence.asp?id=" & LinkVal & """ title=""View Details..."">" & LinkVal & "</a>"
+			Case "APPID":
+				result = "<a href=""package.asp?k2=8&id=" & LinkVal & """ title=""Application Details..."">" & LinkVal & "</a>"
+			Case "PUBLISHED","DISCOVERYENABLED","ISDEPLOYED","ISSUPERSEDED":
+				result = CMWT_YESNO(LinkVal, True)
+			Case "ISENABLED","ISACTIVE","ISDELETED","ISOBSOLETE","ISEXPIRED","ISHIDDEN","EULAEXISTS":
+				result = CMWT_YESNO(LinkVal,True)
+			Case "TASKNAME":
+				result = "<a href=""cmtask.asp?tn=" & LinkVal & """ title=""View Details"">" & LinkVal & "</a>"
+			Case "QUERYID":
+				result = "<a href=""cmquery.asp?id=" & LinkVal & """ title=""View Details"">" & LinkVal & "</a>"
+			Case "REPID":
+				result = "<a href=""sqlrun.asp?id=" & LinkVal & """ title=""Run Report"">Run</a> . " & _
+					"<a href=""sqlrepedit.asp?id=" & LinkVal & """ title=""Modify Report"">Edit</a> . " & _
+					"<a href=""sqlrepdel.asp?id=" & LinkVal & """ title=""Delete Report"">Del</a>"
+			Case "REPORTID":
+				result = LinkVal & " ... " & _
+					CMWT_IMG_LINK (True, "icon_add2", "icon_add1", "icon_add2", "reportrun.asp?id=" & LinkVal & "&rm=0", "Run Report") & " " & _
+					CMWT_IMG_LINK (True, "icon_edit2", "icon_edit1", "icon_edit2", "reportedit.asp?id=" & LinkVal, "Edit Report") & " " & _
+					CMWT_IMG_LINK (True, "icon_del2", "icon_del1", "icon_del2", "reportdel.asp?id=" & LinkVal, "Delete Report")
+			Case "FILENAME":
+				result = "<a href=""dupefiles.asp?cn=" & cn & "&fn=" & LinkVal & """ title=""View Instances"">" & LinkVal & "</a>"
+			Case "COMPONENTNAME":
+				result = "<a href=""ss2.asp?id=" & LinkVal & """ title=""View Details"">" & LinkVal & "</a>"
+			Case "INFOURL":
 				If PageTitle = "Software Update" Then
 					result = "<a href=""" & LinkVal & """ target=""_blank"" title=""Open Link"">" & LinkVal & "</a>"
 				Else
 					result = "<a href=""" & LinkVal & """ target=""_blank"" title=""Open Link"">Link</a>"
 				End If
-			Else
-				result = ""
-			End If
-		Case "PACKAGETYPE":
-			Select Case LinkVal
-				Case 0: result = "0 = Package"
-				Case 8: result = "8 = Application"
-				Case Else: result = LinkVal
-			End Select
-		Case "SHARETYPE":
-			Select Case LinkVal
-				Case 1: result = "1 = Common"
-				Case 2: result = "2 = Specific"
-				Case Else: result = LinkVal
-			End Select
-		Case "FORCEDDISCONNECTENABLED","IGNOREADDRESSSCHEDULE","ISREFERENCECOLLECTION","ISBUILTIN":
-			result = CMWT_YESNO(LinkVal, True)
-		Case "ACTIONINPROGRESS":
-			Select Case LinkVal
-				Case 0: result = "0 = None"
-				Case 1: result = "1 = Update"
-				Case 2: result = "2 = Add"
-				Case 3: result = "3 = Delete"
-				Case Else: result = LinkVal
-			End Select
-		Case "SEVERITYNAME","BULLETINID","ARTICLEID","EXPIRED","SUPERSEDED","DEPLOYED":
-			If LinkVal <> "" Then
+			Case "PACKAGETYPE":
+				Select Case LinkVal
+					Case 0: result = "0 = Package"
+					Case 8: result = "8 = Application"
+					Case Else: result = LinkVal
+				End Select
+			Case "SHARETYPE":
+				Select Case LinkVal
+					Case 1: result = "1 = Common"
+					Case 2: result = "2 = Specific"
+					Case Else: result = LinkVal
+				End Select
+			Case "FORCEDDISCONNECTENABLED","IGNOREADDRESSSCHEDULE","ISREFERENCECOLLECTION","ISBUILTIN":
+				result = CMWT_YESNO(LinkVal, True)
+			Case "ACTIONINPROGRESS":
+				Select Case LinkVal
+					Case 0: result = "0 = None"
+					Case 1: result = "1 = Update"
+					Case 2: result = "2 = Add"
+					Case 3: result = "3 = Delete"
+					Case Else: result = LinkVal
+				End Select
+			Case "SEVERITYNAME","BULLETINID","ARTICLEID","EXPIRED","SUPERSEDED","DEPLOYED":
 				result = "<a href=""updates.asp?fn=" & ColumnName & "&fv=" & LinkVal & """ title=""Filter on " & LinkVal & """>" & LinkVal & "</a>"
-			End If
-		Case "COMPONENT":
-			If LinkVal <> "" Then
+			Case "COMPONENT":
 				result = "<a href=""compstatus.asp?fn=" & ColumnName & "&fv=" & LinkVal & """ title=""Filter on " & LinkVal & """>" & LinkVal & "</a>"
-			End If
-	end select
+			Case "ADID":
+				result = "<a href=""adr.asp?id=" & LinkVal & """ title=""Show Details"">" & LinkVal & "</a>"
+		end select
+	end if
 	CMWT_AutoLink = result
 end function
 

@@ -1,7 +1,7 @@
 <script language="vbscript" runat="server">
 '-----------------------------------------------------------------------------
 ' filename....... global.asa
-' lastupdate..... 12/29/2016
+' lastupdate..... 01/02/2017
 ' description.... global declarations
 '-----------------------------------------------------------------------------
 
@@ -38,7 +38,7 @@ Sub Application_OnStart
 			end if
 		Next
 		Application("cmwt_version")  = "1611"
-		Application("cmwt_build")    = "2016.12.29.01"
+		Application("cmwt_build")    = "2017.01.02.01"
 		Application("CMWT_USERCOUNT") = 0
 		Application("CMWT_USERLIST")  = ""
 		Application("CMWT_Title")     = "CMWT"

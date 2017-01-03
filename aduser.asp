@@ -3,7 +3,7 @@
 <%
 '-----------------------------------------------------------------------------
 ' filename....... aduser.asp
-' lastupdate..... 12/10/2016
+' lastupdate..... 01/02/2017
 ' description.... active directory user account information
 '-----------------------------------------------------------------------------
 time1 = Timer
@@ -42,7 +42,7 @@ CMWT_NewPage "", "", ""
 <!-- #include file="_sm.asp" -->
 <!-- #include file="_banner.asp" -->
 <%
-menulist = "1=Account,2=Groups,3=Computers,4=CM Account"
+menulist = "1=Account,2=Groups,3=Computers"
 
 Response.Write "<table class=""t2""><tr>"
 For each m in Split(menulist,",")

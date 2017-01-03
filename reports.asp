@@ -3,8 +3,8 @@
 '****************************************************************
 ' Filename..: reports.asp
 ' Author....: David M. Stein
-' Date......: 12/09/2016
-' Purpose...: reports
+' Date......: 01/02/2017
+' Purpose...: reports landing page
 '****************************************************************
 time1 = Timer
 PageTitle = "Reports"
@@ -36,7 +36,7 @@ CMWT_NewPage "", "", ""
 	</tr>
 	<tr class="h50">
 		<td class="m111 w250" onClick="document.location.href='sqlreports.asp'" title="Saved SQL Reports">Saved SQL Reports</td>
-		<td class="m111 w250"></td>
+		<td class="m111 w250" onClick="document.location.href='logins.asp'" title="Device Logins">Device Logins</td>
 		<td class="m111 w250"></td>
 		<td class="m111 w250"></td>
 		<td></td>

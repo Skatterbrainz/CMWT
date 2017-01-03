@@ -3,7 +3,7 @@
 <%
 '-----------------------------------------------------------------------------
 ' filename....... cmusers.asp
-' lastupdate..... 12/04/2016
+' lastupdate..... 01/02/2017
 ' description.... sccm user accounts
 '-----------------------------------------------------------------------------
 time1 = Timer
@@ -74,7 +74,7 @@ If Not(rs.BOF And rs.EOF) Then
 					udom = fv
 					fv = "<a href=""cmusers.asp?d=" & fv & """ title=""Filter on domain " & fv & """>" & fv & "</a>"
 				Case "USER_NAME0","USERID":
-					fv = "<a href=""cmuser.asp?uid=" & fv & """>" & fv & "</a>"
+					fv = "<a href=""aduser.asp?uid=" & fv & """>" & fv & "</a>"
 			End Select
 			Response.Write "<td class=""td6 v10"">" & fv & "</td>"
 		Next

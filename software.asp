@@ -2,7 +2,7 @@
 <%
 '-----------------------------------------------------------------------------
 ' filename....... software.asp
-' lastupdate..... 12/12/2016
+' lastupdate..... 01/02/2017
 ' description.... software information landing page
 '-----------------------------------------------------------------------------
 time1 = Timer
@@ -23,14 +23,14 @@ CMWT_NewPage "", "", ""
 		<td class="m111 w250" onClick="document.location.href='packages.asp'" title="Packages">Packages</td>
 		<td class="m111 w250" onClick="document.location.href='deployments.asp'" title="Deployments">Deployments</td>
 		<td class="m111 w250" onClick="document.location.href='updates.asp'" title="Software Updates">Software Updates</td>
-		<td class="m111 w250" onClick="document.location.href='depsummary.asp'" title="Deployment Summary">Deployment Summary</td>
+		<td class="m111 w250" onClick="document.location.href='depsummary.asp'" title="Deployment Summary: All">Deployment Summary: All</td>
 		<td></td>
 	</tr>
 	<tr class="h50">
 		<td class="m111 w250" onClick="document.location.href='applications.asp'" title="Applications">Applications</td>
 		<td class="m111 w250"></td>
-		<td class="m111 w250"></td>
-		<td class="m111 w250"></td>
+		<td class="m111 w250" onClick="document.location.href='adrs.asp'" title="Automatic Deployment Rules">Auto Deployments</td>
+		<td class="m111 w250" onClick="document.location.href='depsummary2.asp'" title="Deployment Summary: Brief">Deployment Summary: Brief</td>
 		<td></td>
 	</tr>
 	<tr>
@@ -61,7 +61,7 @@ CMWT_NewPage "", "", ""
 		<td class="m111 w250" onClick="document.location.href='bootimages.asp'" title="Boot Image">Boot Images</td>
 		<td class="m111 w250" onClick="document.location.href='adkcomps.asp'" title="Boot Image Components">Boot Image Components</td>
 		<td class="m111 w250" onClick="document.location.href='tasksequences.asp'" title="Task Sequences">Task Sequences</td>
-		<td class="m111 w250"></td>
+		<td class="m111 w250" onClick="document.location.href='osimages.asp'" title="Operating System Images">OS Images</td>
 		<td></td>
 	</tr>
 </table>
