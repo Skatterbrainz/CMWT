@@ -3,14 +3,14 @@
 <%
 '-----------------------------------------------------------------------------
 ' filename....... clients.asp
-' lastupdate..... 12/29/2016
+' lastupdate..... 02/22/2017
 ' description.... computers with or without clients installed
 '-----------------------------------------------------------------------------
 time1 = Timer
 
 cm = CMWT_GET("c", "")
 QueryOn = CMWT_GET("qq", "")
-SortBy  = CMWT_GET("s", "ADSiteName")
+SortBy  = CMWT_GET("s", "ComputerName")
 
 Select Case cm
 	Case "1": PageTitle = "Devices: With Client"

@@ -3,7 +3,7 @@
 '****************************************************************
 ' Filename..: confirm.asp
 ' Author....: David M. Stein
-' Date......: 03/20/2016
+' Date......: 02/22/2017
 ' Purpose...: generic deletion confirmation prompt
 '****************************************************************
 Response.Expires = -1
@@ -26,11 +26,11 @@ CMWT_PageHeading PageTitle, ""
 '----------------------------------------------------------------
 %>
 
-<form name="form1" id="form1" method="post" action="./?sbx1=1&sbx2=1&sbx4=delrec.asp">
+<form name="form1" id="form1" method="post" action="delrec.asp">
 <input type="hidden" name="tn" id="tn" value="<%=TableName%>" />
 <input type="hidden" name="id" id="id" value="<%=RecordID%>" />
 <input type="hidden" name="pk" id="pk" value="<%=IDColumn%>" />
-<input type="hidden" name="t" id="t" value="./?sbx1=3&sbx2=1&sbx4=<%=TargetURL%>" />
+<input type="hidden" name="t" id="t" value="<%=TargetURL%>" />
 <table class="t1000x">
 	<tr class="h300">
 		<td class="td6 v10 ctr">

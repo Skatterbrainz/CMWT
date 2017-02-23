@@ -3,7 +3,7 @@
 '****************************************************************
 ' Filename..: reports.asp
 ' Author....: David M. Stein
-' Date......: 01/02/2017
+' Date......: 02/22/2017
 ' Purpose...: reports landing page
 '****************************************************************
 time1 = Timer
@@ -17,13 +17,13 @@ CMWT_NewPage "", "", ""
 <table class="tfx">
 	<tr>
 		<td class="td6" colspan="5">
-			x
+			Inventory and Status Reports
 		</td>
 	</tr>
 	<tr class="h50">
 		<td class="m111 w250" onClick="document.location.href='report0.asp'" title="Report Builder">Report Builder</td>
 		<td class="m111 w250" onClick="document.location.href='clientpush.asp'" title="Client Push Installations">Client Push Installs</td>
-		<td class="m111 w250"></td>
+		<td class="m111 w250" onClick="window.open('/reports/','_blank');" title="ConfigMgr Reports">ConfigMgr Reports</td>
 		<td class="m111 w250"></td>
 		<td></td>
 	</tr>
