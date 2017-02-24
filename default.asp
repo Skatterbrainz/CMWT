@@ -4,8 +4,8 @@
 <%
 '-----------------------------------------------------------------------------
 ' filename....... default.asp
-' lastupdate..... 12/14/2016
-' description.... home page
+' lastupdate..... 02/24/2017
+' description.... CMWT home page
 '-----------------------------------------------------------------------------
 time1 = Timer
 
@@ -22,8 +22,9 @@ CMWT_NewPage "", "", ""
 		<td>
 			<br/>
 			<%
-			q = "SELECT TOP 1 SiteCode,SiteName,Version," & _
-				"ServerName,InstallDir FROM dbo.v_Site"
+			q = "SELECT SiteCode,SiteName,Version," & _
+				"ServerName,InstallDir FROM dbo.v_Site " & _
+				"ORDER BY Type DESC, SiteCode"
 			CMWT_DB_QUERY Application("DSN_CMDB"), q
 			Response.Write "<table class=""t1x""><tr>"
 			For i = 0 to rs.Fields.Count - 1
