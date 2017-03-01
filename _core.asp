@@ -2,7 +2,7 @@
 <%
 '-----------------------------------------------------------------------------
 ' filename....... _core.asp
-' lastupdate..... 01/02/2017
+' lastupdate..... 03/01/2017
 ' description.... CMWT core functions library
 '-----------------------------------------------------------------------------
 
@@ -972,6 +972,48 @@ Sub CMWT_WMI_TABLEGRID (hostname, columns, className, caption, sortby, autolink)
 	
 	Set objWMIService = GetObject("winmgmts:\\" & hostname & "\root\CIMV2") 
 	Set colItems = objWMIService.ExecQuery("SELECT " & columns & " FROM " & className,,48)
+	If CMWT_NotNullString(autolink) Then
+		afx = Split(autolink,"=")
+		afn = afx(0)
+		afl = afx(1)
+	Else
+		afn = ""
+		afl = ""
+	End If
+	rows = 0
+	For Each objItem in colItems
+		Response.Write "<tr class=""tr1"">"
+		For each PropertyName in Split(columns, ",")
+			val = objItem.Properties_.Item(PropertyName)
+			If CMWT_NotNullString(afn) And Ucase(afn)=Ucase(PropertyName) Then
+				val = "<a href=""" & afl & "=" & val & """>" & val & "</a>"
+			End If
+			Response.Write "<td class=""td6 v10"">" & val & "</td>"
+		Next
+		Response.Write "</tr>"
+		rows = rows + 1
+	Next
+	Response.Write "<tr><td class=""td6 v10 bgGray"" colspan=""" & cols & """>" & _
+		rows & " services found</td></tr></table>"
+End Sub
+
+Sub CMWT_WMI_TABLEGRID2 (hostname, columns, className, clause, caption, sortby, autolink)
+	Dim cn, objWMIService, colItems, objItem, query, val, PropertyName, afx, afn, afl, rows, cols
+	Response.Write "<h2 class=""tfx"">" & caption & "</h2>" & _
+		"<table class=""tfx""><tr>"
+	cols = Ubound(Split(columns,","))+1
+	For each cn in Split(columns, ",")
+		Response.Write "<td class=""td6 v10 bgGray"">" & _
+			"<a href=""" & Request.ServerVariables("PATH_INFO") & _
+			"?s=" & cn & """ title=""Sort Column"">" & cn & "</a></td>"
+	Next
+	Response.Write "</tr>"
+	query = "SELECT " & columns & " FROM " & className
+	If clause <> "" Then
+		query = query & " WHERE " & clause 
+	End If
+	Set objWMIService = GetObject("winmgmts:\\" & hostname & "\root\CIMV2") 
+	Set colItems = objWMIService.ExecQuery(query,,48)
 	If CMWT_NotNullString(autolink) Then
 		afx = Split(autolink,"=")
 		afn = afx(0)

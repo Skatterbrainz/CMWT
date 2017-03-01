@@ -1,11 +1,10 @@
 <!-- #include file=_core.asp -->
 <%
-'****************************************************************
-' Filename..: about.asp
-' Author....: David M. Stein
-' Date......: 12/03/2016
-' Purpose...: about CMWT
-'****************************************************************
+'-----------------------------------------------------------------------------
+' filename....... about.asp
+' lastupdate..... 03/01/2017
+' description.... CMWT About page
+'-----------------------------------------------------------------------------
 time1 = Timer
 PageTitle = "About CMWT"
 
@@ -20,7 +19,8 @@ CMWT_NewPage "", "", ""
 		<td class="td6 v10" colspan="2">
 			<p>Designed and developed by David Stein.  For questions or feedback, please email 
 			<a href="mailto:<%=MailBox%>?subject=CMWT Feedback"><%=Application("CMWT_SupportMail")%></a>.  Thank you!</p>
-			<p>Read licensing terms in the LICENSE.TXT file located in the CMWT installation root folder.</p>
+			<input type="button" name="bb2" id="bb2" value="View License" class="btx w180 h30" onClick="javascript:window.open('LICENSE.TXT','licwin','width=800,height=400');" />
+			<input type="button" name="bb2" id="bb2" value="Get Updates" class="btx w180 h30" onClick="javascript:window.open('https://github.com/skatterbrainz/cmwt/wiki/','gitwin','width=1200,height=600,toolbar=yes,scrollbars=yes,resizable=yes,titlebar=yes,status=yes,menubar=yes');" />
 		</td>
 	</tr>
 	<%
@@ -52,7 +52,6 @@ CMWT_NewPage "", "", ""
 </table>
 	
 <% CMWT_Footer() %>
-	
-</body>
 
+</body>
 </html>

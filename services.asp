@@ -1,11 +1,10 @@
 <!-- #include file=_core.asp -->
 <%
-'****************************************************************
-' Filename..: services.asp
-' Author....: David M. Stein
-' Date......: 12/09/2016
-' Purpose...: site server windows services status
-'****************************************************************
+'-----------------------------------------------------------------------------
+' filename....... services.asp
+' lastupdate..... 03/01/2017
+' description.... site system windows services status
+'-----------------------------------------------------------------------------
 time1 = Timer
 SortBy  = CMWT_GET("s", "DisplayName")
 QueryON = CMWT_GET("qq", "")

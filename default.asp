@@ -4,7 +4,7 @@
 <%
 '-----------------------------------------------------------------------------
 ' filename....... default.asp
-' lastupdate..... 02/24/2017
+' lastupdate..... 03/01/2017
 ' description.... CMWT home page
 '-----------------------------------------------------------------------------
 time1 = Timer
@@ -17,110 +17,18 @@ CMWT_NewPage "", "", ""
 %>
 <!-- #include file="_sm.asp" -->
 <!-- #include file="_banner.asp" -->
-<table class="tfx">
-	<tr>
-		<td>
-			<br/>
-			<%
-			q = "SELECT SiteCode,SiteName,Version," & _
-				"ServerName,InstallDir FROM dbo.v_Site " & _
-				"ORDER BY Type DESC, SiteCode"
-			CMWT_DB_QUERY Application("DSN_CMDB"), q
-			Response.Write "<table class=""t1x""><tr>"
-			For i = 0 to rs.Fields.Count - 1
-				Response.Write "<td class=""td6a v10 bgBlue"">" & rs.Fields(i).Name & "</td>"
-			Next
-			Response.Write "<td class=""td6a v10 bgBlue"">Branch Name</td>"
-			Response.Write "</tr>"
-			Do Until rs.EOF
-				Response.Write "<tr>"
-				For i = 0 to rs.Fields.Count - 1
-					Response.Write "<td class=""td6a v10 bgDarkGray"">" & rs.Fields(i).Value & "</td>"
-				Next
-				Response.Write "<td class=""td6a v10 bgDarkGray"">" & CMWT_CM_BuildName(rs.Fields("Version").value) & "</td>"
-				Response.Write "</tr>"
-				rs.MoveNext
-			Loop
-			CMWT_DB_CLOSE()
-			Response.Write "</table>"
-			%>
-		</td>
-	</tr>
-</table>
+
+<!-- #include file="_panel1.asp" -->
+<!-- #include file="_panel2.asp" -->
+<!-- #include file="_panel5.asp" -->
 
 <table class="tfx">
 	<tr>
 		<td class="v10 vtop w600">
-			
-			<h2>Site Resources</h2>
-			
-			<table class="t1x">
-				<tr class="tr2" onClick="document.location.href='clients.asp'" title="View Records">
-					<td class="td5a v10">Forest: Discovered Computers</td>
-					<td class="td5a v10 w80 right"><a href="clients.asp"><%=count_computers%></a></td>
-				</tr>
-				<tr class="tr2" onClick="document.location.href='adusers.asp?x=1'" title="View Records">
-					<td class="td5a v10">Forest: Discovered User Accounts</td>
-					<td class="td5a v10 w80 right"><a href="adusers.asp?x=1"><%=count_users%></a></td>
-				</tr>
-				<tr class="tr2" onClick="document.location.href='adgroups.asp'" title="View Records">
-					<td class="td5a v10">Forest: Discovered Groups</td>
-					<td class="td5a v10 w80 right"><a href="adgroups.asp"><%=count_groups%></a></td>
-				</tr>
-				<tr class="tr2" onClick="document.location.href='bgroups.asp'" title="View Records">
-					<td class="td5a v10">Site: Site Boundary Groups</td>
-					<td class="td5a v10 w80 right"><a href="bgroups.asp"><%=count_bgs%></a></td>
-				</tr>
-				<tr class="tr2" onClick="document.location.href='dpservers.asp'" title="View Records">
-					<td class="td5a v10">Site: Distribution Points</td>
-					<td class="td5a v10 w80 right"><a href="dpservers.asp"><%=count_dps%></a></td>
-				</tr>
-				<tr class="tr2" onClick="document.location.href='products.asp'" title="View Records">
-					<td class="td5a v10">Site: Inventoried Applications</td>
-					<td class="td5a v10 w80 right">
-						<%
-						If count_apps > 50 Then
-							Response.Write "<a href=""products.asp?ch=A"">" & count_apps & "</a>"
-						Else
-							Response.Write "<a href=""products.asp?ch=ALL"">" & count_apps & "</a>"
-						End If
-						%>
-					</td>
-				</tr>
-			</table>
-			
+			<!-- #include file="_panel3.asp" -->			
 		</td>
 		<td class="v10 vtop">
-			
-			<h2>Status</h2>
-			
-			<table class="t1x">
-				<tr class="tr2" onClick="document.location.href='sitestatus.asp'">
-					<td class="td5a v10">Site Status Errors</td>
-					<td class="td5a v10 w80 right"><%=count_stat1%></td>
-				</tr>
-				<tr class="tr2" onClick="document.location.href='compstatus.asp'">
-					<td class="td5a v10">Component Status Errors</td>
-					<td class="td5a v10 w80 right"><%=count_stat2%></td>
-				</tr>
-				<tr class="tr2" onClick="document.location.href='collections.asp?ks=2&ch=all'">
-					<td class="td5a v10">Device Collections</td>
-					<td class="td5a v10 w80 right"><%=count_dcolls%></td>
-				</tr>
-				<tr class="tr2" onClick="document.location.href='collections.asp?ks=1&ch=all'">
-					<td class="td5a v10">User Collections</td>
-					<td class="td5a v10 w80 right"><%=count_ucolls%></td>
-				</tr>
-				<tr class="tr2" onClick="document.location.href='tasksequences.asp'">
-					<td class="td5a v10">Task Sequences</td>
-					<td class="td5a v10 w80 right"><%=count_tseqs%></td>
-				</tr>
-				<tr class="tr2">
-					<td class="td5a v10">.</td>
-					<td class="td5a v10 w80 right"> </td>
-				</tr>
-			</table>
-			
+			<!-- #include file="_panel4.asp" -->
 		</td>
 	</tr>
 	<tr>
