@@ -1,7 +1,7 @@
 <script language="vbscript" runat="server">
 '-----------------------------------------------------------------------------
 ' filename....... global.asa
-' lastupdate..... 03/01/2017
+' lastupdate..... 04/24/2017
 ' description.... global declarations
 '-----------------------------------------------------------------------------
 
@@ -38,7 +38,7 @@ Sub Application_OnStart
 			end if
 		Next
 		Application("cmwt_version")   = "1702"
-		Application("cmwt_build")     = "2017.03.01.01"
+		Application("cmwt_build")     = "2017.04.24.01"
 		Application("CMWT_USERCOUNT") = 0
 		Application("CMWT_USERLIST")  = ""
 		Application("CMWT_Title")     = "CMWT"
@@ -72,6 +72,12 @@ Sub Application_OnStart
 			"Tools:Management Tools," & _
 			"User Profiles:User Profiles," & _
 			"Video:Video Display Adapters"
+		Application("CMWT_CHASSISTYPES") = "1=Virtual,2=Blade Server,3=Desktop,4=Low-Profile Desktop,5=Pizza-Box," & _
+			"6=Mini Tower,7=Tower,8=Portable,9=Laptop,10=Notebook,11=Hand-Held," & _
+			"12=Mobile Device in Docking Station,13=All-in-One,14=Sub-Notebook," & _
+			"15=Space Saving Chassis,16=Ultra Small Form Factor,17=Server Tower Chassis," & _
+			"18=Mobile Device in Docking Station,19=Sub-Chassis,20=Bus-Expansion chassis," & _
+			"21=Peripheral Chassis,22=Storage Chassis,23=Rack-Mounted Chassis,24=Sealed-Case PC"
 		Application("CMWT_INIT")="TRUE"
 	End If
 End Sub

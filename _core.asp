@@ -2,7 +2,7 @@
 <%
 '-----------------------------------------------------------------------------
 ' filename....... _core.asp
-' lastupdate..... 03/01/2017
+' lastupdate..... 04/24/2017
 ' description.... CMWT core functions library
 '-----------------------------------------------------------------------------
 
@@ -734,8 +734,7 @@ Sub CMWT_DB_TableGrid (rs, Caption, SortLink, AutoLink)
 		If CMWT_NotNullString(Caption) Then
 			Response.Write "<h2 class=""tfx"">" & Caption & "</h2>"
 		End If
-		Response.Write "<table class=""tfx""><tr class=""h100 tr1"">" & _
-			"<td class=""td6 v10 ctr"">No matching rows found</td></tr></table>"
+		CMWT_TextBlock "No matching rows found"
 	end if 
 End Sub
 
@@ -805,8 +804,7 @@ Sub CMWT_DB_TableGrid2 (rs, Caption, SortLink, AutoLink, FormLink)
 		If CMWT_NotNullString(Caption) Then
 			Response.Write "<h2 class=""tfx"">" & Caption & "</h2>"
 		End If
-		Response.Write "<table class=""tfx""><tr class=""h100 tr1"">" & _
-			"<td class=""td6 v10 ctr"">No matching rows found</td></tr></table>"
+		CMWT_TextBlock "No matching rows found"
 	end if 
 End Sub
 
@@ -874,8 +872,7 @@ Sub CMWT_DB_TableGridFilter (rs, Caption, SortLink, AutoLink, ColumnSet, FilterL
 		If CMWT_NotNullString(Caption) Then
 			Response.Write "<h2 class=""tfx"">" & Caption & "</h2>"
 		End If
-		Response.Write "<table class=""tfx""><tr class=""h100 tr1"">" & _
-			"<td class=""td6 v10 ctr"">No matching rows found</td></tr></table>"
+		CMWT_TextBlock "No matching rows found"
 	end if 
 End Sub
 
@@ -909,8 +906,7 @@ Sub CMWT_DB_TABLEROWGRID (objRS, CaptionText, SortLink, AutoLink)
 		If CMWT_NotNullString(CaptionText) Then
 			Response.Write "<h2 class=""tfx"">" & CaptionText & "</h2>"
 		End If
-		Response.Write "<table class=""tfx""><tr class=""h100 tr1"">" & _
-			"<td class=""td6 v10 ctr"">No matching rows found</td></tr></table>"
+		CMWT_TextBlock "No matching rows found"
 	End If
 	
 End Sub
@@ -946,8 +942,7 @@ Sub CMWT_DB_TABLEROWGRIDFilter (objRS, CaptionText, FilterLink)
 		If CMWT_NotNullString(CaptionText) Then
 			Response.Write "<h2 class=""tfx"">" & CaptionText & "</h2>"
 		End If
-		Response.Write "<table class=""tfx""><tr class=""h100 tr1"">" & _
-			"<td class=""td6 v10 ctr"">No matching rows found</td></tr></table>"
+		CMWT_TextBlock "No matching rows found"
 	End If
 	
 End Sub
@@ -1227,11 +1222,11 @@ End Sub
 '-----------------------------------------------------------------------------
 
 Function CMWT_LOADTIME ()
+	Dim result : result = 0
 	If CMWT_NotNullString(time1) Then
-		CMWT_LOADTIME = Round(Timer - CDBL(time1),2)
-	Else
-		CMWT_LOADTIME = 0
+		result = Round(Timer - CDBL(time1),2)
 	End If
+	CMWT_LOADTIME = result
 End Function
 
 '-----------------------------------------------------------------------------
@@ -1305,7 +1300,6 @@ Function CMWT_Add_CmCollectionMember (strCompName, strCollID)
 	On Error Resume Next
 	Set objSWbemLocator = CreateObject("WbemScripting.SWbemLocator") 
 	Set objSWbemServices= objSWbemLocator.ConnectServer(Application("CMWT_SiteServer"),"root\sms") 
-	 
 	Set ProviderLoc = objSWbemServices.InstancesOf("SMS_ProviderLocation") 
 	For Each Location In ProviderLoc 
 		If Location.ProviderForLocalSite = True Then 
@@ -1313,18 +1307,13 @@ Function CMWT_Add_CmCollectionMember (strCompName, strCollID)
 				(Location.Machine, "root\sms\site_" + Location.SiteCode) 
 		End If 
 	Next 
-
 	query = "SELECT ResourceID FROM SMS_R_System WHERE NetbiosName='" & strCompName & "'"
-
 	Set colCompResourceID = objSWbemServices.ExecQuery(query) 
-	 
 	For each insCompResource in colCompResourceID 
 		strNewResourceID = insCompResource.ResourceID 
 	Next 
-	 
 	Set instColl = objSWbemServices.Get("SMS_Collection.CollectionID=""" & strCollID & """") 
 	Set instDirectRule = objSWbemServices.Get("SMS_CollectionRuleDirect").SpawnInstance_() 
-	 
 	instDirectRule.ResourceClassName = "SMS_R_System" 
 	instDirectRule.ResourceID = strNewResourceID 
 	instDirectRule.RuleName = strComputerName 
@@ -1374,7 +1363,6 @@ Function CMWT_Remove_CmCollectionMember (strCompName, strCollID)
 	On Error Resume Next
 	Set objSWbemLocator = CreateObject("WbemScripting.SWbemLocator") 
 	Set objSWbemServices= objSWbemLocator.ConnectServer(Application("CMWT_SiteServer"),"root\sms") 
-	 
 	Set ProviderLoc = objSWbemServices.InstancesOf("SMS_ProviderLocation") 
 	For Each Location In ProviderLoc 
 		If Location.ProviderForLocalSite = True Then 
@@ -1382,18 +1370,13 @@ Function CMWT_Remove_CmCollectionMember (strCompName, strCollID)
 				(Location.Machine, "root\sms\site_" + Location.SiteCode) 
 		End If 
 	Next 
-
 	query = "SELECT ResourceID FROM SMS_R_System WHERE NetbiosName='" & strCompName & "'"
-
 	Set colCompResourceID = objSWbemServices.ExecQuery(query) 
-	 
 	For each insCompResource in colCompResourceID 
 		strNewResourceID = insCompResource.ResourceID 
 	Next 
-	 
 	Set instColl = objSWbemServices.Get("SMS_Collection.CollectionID=""" & strCollID & """") 
 	Set instDirectRule = objSWbemServices.Get("SMS_CollectionRuleDirect").SpawnInstance_() 
-	 
 	instDirectRule.ResourceClassName = "SMS_R_System" 
 	instDirectRule.ResourceID = strNewResourceID 
 	instDirectRule.RuleName = strComputerName 
@@ -1550,7 +1533,6 @@ Function CMWT_PrettySQL (sqlString)
 			Replace( _
 				Replace(Ucase(sqlString), ",", ", "), "FROM", "<br/>FROM"), _
 				"WHERE", "<br/>WHERE")
-			
 End Function
 
 '-----------------------------------------------------------------------------
@@ -1680,11 +1662,11 @@ End Function
 '-----------------------------------------------------------------------------
 
 Function CMWT_KB2GB (intVal)
+	Dim result : result = 0
 	If intVal > 0 Then
-		CMWT_KB2GB = Round(intVal / 1024 / 1024, 2)
-	Else
-		CMWT_KB2GB = 0
+		result = Round(intVal / 1024 / 1024, 2)
 	End If
+	CMWT_KB2GB = result
 End Function
 
 '-----------------------------------------------------------------------------
@@ -1693,11 +1675,11 @@ End Function
 '-----------------------------------------------------------------------------
 
 Function CMWT_MB2GB (intVal)
+	Dim result : result = 0
 	If intVal > 0 Then
-		CMWT_MB2GB = Round(intVal / 1024, 2)
-	Else
-		CMWT_MB2GB = 0
+		result = Round(intVal / 1024, 2)
 	End If
+	CMWT_MB2GB = result
 End Function
 
 '-----------------------------------------------------------------------------
@@ -1934,73 +1916,38 @@ function CMWT_WMI_ChassisType (MatchValue)
 end function
 
 '-----------------------------------------------------------------------------
-' function-name: CMWT_CM_CHASSISTYPE
+' function-name: Get_ChassisType
 ' function-desc: 
 '-----------------------------------------------------------------------------
 
-Function CMWT_CM_CHASSISTYPE (CTNum)
-	Select Case CTNum
-		Case  1:	CMWT_CM_CHASSISTYPE = "Virtual"
-		Case  2:	CMWT_CM_CHASSISTYPE = "Blade Server"
-		Case  3:	CMWT_CM_CHASSISTYPE = "Desktop"
-		Case  4:	CMWT_CM_CHASSISTYPE = "Low-Profile Desktop"
-		Case  5:	CMWT_CM_CHASSISTYPE = "Pizza-Box"
-		Case  6:	CMWT_CM_CHASSISTYPE = "Mini Tower"
-		Case  7:	CMWT_CM_CHASSISTYPE = "Tower"
-		Case  8:	CMWT_CM_CHASSISTYPE = "Portable"
-		Case  9:	CMWT_CM_CHASSISTYPE = "Laptop"
-		Case 10:	CMWT_CM_CHASSISTYPE = "Notebook"
-		Case 11:	CMWT_CM_CHASSISTYPE = "Hand-Held"
-		Case 12:	CMWT_CM_CHASSISTYPE = "Mobile Device in Docking Station"
-		Case 13:	CMWT_CM_CHASSISTYPE = "All-in-One"
-		Case 14:	CMWT_CM_CHASSISTYPE = "Sub-Notebook"
-		Case 15:	CMWT_CM_CHASSISTYPE = "Space Saving Chassis"
-		Case 16:	CMWT_CM_CHASSISTYPE = "Ultra Small Form Factor"
-		Case 17:	CMWT_CM_CHASSISTYPE = "Server Tower Chassis"
-		Case 18:	CMWT_CM_CHASSISTYPE = "Mobile Device in Docking Station"
-		Case 19:	CMWT_CM_CHASSISTYPE = "Sub-Chassis"
-		Case 20:	CMWT_CM_CHASSISTYPE = "Bus-Expansion chassis"
-		Case 21:	CMWT_CM_CHASSISTYPE = "Peripheral Chassis"
-		Case 22:	CMWT_CM_CHASSISTYPE = "Storage Chassis"
-		Case 23:	CMWT_CM_CHASSISTYPE = "Rack-Mounted Chassis"
-		Case 24:	CMWT_CM_CHASSISTYPE = "Sealed-Case PC"
-		Case Else: CMWT_CM_CHASSISTYPE = ""
-	End Select
-End Function
-
-'----------------------------------------------------------------
-' function-name: CMWT_CM_CHASSISNUM
-' function-desc: 
-'----------------------------------------------------------------
-
-Function CMWT_CM_CHASSISNUM (strCT)
-	Select Case strCT
-		Case "Virtual": CMWT_CM_CHASSISNUM = 1
-		Case "Blade Server": CMWT_CM_CHASSISNUM = 2
-		Case "Desktop": CMWT_CM_CHASSISNUM = 3
-		Case "Low-Profile Desktop": CMWT_CM_CHASSISNUM = 4
-		Case "Pizza-Box": CMWT_CM_CHASSISNUM = 5
-		Case "Mini Tower": CMWT_CM_CHASSISNUM = 6
-		Case "Tower": CMWT_CM_CHASSISNUM = 7
-		Case "Portable": CMWT_CM_CHASSISNUM = 8
-		Case "Laptop": CMWT_CM_CHASSISNUM = 9
-		Case "Notebook": CMWT_CM_CHASSISNUM = 10
-		Case "Hand-Held": CMWT_CM_CHASSISNUM = 11
-		Case "Mobile Device in Docking Station": CMWT_CM_CHASSISNUM = 12
-		Case "All-in-One": CMWT_CM_CHASSISNUM = 13
-		Case "Sub-Notebook": CMWT_CM_CHASSISNUM = 14
-		Case "Space Saving Chassis": CMWT_CM_CHASSISNUM = 15
-		Case "Ultra Small Form Factor": CMWT_CM_CHASSISNUM = 16
-		Case "Server Tower Chassis": CMWT_CM_CHASSISNUM = 17
-		Case "Mobile Device in Docking Station": CMWT_CM_CHASSISNUM = 18
-		Case "Sub-Chassis": CMWT_CM_CHASSISNUM = 19
-		Case "Bus-Expansion chassis": CMWT_CM_CHASSISNUM = 20
-		Case "Peripheral Chassis": CMWT_CM_CHASSISNUM = 21
-		Case "Storage Chassis": CMWT_CM_CHASSISNUM = 22
-		Case "Rack-Mounted Chassis": CMWT_CM_CHASSISNUM = 23
-		Case "Sealed-Case PC": CMWT_CM_CHASSISNUM = 24
-		Case Else: CMWT_CM_CHASSISNUM = 0
-	End Select
+Function Get_ChassisType (intVal, strVal)
+	Dim tmp, tmpz, result, iset
+	If intVal <> "" Then
+		If CMWT_NotNullString(Application("CMWT_CHASSISTYPES")) Then
+			tmp = Split(Application("CMWT_CHASSISTYPES"),",")
+			For Each iset In tmp
+				tmpz = Split(iset,"=")
+				If tmpz(0) = CStr(intVal) Then
+					result = tmpz(1)
+					Exit For
+				End If
+			Next
+		End If
+	ElseIf strVal <> "" Then
+		If CMWT_NotNullString(Application("CMWT_CHASSISTYPES")) Then
+			tmp = Split(Application("CMWT_CHASSISTYPES"),",")
+			For Each iset In tmp
+				tmpz = Split(iset,"=")
+				If Ucase(tmpz(1)) = Ucase(strVal) Then
+					result = tmpz(0)
+					Exit For
+				End If
+			Next
+		End If
+	Else
+		result = ""
+	End If
+	Get_ChassisType = result
 End Function
 
 '----------------------------------------------------------------
@@ -2412,6 +2359,11 @@ Function CMWT_WordCase (strVal)
 	End If
 End Function 
 
+'----------------------------------------------------------------
+' function-name: CMWT_DB_OfflineSort
+' function-desc: 
+'----------------------------------------------------------------
+
 Function CMWT_DB_OfflineSort (sourceRS, fieldnames, sortName)
 	Dim fn
 	Set rs = CreateObject("ADODB.RecordSet")
@@ -2431,4 +2383,14 @@ Function CMWT_DB_OfflineSort (sourceRS, fieldnames, sortName)
 	rs.Sort = sortName
 	rs.MoveFirst
 End Function
+
+'----------------------------------------------------------------
+' sub-name: CMWT_TextBlock
+' sub-desc: 
+'----------------------------------------------------------------
+
+Sub CMWT_TextBlock (Message)
+	Response.Write "<table class=""tfx""><tr class=""h200 tr1"">" & _
+		"<td class=""td6 ctr v10"">" & Message & "</td></tr></table>"
+End Sub
 %>

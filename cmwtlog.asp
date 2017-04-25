@@ -2,7 +2,7 @@
 <%
 '-----------------------------------------------------------------------------
 ' filename....... cmwtlog.asp
-' lastupdate..... 12/15/2016
+' lastupdate..... 04/24/2017
 ' description.... cmwt database log maintenance
 '-----------------------------------------------------------------------------
 time1 = Timer
@@ -19,7 +19,7 @@ End If
 
 select case Ucase(KeySet)
 	case "TASKS":
-		query = "SELECT " & selx & " * FROM dbo.ClientTasks ORDER BY DateTimeCreated DESC"
+		query = "SELECT " & selx & " * FROM dbo.Tasks ORDER BY DateTimeCreated DESC"
 		PageTitle = "CMWT Task Logs"
 	case "EVENTS":
 		query = "SELECT " & selx & " * FROM dbo.EventLog ORDER BY EventDateTime DESC"
@@ -52,11 +52,9 @@ if Application("CMWT_ENABLE_LOGGING") = "TRUE" Then
 	CMWT_DB_TABLEGRID rs, "", "", ""
 	CMWT_DB_CLOSE()
 Else
-	Response.Write "<table class=""tfx""><tr class=""h200 tr1"">" & _
-		"<td class=""td6 ctr v10"">Logging is not enabled.<p>" & _
+	CMWT_TextBlock "Logging is not enabled.<p>" & _
 		"To enable site activity logging, modify the _config.txt file " & _
-		"to set CMWT_ENABLE_LOGGING~TRUE</p><p>Then recycle the IIS application pool.</p>" & _
-		"</td></tr></table>"
+		"to set CMWT_ENABLE_LOGGING~TRUE</p><p>Then recycle the IIS application pool.</p>"
 End If
 CMWT_FOOTER()
 %>

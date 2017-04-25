@@ -3,7 +3,7 @@
 <%
 '-----------------------------------------------------------------------------
 ' filename....... device.asp
-' lastupdate..... 12/04/2016
+' lastupdate..... 04/24/2017
 ' description.... device information report
 '-----------------------------------------------------------------------------
 time1 = Timer
@@ -89,7 +89,6 @@ Select Case Ucase(pset)
 				For i = 0 to xcols-1
 					fn = rs.Fields(i).Name
 					fv = rs.Fields(i).Value
-
 					Select Case Ucase(fn)
 						Case "RESOURCEID":
 							ResourceID = fv
@@ -97,11 +96,11 @@ Select Case Ucase(pset)
 							fv = "<a href=""cmadsite.asp?sn=" & fv & """ title=""Devices in Site " & fv & """>" & fv & "</a>"
 						Case "MODELNAME","MODEL0":
 							fv = "<a href=""model.asp?m=" & fv & """ title=""Devices by Model " & fv & """>" & fv & "</a>"
-						Case "DOMAINNAME":
-							fv = "<a href=""domlist.asp?dn=" & fv & """ title=""Devices in " & fv & """>" & fv & "</a>"
+'						Case "DOMAINNAME":
+'							fv = "<a href=""domlist.asp?dn=" & fv & """ title=""Devices in " & fv & """>" & fv & "</a>"
 						Case "MEMORY":
 							fv = CMWT_KB2GB(fv) & " GB"
-						Case "WINDOWSTYPE":
+						Case "WINDOWSVERSION":
 							If InStr(fv, "Server") > 0 Then
 								is_server = True
 							Else
@@ -109,7 +108,8 @@ Select Case Ucase(pset)
 							End If
 							fv = "<a href=""os.asp?on=" & fv & """ title=""Devices running " & fv & """>" & fv & "</a>"
 						Case "CHASSISTYPE":
-							fv = CMWT_CM_CHASSISTYPE(fv)
+							fv = Get_ChassisType(fv, "")
+							'fv = CMWT_CM_CHASSISTYPE(fv)
 						Case "CLIENT":
 							If fv = 1 Then
 								fv = "Installed"
