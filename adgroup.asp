@@ -3,7 +3,7 @@
 <%
 '-----------------------------------------------------------------------------
 ' filename....... adgroup.asp
-' lastupdate..... 12/10/2016
+' lastupdate..... 04/24/2017
 ' description.... active directory security group information
 '-----------------------------------------------------------------------------
 time1 = Timer
@@ -124,19 +124,31 @@ Select Case PSet
 			objGroup.GetInfo
 			arrMemberOf = objGroup.GetEx("member")
 			If VarType(arrMemberOf) > 0 Then
-				Response.Write "<tr><td class=""td6 v10 bgGray w200"">Name</td>" & _
+				Response.Write "<tr><td class=""td6 v10 bgGray"">User ID</td>" & _
+					"<td class=""td6 v10 bgGray w200"">Name</td>" & _
 					"<td class=""td6 v10 bgGray"">Path</td></tr>"
 				mcount = 0
 				For Each strMember in arrMemberOf
-					uid = Get_LogonName(strMember)
+					'uid = Get_LogonName(strMember)
+					'uid = CMWT_AD_SamAccountName("LDAP://" & strMember, "user")
+					uid = Replace(Split(strMember,",")(0), "CN=","")
+					set openDS  = GetObject("LDAP:")
+					if err.number <> 0 Then response.write "exception1: " & err.Description : response.end
+
+					set objUser  = openDS.OpenDSObject("LDAP://" & strMember, Application("CM_AD_TOOLUSER"), Application("CM_AD_TOOLPASS"), ADS_SECURE_AUTHENTICATION)
+					if err.number <> 0 Then response.write "exception2: " & err.Description : response.end
+					uid = objUser.samaccountname
+					ucn = objUser.displayName
+					
 					If CMWT_NotNullString(uid) Then
 						uid = "<a href=""aduser.asp?uid=" & uid & """ title=""Account Details for: " & uid & """>" & uid & "</a>"
 					End If
 					Response.Write "<tr class=""tr1""><td class=""td6 v10"">" & uid & "</td>" & _
+						"<td class=""td6 v10"">" & ucn & "</td>" & _
 						"<td class=""td6 v10"">" & strMember & "</td></tr>"
 					mcount = mcount + 1
 				Next
-				Response.Write "<tr class=""tr1""><td class=""td6 v10 bgGray"" colspan=""2"">" & mcount & " members found</td></tr>"
+				Response.Write "<tr class=""tr1""><td class=""td6 v10 bgGray"" colspan=""3"">" & mcount & " members found</td></tr>"
 			Else
 				Response.Write "<tr class=""h100 tr1""><td class=""td6 v10 ctr"">No members found</td></tr>"
 			End If

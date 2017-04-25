@@ -242,10 +242,45 @@ End Sub
 ' function-desc: 
 '----------------------------------------------------------------
 
+Function CMWT_AD_SamAccountName (strDN, objType)
+	Dim query, conn, cmd, rs, result : result = ""
+	query = "SELECT SAMAccountName FROM 'LDAP://" & Application("CMWT_DomainPath") & "' " & _
+		"WHERE objectCategory='" & objType & "' AND distinguishedName='" & strDN & "'"
+	Set conn = CreateObject("ADODB.Connection")
+	Set cmd    = CreateObject("ADODB.Command")
+	conn.Provider = "ADsDSOObject"
+	conn.Properties("User ID")  = Application("CM_AD_TOOLUSER")
+	conn.Properties("Password") = Application("CM_AD_TOOLPASS")
+	conn.Properties("ADSI Flag") = 1
+	conn.Open "Active Directory Provider"
+	Set cmd.ActiveConnection = conn
+	cmd.Properties("Page Size") = 1000
+	cmd.Properties("Searchscope") = ADS_SCOPE_SUBTREE
+	cmd.CommandText = query
+	Set rs = cmd.Execute
+	rs.MoveFirst
+	xrows = rs.RecordCount
+	If xrows > 0 Then
+		Do Until rs.EOF
+			result = rs.Fields("sAMAccountName").value
+			rs.MoveNext
+		Loop
+	End If
+	rs.Close
+	conn.Close
+	Set rs = Nothing : Set cmd = Nothing : Set conn = Nothing
+	CMWT_AD_SamAccountName = result
+End Function
+
+'----------------------------------------------------------------
+' function-name: CMWT_AD_GetADsPath
+' function-desc: 
+'----------------------------------------------------------------
+
 Function CMWT_AD_GetADsPath (strName, objType)
 	Dim query, conn, cmd, rs, result : result = ""
 	query = "SELECT distinguishedName FROM 'LDAP://" & Application("CMWT_DomainPath") & "' " & _
-		"WHERE objectCategory='" & objType & "' AND name='" & strName & "'"
+		"WHERE objectCategory='" & objType & "' AND sAMAccountName='" & strName & "'"
 	Set conn = CreateObject("ADODB.Connection")
 	Set cmd    = CreateObject("ADODB.Command")
 	conn.Provider = "ADsDSOObject"
@@ -319,6 +354,114 @@ Function CMWT_AD_GetLogonName (UserDN)
 	result = objUser.sAMAccountName
 	CMWT_AD_GetLogonName = result
 End Function
+
+Function CMWT_AD_GetProtectedGroupsList ()
+	Dim filename, fso, objFile, ln, result : result = ""
+	filename = Application("CMWT_PhysicalPath") & "\_protectedgroups.txt"
+	Set fso = CreateObject("Scripting.FileSystemObject")
+	On Error Resume Next
+	Set objFile = fso.OpenTextFile(filename, 1)
+	If err.Number = 0 Then
+		Do Until objFile.AtEndOfStream
+			ln = Trim(objFile.ReadLine)
+			If ln <> "" and Left(ln,1) <> ";" Then
+				If result <> "" Then
+					result = result & "," & ln
+				Else
+					result = ln
+				End If
+			End If
+		Loop
+		objFile.Close
+	End If
+	Set fso = Nothing
+	CMWT_AD_GetProtectedGroupsList = result
+End Function
+
+'----------------------------------------------------------------
+' sub-name: CMWT_AD_ListGroups
+' sub-desc: display drop-list of AD groups to select from
+'----------------------------------------------------------------
+
+Sub CMWT_AD_ListGroups (ShowAll, Exclude2)
+	Dim query, objConnection, objRecordset, objCommand, rs, xrows, exclusions
+	Dim restrict, xn
+	exclusions = ""
+	If ShowAll <> True Then
+		restrict = True
+		' build base list for comparison
+		exclusions = CMWT_AD_GetProtectedGroupsList()
+		If exclusions <> "" Then 
+			exclusions = "," & Ucase(exclusions) & ","
+			If exclude2 <> "" Then
+				exclusions = exclusions & Ucase(exclude2) & ","
+			End If
+		ElseIf exclude2 <> "" Then
+			exclusions = "," & Ucase(exclude2) & ","
+		End If
+	Else
+		If exclude2 <> "" Then
+			exclusions = "," & Ucase(exclude2) & ","
+		End If
+	End If
+	query = "SELECT ADsPath, Name FROM 'LDAP://" & Application("CMWT_DomainPath") & _
+		"' WHERE objectCategory='group'"
+	On Error Resume Next
+	Set objConnection = CreateObject("ADODB.Connection")
+	objConnection.Provider = "ADsDSOObject"
+	objConnection.Properties("User ID")  = Application("CM_AD_TOOLUSER")
+	objConnection.Properties("Password") = Application("CM_AD_TOOLPASS")
+	objConnection.Properties("ADSI Flag") = 1
+	objConnection.Open "Active Directory Provider"
+	Set objCommand = CreateObject("ADODB.Command")
+	Set objCommand.ActiveConnection = objConnection
+	objCommand.Properties("Page Size") = 1000
+	objCommand.Properties("Searchscope") = ADS_SCOPE_SUBTREE
+	objCommand.CommandText = query
+	Set objRecordSet = objCommand.Execute
+	If Not(objRecordSet.BOF AND objRecordSet.EOF) Then
+		objRecordSet.MoveFirst
+		Set rs = CreateObject("ADODB.RecordSet")
+		rs.CursorLocation = adUseClient
+		rs.Fields.Append "name", adVarChar, 255
+		rs.Fields.Append "adspath", adVarChar, 255
+		rs.Open
+		Do Until objRecordSet.EOF
+			gn = objRecordSet.Fields("Name").Value
+			ap = objRecordSet.Fields("aDsPath").value
+			xn = "," & Ucase(gn) & ","
+			If (restrict = True) Then
+				If (InStr(exclusions, xn) > 0) Then
+					' exclude from display list
+				Else
+					rs.AddNew
+					rs.Fields("name").value = gn
+					rs.Fields("adspath").value = ap
+					rs.Update
+				End If
+			Else
+				rs.AddNew
+				rs.Fields("name").value = gn
+				rs.Fields("adspath").value = ap
+				rs.Update
+			End If
+			objRecordSet.MoveNext
+		Loop
+		rs.Sort = "name"
+		rs.MoveFirst
+		xrows = objRecordSet.RecordCount
+		Do Until rs.EOF
+			Set objGroup = GetObject(rs.Fields("ADsPath").Value)
+			gn = rs.Fields("Name").Value
+			Response.Write "<option value=""" & gn & """>" & gn & "</option>"
+			rs.MoveNext
+		Loop
+		rs.Close
+		Set rs = Nothing
+	End If
+	objRecordSet.Close
+	objConnection.Close
+End Sub
 
 %>
 <!-- end-module: _adds.asp -->

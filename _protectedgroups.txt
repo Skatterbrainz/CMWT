@@ -1,0 +1,49 @@
+;CM_AD_ProtectedGroups
+Access Control Assistance Operators
+Account Operators
+Administrators
+AdsyncAdmins
+AdsyncBrowse
+AdsyncOperators
+AdsyncPasswordSet
+Allowed RODC Password Replication Group
+Backup Operators
+Cert Publishers
+Certificate Service DCOM Access
+Cloneable Domain Controllers
+Cryptographic Operators
+Denied RODC Password Replication Group
+DHCP Administrators
+Distributed COM Users
+Domain Computers
+Domain Controllers
+DnsAdmins
+DnsUpdateProxy
+Domain Admins
+Domain Guests
+Domain Users
+Enterprise Admins
+Enterprise Key Admins
+Enterprise Read-only Domain Controllers
+Group Policy Creator Owners
+Guests
+IIS_IUSRS
+Incoming Forest Trust Builders
+Key Admins
+Network Configuration Operators
+Pre-Windows 2000 Compatible Access
+Print Operators
+Protected Users
+RAS and IAS Servers
+RDS Endpoint Servers
+RDS Management Servers
+RDS Remote Access Servers
+Read-only Domain Controllers
+Replicator
+Schema Admins
+Server Operators
+Storage Replica Administrators
+System Managed Accounts Group
+Terminal Server License Servers
+Users
+Windows Authorization Access Group

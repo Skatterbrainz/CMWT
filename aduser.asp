@@ -153,14 +153,18 @@ Select Case KeySet
 		End If
 		Response.Write "</table>"
 
-		If ADModify = True Then
-			Response.Write "<div class=""tfx""><br/>" & _
-				"<input type=""button"" name=""b1"" id=""b1"" class=""btx w150 h32"" value=""Add to Group"" />" & _
-				"</div>"
-		Else
-			Response.Write "<div class=""tfx""><br/>" & _
-				"<input type=""button"" name=""b1"" id=""b1"" class=""btx w150 h32"" value=""Add to Group"" disabled=""true"" />" & _
-				"</div>"
+		If Application("CM_AD_TOOLS") = "TRUE" Then
+			Response.Write "<form name=""form2"" id=""form2"" method=""post"" action=""admod.asp"">" & _
+				"<input type=""hidden"" name=""type"" id=""type"" value=""adduser"" />" & _
+				"<input type=""hidden"" name=""acct"" id=""acct"" value=""" & UserID & """ />" & _
+				"<table class=""t2"">" & _
+				"<tr><td class=""pad6"">" & _
+				"<select name=""dest"" id=""dest"" class=""w400 pad6"">" & _
+				"<option value=""""></option>"
+			CMWT_AD_ListGroups False, groups
+			Response.Write "</select></td><td class=""pad6"">" & _
+				"<input type=""submit"" name=""b1"" id=""b1"" class=""btx w120 h30"" value=""Add"" />" & _
+				"</td></tr></table></form>"
 		End If
 	Case "3":
 		Dim conn, cmd, rs
