@@ -1,14 +1,15 @@
 <!-- #include file=_core.asp -->
+<!-- #include file=_adds.asp -->
 <%
 '-----------------------------------------------------------------------------
 ' filename....... adusers.asp
-' lastupdate..... 12/10/2016
+' lastupdate..... 04/24/2017
 ' description.... active directory users report
 '-----------------------------------------------------------------------------
-time1 = Timer
-objPfx  = CMWT_GET("ch", "A")
-SelOpt  = CMWT_GET("sel", "")
-SortBy  = CMWT_GET("s", "sAMAccountName")
+time1  = Timer
+objPfx = CMWT_GET("ch", "A")
+SelOpt = CMWT_GET("sel", "")
+SortBy = CMWT_GET("s", "sAMAccountName")
 
 PageTitle    = "AD Users"
 PageBackLink = "adtools.asp"
@@ -28,10 +29,10 @@ CMWT_CLICKBAR objPfx, "adusers.asp?ch="
 	
 If objPFX <> "ALL" Then
 	query = "<LDAP://" & Application("CMWT_DomainPath") & ">;(&(objectCategory=User)" & _
-		"(sAMAccountName=" & objPFX & "*));displayName,sAMAccountName,whenCreated,pwdLastSet,ADsPath;Subtree"  
+		"(sAMAccountName=" & objPFX & "*));displayName,userAccountControl,sAMAccountName,whenCreated,pwdLastSet,ADsPath;Subtree"  
 Else
 	query = "<LDAP://" & Application("CMWT_DomainPath") & ">;(objectCategory=User)" & _
-		";displayName,sAMAccountName,whenCreated,pwdLastSet,ADsPath;Subtree"  
+		";displayName,userAccountControl,sAMAccountName,whenCreated,pwdLastSet,ADsPath;Subtree"  
 End If
 
 Response.Write "<form name=""form1"" id=""form1"" method=""post"" action=""adUserMod.asp"">" & _
@@ -71,15 +72,18 @@ If NOT (objRecordSet.BOF AND objRecordSet.EOF) Then
 		"<td class=""td6 v10 w30 bgGray""> </td>" & _
 		"<td class=""td6 v10 bgGray"">SAM Account Name</td>" & _
 		"<td class=""td6 v10 bgGray"">Display Name</td>" & _
+		"<td class=""td6 v10 bgGray"">Status</td>" & _
 		"<td class=""td6 v10 bgGray"">ADS Path</td>" & _
 		"</tr>"
 	
 	Do Until objRecordSet.EOF
-		udn = objRecordSet.Fields("displayName").Value
+		udn = objRecordSet.Fields("displayName").value
 		sam = objRecordSet.Fields("sAMAccountName").value
+		uac = objRecordSet.Fields("userAccountControl").value
 		ads = objRecordSet.Fields("ADsPath").value
 		adx = Replace(ads, ",", "^")
 		samlink = "<a href=""aduser.asp?uid=" & sam & """>" & sam & "</a>"
+		uacx = CMWT_UAC(uac)
 		
 		If Application("CM_AD_TOOLS") = "TRUE" Then
 			If SelOpt = "1" Then
@@ -95,15 +99,16 @@ If NOT (objRecordSet.BOF AND objRecordSet.EOF) Then
 			"<td class=""td6 v10 w30 ctr"">" & chk & "</td>" & _
 			"<td class=""td6 v10"">" & samlink & "</td>" & _
 			"<td class=""td6 v10"">" & udn & "</td>" & _
+			"<td class=""td6 v10"">" & uacx & "</td>" & _
 			"<td class=""td6 v8"">" & ads & "</td>" & _
 			"</tr>"
 		objRecordSet.MoveNext
 	Loop
 	
-	Response.Write "<tr><td class=""td6 v10 bgGray"" colspan=""4"">" & _
+	Response.Write "<tr><td class=""td6 v10 bgGray"" colspan=""5"">" & _
 		xrows & " accounts were found</td></tr>"
 Else
-	Response.Write "<tr class=""h100""><td class=""td6 v10 ctr"">No matching user accounts were found</td></tr>"
+	Response.Write "<tr class=""tr1 h100""><td class=""td6 v10 ctr"">No matching user accounts were found</td></tr>"
 End If
 
 Response.Write "</table>"

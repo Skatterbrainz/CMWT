@@ -9,7 +9,7 @@
 time1 = Timer
 
 UserID  = CMWT_GET("uid", "")
-Pset    = CMWT_GET("set", "1")
+KeySet  = CMWT_GET("set", "1")
 QueryOn = CMWT_GET("qq", "")
 CMWT_VALIDATE UserID, "User Account ID was not specified"
 
@@ -18,7 +18,7 @@ If InStr(UserID, "\") > 0 Then
 	UserID = uu(1)
 End If
 
-If PSet = "4" Then
+If KeySet = "4" Then
 	Response.Redirect "cmuser.asp?uid=" & UserID
 End If
 
@@ -57,7 +57,7 @@ For each m in Split(menulist,",")
 Next
 Response.Write "</tr></table>"
 
-Select Case Pset
+Select Case KeySet
 
 	Case "1":
 	
@@ -180,7 +180,6 @@ End Select
 
 CMWT_SHOW_QUERY()
 CMWT_Footer()
-%>
 
-</body>
-</html>
+Response.Write "</body></html>"
+%>
