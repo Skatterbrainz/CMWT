@@ -3,7 +3,7 @@
 <%
 '-----------------------------------------------------------------------------
 ' filename....... aduser.asp
-' lastupdate..... 01/02/2017
+' lastupdate..... 04/24/2017
 ' description.... active directory user account information
 '-----------------------------------------------------------------------------
 time1 = Timer
@@ -85,7 +85,7 @@ Select Case Pset
 				Response.Write "<tr class=""tr1"">"
 				For i = 0 to objRecordSet.Fields.Count -1
 					fieldname = objRecordSet.Fields(i).Name
-					strvalue  = objRecordSet.Fields(i).Value
+					strValue  = objRecordSet.Fields(i).Value
 					fn = fieldname
 					Select Case Ucase(fieldname)
 						Case "NAME":
@@ -104,7 +104,8 @@ Select Case Pset
 								fv = ""
 							End If
 						Case "USERACCOUNTCONTROL":
-							fv = CMWT_UAC (fv)
+							fv = CMWT_UAC (strValue)
+							'fv = CMWT_ADUSER_UAC(strValue)
 							fn = "Status"
 						Case "L","CITY":
 							fn = "City"

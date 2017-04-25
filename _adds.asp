@@ -2,7 +2,7 @@
 <%
 '-----------------------------------------------------------------------------
 ' filename....... _adds.asp
-' lastupdate..... 12/10/2016
+' lastupdate..... 04/24/2017
 ' description.... active directory domain services module
 '-----------------------------------------------------------------------------
 
@@ -24,7 +24,7 @@ Function CMWT_UAC (intVal)
 		Case 328194: CMWT_UAC = "Disabled, Smartcard Required, Password Doesnt Expire"
 		Case 328224: CMWT_UAC = "Enabled, Smartcard Required, Password Doesnt Expire / Not Required"
 		Case 328226: CMWT_UAC = "Disabled, Smartcard Required, Password Doesnt Expire / Not Required"
-		Case Else: CMWT_UAC = "UNKNOWN"
+		Case Else: CMWT_UAC = "UNKNOWN (" & intVal & ")"
 	End Select
 End Function
 
