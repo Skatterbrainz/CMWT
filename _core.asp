@@ -651,6 +651,8 @@ function CMWT_AutoLink (ColumnName, LinkVal)
 				result = "<a href=""compstatus.asp?fn=" & ColumnName & "&fv=" & LinkVal & """ title=""Filter on " & LinkVal & """>" & LinkVal & "</a>"
 			Case "ADID":
 				result = "<a href=""adr.asp?id=" & LinkVal & """ title=""Show Details"">" & LinkVal & "</a>"
+			Case "CONFIGURATION":
+				result = Replace(LinkVal, ",", ", ")
 		end select
 	end if
 	CMWT_AutoLink = result
