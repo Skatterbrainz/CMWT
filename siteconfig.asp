@@ -2,11 +2,12 @@
 <%
 '-----------------------------------------------------------------------------
 ' filename....... siteconfig.asp
-' lastupdate..... 11/30/2016
+' lastupdate..... 05/23/2017
 ' description.... site configuration table report
 '-----------------------------------------------------------------------------
 time1 = Timer
 SortBy   = CMWT_GET("s", "RoleName")
+QueryON  = CMWT_GET("qq", "")
 KeyValue = CMWT_GET("id", "")
 KeySet   = CMWT_GET("ks", "1")
 
@@ -19,9 +20,7 @@ PageBackName = "Site Hierarchy"
 <!-- #include file="_sm.asp" -->
 <!-- #include file="_banner.asp" -->
 <%
-
-
-query = "SELECT RoleName,SiteCode,RoleID,State,Configuration," & _
+query = "SELECT RoleName AS Role_Name,SiteCode,RoleID,State,Configuration," & _
 	"MessageID,LastEvaluatingTime,Param1,Param2,Param3,Param4,Param5,Param6 " & _
 	"FROM dbo.vCM_SiteConfiguration " & _
 	"ORDER BY " & SortBy
@@ -32,7 +31,5 @@ CMWT_DB_CLOSE()
 CMWT_SHOW_QUERY()
 CMWT_Footer()
 %>
-
 </body>
-
 </html>
