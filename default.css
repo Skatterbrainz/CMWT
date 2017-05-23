@@ -2,7 +2,7 @@
 '****************************************************************
 ' Filename..: default.css
 ' Purpose...: base CSS stylesheet
-' Version...: 12/15/2016
+' Version...: 05/23/2017
 '****************************************************************
 */
 body {
@@ -44,6 +44,7 @@ li {margin-bottom: 6px;}
 .bgGreen       {background-color: #1f6040;}
 .bgOrange      {background-color: #b35900;}
 .bgGray        {background-color: #737373;}
+.bgRed         {background-color: #990000;}
 
 .cBlack        {color:#000;}
 .cLightGreen   {color: #7FFFCC;}
