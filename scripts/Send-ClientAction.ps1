@@ -1,3 +1,4 @@
+#requires -version 2
 <#
 .SYNOPSIS
     Invoke commands remotely on an SCCM Client for a system or systems.
@@ -28,7 +29,8 @@
 .EXAMPLE
     Send-ClientAction -ComputerName server01 -Action HardwareInv
 
-    The above command will invoke the Configuration Manager Client's Hardware Inventory Cycle on the targeted computer.  The return will look like the following:
+    The above command will invoke the Configuration Manager Client's Hardware Inventory Cycle 
+    on the targeted computer.  The return will look like the following:
 
        
         __GENUS          : 1
@@ -47,40 +49,30 @@
 .NOTES
 
     Derived from the original script created by Will Anderson. 
-    
     http://lastwordinnerd.com/category/posts/powershell-scripting/
-    
     This script is provided AS IS without warranty of any kind.
 
 #>
 
-
+[CmdletBinding(SupportsShouldProcess=$True)]
 param (
-    [parameter(Mandatory=True)] 
-    [string[]] $ComputerName,
-    [Parameter(Mandatory=$True)]
-    [ValidateSet('HardwareInv','SoftwareInv','UpdateScan','MachinePol','UserPolicy','DiscoveryInv','FileCollect')]
-    [string]$Action
-)
-Param (
-        [Parameter(Mandatory=$True,ValueFromPipeline=$True,ValueFromPipelineByPropertyName=$True)]
-        [string[]]$ComputerName = $env:COMPUTERNAME,
+        [Parameter(Mandatory=$False,ValueFromPipeline=$True,ValueFromPipelineByPropertyName=$True)]
+        	[string[]] $ComputerName = $env:COMPUTERNAME,
         [Parameter(Mandatory=$True)]
-        [ValidateSet('HardwareInv','SoftwareInv','UpdateScan','MachinePol','UserPolicy','DiscoveryInv','FileCollect')]
-        [string]$Action
-
+        	[ValidateSet('HardwareInv','SoftwareInv','UpdateScan','MachinePol','UserPolicy','DiscoveryInv','FileCollect')]
+        	[string] $Action
 )
 
-Switch ($action) {
-	'HardwareInv'  {$_action = "{00000000-0000-0000-0000-000000000001}"}
-	'SoftwareInv'  {$_action = "{00000000-0000-0000-0000-000000000002}"}
-	'UpdateScan'   {$_action = "{00000000-0000-0000-0000-000000000113}"}
-	'MachinePol'   {$_action = "{00000000-0000-0000-0000-000000000021}"}
-	'UserPolicy'   {$_action = "{00000000-0000-0000-0000-000000000027}"}
-	'FileCollect'  {$_action = "{00000000-0000-0000-0000-000000000010}"}
+switch ($action) {
+	'HardwareInv'  {$ActionCode = "{00000000-0000-0000-0000-000000000001}"}
+	'SoftwareInv'  {$ActionCode = "{00000000-0000-0000-0000-000000000002}"}
+	'UpdateScan'   {$ActionCode = "{00000000-0000-0000-0000-000000000113}"}
+	'MachinePol'   {$ActionCode = "{00000000-0000-0000-0000-000000000021}"}
+	'UserPolicy'   {$ActionCode = "{00000000-0000-0000-0000-000000000027}"}
+	'FileCollect'  {$ActionCode = "{00000000-0000-0000-0000-000000000010}"}
 }
-Foreach ($Computer in $ComputerName) {
+foreach ($Computer in $ComputerName) {
     if ($PSCmdlet.ShouldProcess("$action $computer")) {
-        Invoke-WmiMethod -ComputerName $Computer -Namespace root\CCM -Class SMS_Client -Name TriggerSchedule -ArgumentList "$_action"
+        Invoke-WmiMethod -ComputerName $Computer -Namespace root\CCM -Class SMS_Client -Name TriggerSchedule -ArgumentList "$ActionCode"
     }
 }
