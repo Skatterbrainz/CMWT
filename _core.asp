@@ -2,7 +2,7 @@
 <%
 '-----------------------------------------------------------------------------
 ' filename....... _core.asp
-' lastupdate..... 04/24/2017
+' lastupdate..... 05/23/2017
 ' description.... CMWT core functions library
 '-----------------------------------------------------------------------------
 
@@ -651,6 +651,8 @@ function CMWT_AutoLink (ColumnName, LinkVal)
 				result = "<a href=""compstatus.asp?fn=" & ColumnName & "&fv=" & LinkVal & """ title=""Filter on " & LinkVal & """>" & LinkVal & "</a>"
 			Case "ADID":
 				result = "<a href=""adr.asp?id=" & LinkVal & """ title=""Show Details"">" & LinkVal & "</a>"
+			Case "CONFIGURATION":
+				result = Replace(LinkVal, ",", ", ")
 		end select
 	end if
 	CMWT_AutoLink = result
@@ -954,18 +956,17 @@ End Sub
 ' CMWT_WMI_TABLEGRID ".", "Name,DisplayName,StartMode,State", "Win32_Service", "Services", "DisplayName", "Name=service.asp?sn="
 
 Sub CMWT_WMI_TABLEGRID (hostname, columns, className, caption, sortby, autolink)
-	Dim cn, objWMIService, colItems, objItem, val, PropertyName, afx, afn, afl, rows, cols
-	Response.Write "<h2 class=""tfx"">" & caption & "</h2>" & _
-		"<table class=""tfx""><tr>"
+	Dim cn, objWMIService, colItems, objItem, val, PropertyName
+	Dim afx, afn, afl, rows, cols, rs2
+	Response.Write "<h2 class=""tfx"">" & caption & "</h2><table class=""tfx""><tr>"
 	cols = Ubound(Split(columns,","))+1
 	For each cn in Split(columns, ",")
-		Response.Write "<td class=""td6 v10 bgGray"">" & _
-			"<a href=""" & Request.ServerVariables("PATH_INFO") & _
+		Response.Write "<td class=""td6 v10 bgGray""><a href=""" & Request.ServerVariables("PATH_INFO") & _
 			"?s=" & cn & """ title=""Sort Column"">" & cn & "</a></td>"
 	Next
 	Response.Write "</tr>"
-	
-	Set objWMIService = GetObject("winmgmts:\\" & hostname & "\root\CIMV2") 
+	On Error Resume Next
+	Set objWMIService = GetObject("winmgmts:\\" & hostname & "\root\CIMV2")
 	Set colItems = objWMIService.ExecQuery("SELECT " & columns & " FROM " & className,,48)
 	If CMWT_NotNullString(autolink) Then
 		afx = Split(autolink,"=")
@@ -976,21 +977,46 @@ Sub CMWT_WMI_TABLEGRID (hostname, columns, className, caption, sortby, autolink)
 		afl = ""
 	End If
 	rows = 0
-	For Each objItem in colItems
+	i = 1
+	Set rs2 = CreateObject("ADODB.RecordSet")
+	rs2.CursorLocation = adUseClient
+	For Each cn in Split(columns, ",")
+		rs2.Fields.Append cn, adVarChar, 255
+	Next
+	rs2.Open
+'	' populate offline recordset
+	For each objItem in colItems
+		rs2.AddNew
+		For each cn in Split(columns, ",")
+			if cn <> "" Then
+				val = objItem.Properties_.Item(cn)
+				if CMWT_IsNullString(val) Then val = ""
+				rs2.Fields(cn).Value = val
+			End if
+		Next
+		rs2.Update
+		i = i + 1
+	Next
+	rs2.Sort = sortby
+	rs2.MoveFirst
+	rows = rs2.RecordCount
+	Do Until rs2.EOF
 		Response.Write "<tr class=""tr1"">"
-		For each PropertyName in Split(columns, ",")
-			val = objItem.Properties_.Item(PropertyName)
-			If CMWT_NotNullString(afn) And Ucase(afn)=Ucase(PropertyName) Then
+		For each cn in Split(columns, ",")
+			val = rs2.Fields(cn).Value
+			If CMWT_NotNullString(afn) And Ucase(afn)=Ucase(cn) Then
 				val = "<a href=""" & afl & "=" & val & """>" & val & "</a>"
 			End If
 			Response.Write "<td class=""td6 v10"">" & val & "</td>"
 		Next
 		Response.Write "</tr>"
-		rows = rows + 1
-	Next
-	Response.Write "<tr><td class=""td6 v10 bgGray"" colspan=""" & cols & """>" & _
-		rows & " services found</td></tr></table>"
+		rs2.MoveNext
+	Loop
+	rs2.Close
+	Set rs2 = Nothing
+	Response.Write "<tr><td class=""td6 v10 bgGray"" colspan=""" & cols & """>" & rows & " items returned</td></tr></table>"
 End Sub
+
 
 Sub CMWT_WMI_TABLEGRID2 (hostname, columns, className, clause, caption, sortby, autolink)
 	Dim cn, objWMIService, colItems, objItem, query, val, PropertyName, afx, afn, afl, rows, cols

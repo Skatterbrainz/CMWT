@@ -2,7 +2,7 @@
 <%
 '-----------------------------------------------------------------------------
 ' filename....... compstatus2.asp
-' lastupdate..... 12/29/2016
+' lastupdate..... 05/23/2017
 ' description.... component status summary - detailed view
 '-----------------------------------------------------------------------------
 time1 = Timer
@@ -48,9 +48,9 @@ query = "SELECT " & _
 	"WHERE " & _
 		"Time > DATEADD(ss,-240-(24*3600),GETDATE()) " & _
 		"AND " & _
-		"Severity='-" & LinkQual & "' " & _
-		"AND " & _
-		"com.ComponentName='" & FilterFV & "'"
+		"com.ComponentName='" & FilterFV & "' " & _
+		"AND " & _ 
+		"Severity='-" & LinkQual & "'"
 
 CMWT_DB_QUERY Application("DSN_CMDB"), query
 
@@ -84,7 +84,6 @@ if not (rs.BOF and rs.EOF) then
 		xrows & " rows returned</td></tr></table>"
 end if
 
-'CMWT_DB_TABLEGRID rs, "Warnings as of " & DATEADD("s",-240-(24*3600),NOW), "", ""
 CMWT_DB_CLOSE()
 CMWT_SHOW_QUERY()
 CMWT_FOOTER()

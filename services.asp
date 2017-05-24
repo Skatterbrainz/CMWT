@@ -2,7 +2,7 @@
 <%
 '-----------------------------------------------------------------------------
 ' filename....... services.asp
-' lastupdate..... 03/01/2017
+' lastupdate..... 05/23/2017
 ' description.... site system windows services status
 '-----------------------------------------------------------------------------
 time1 = Timer
@@ -20,7 +20,7 @@ CMWT_NewPage "", "", ""
 wmi_columns = "DisplayName,Name,StartMode,State,StartName"
 wmi_class   = "Win32_Service"
 query = "SELECT " & wmi_columns & " FROM " & wmi_class
-CMWT_WMI_TABLEGRID ".", wmi_columns, wmi_class, "", "DisplayName", "Name=service.asp?sn="
+CMWT_WMI_TABLEGRID ".", wmi_columns, wmi_class, "", sortby, "Name=service.asp?sn="
 CMWT_SHOW_QUERY() 
 CMWT_Footer()
 Response.Write "</body></html>"
