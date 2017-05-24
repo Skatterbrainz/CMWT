@@ -1,6 +1,10 @@
 # cmwt
 ConfigMgr Web Tools
 
+## Update 05/23/2017
+
+Merged updates into master branch.  Download repository will be decommissioned in lieu of using the cmwt repo native "download" (zip file) features provided by GitHub.
+
 ## Update 12/07/2016 - Latest Raw Code
 
 Wiki will be updated when finalized.  This is going to be daily build updates on the path to releasing another ZIP milestone release.
