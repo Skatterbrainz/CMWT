@@ -3,7 +3,7 @@
 <%
 '-----------------------------------------------------------------------------
 ' filename....... device.asp
-' lastupdate..... 04/24/2017
+' lastupdate..... 06/12/2017
 ' description.... device information report
 '-----------------------------------------------------------------------------
 time1 = Timer
@@ -325,11 +325,11 @@ Select Case Ucase(pset)
 				
 				Response.Write "<tr class=""tr1"">"
 				Response.Write "<td class=""td6 v10 ctr"">"
-				'If NotNullString(x3) Then
-				'	CMWT_IMGLINK2 False, "icon_del2", "icon_del1", "icon_del3", "cmcx.asp?cid=" & x1 & "&cn=" & cn & "&mx=rem&z=device", "Query-Rule Collection"
-				'Else
-				'	CMWT_IMGLINK2 CMWT_ADMIN(), "icon_del2", "icon_del1", "icon_del3", "cmcx.asp?cid=" & x1 & "&cn=" & cn & "&mx=rem&z=device", "Remove"
-				'End If
+				If CMWT_NotNullString(x3) Then
+					CMWT_IMGLINK2 False, "icon_del2", "icon_del1", "icon_del3", "cmcx.asp?cid=" & x1 & "&cn=" & cn & "&mx=rem&z=device", "Query-Rule Collection"
+				Else
+					CMWT_IMGLINK2 CMWT_ADMIN(), "icon_del2", "icon_del1", "icon_del3", "cmcx.asp?cid=" & x1 & "&cn=" & cn & "&mx=rem&z=device", "Remove"
+				End If
 				Response.Write "</td>"
 				
 				Response.Write "<td class=""td6 v10"">" & x1 & "</td>"
@@ -348,7 +348,7 @@ Select Case Ucase(pset)
 		
 		Response.Write "<table>"
 		
-		If CMModify = True And CMWT_ADMIN() Then
+		If CMWT_ADMIN() Then
 			Response.Write "<form name=""form3"" id=""form3"" method=""post"" action=""cmcx.asp"">" & _
 				"<input type=""hidden"" name=""cn"" id=""cn"" value=""" & cn & """ />" & _
 				"<input type=""hidden"" name=""mx"" id=""mx"" value=""ADD"" />" & _

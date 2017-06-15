@@ -2,10 +2,11 @@
 <%
 '-----------------------------------------------------------------------------
 ' filename....... cmcx.asp
-' lastupdate..... 12/16/2016
+' lastupdate..... 06/12/2017
 ' description.... add or remove resources to/from a collection
 '-----------------------------------------------------------------------------
 Response.Expires = -1
+time1 = Timer
 
 cnx = CMWT_GETX("cn", "", "Resources were not selected")
 mx  = CMWT_GETX("mx", "", "Operation Type was not selected")
@@ -88,11 +89,9 @@ Select Case Ucase(mx)
 		CMWT_STOP "invalid operation code requested."
 End Select
 
-Response.Write "</table>"
+Response.Write "</table> <p class=""tf800"">Note: Actual change may take a few seconds to appear in the CMWT console.</p>"
 
-Response.Write "<p class=""tf800"">Note: Actual change may take a few seconds to appear in the CMWT console.</p>"
-
-targetURL = "collection.asp?id=" & cid & "&ks=2"
+targetURL = "collection.asp?id=" & cnn & "&ks=2"
 
 Response.Write "<p><input type=""button"" name=""b1"" id=""b1"" " & _
 	"class=""btx w150 h32"" value=""Continue"" onClick=""document.location.href='" & TargetURL & "'"" /></p>"
