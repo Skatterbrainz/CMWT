@@ -94,45 +94,28 @@ If you encounter issues with the HTML test, confirm the IIS virtual folder and a
 ## Appendix A – _Config.txt File Keys
 
 Note that the values assigned to a given key should not be enclosed in quotations.
-|Key|Description|
-|---|-----------|
-|CMWT_DOMAIN| NETBIOS name of AD domain (e.g. “Contoso”)|
-|-----------|-------------------------------------------|
-|CMWT_DOMAINSUFFIX|	FQDN of AD domain (e.g. “contoso.com”)|
-|-----------|-------------------------------------------|
-|CMWT_ADMINS|	Comma-delimited list of usernames to have access to CMWT.  Note that the usernames must also have explicit or implicit permissions granted within the associated Configuration Manager site.|
-|-----------|-------------------------------------------|
-|DSN_CMDB|	The DSN connection string to the Configuration Manager SQL database|
-|-----------|-------------------------------------------|
-|DSN_CMWT|	The DSN connection string to the CMWT SQL database|
-|-----------|-------------------------------------------|
-|DSN_CMM|	The DSN connection string to the CMMonitor database**|
-|-----------|-------------------------------------------|
-|CMWT_PhysicalPath|	The physical installation path to CMWT|
-|-----------|-------------------------------------------|
-|CMWT_DomainPath|	The LDAP domain label (e.g. “dc=contoso,dc=com”)|
-|-----------|-------------------------------------------|
-|CMWT_MailServer|	SMTP or relay server address for sending alerts (not currently used)|
-|-----------|-------------------------------------------|
-|CMWT_MailSender|	Email address from which alerts will be sent (not currently used)|
-|-----------|-------------------------------------------|
-|CMWT_SupportMail|	Email address to send support requests, feature requests, comments (should be “ds0934@gmail.com”)|
-|-----------|-------------------------------------------|
-|CMWT_ENABLE_LOGGING|	TRUE = Enable logging of console activities, FALSE = disabled logging|
-|-----------|-------------------------------------------|
-|CMWT_MAX_LOG_AGE_DAYS|	Number of days to maintain CMWT activity logs|
-|-----------|-------------------------------------------|
-|CM_SITECODE|	Configuration Manager site code (e.g. “PS1”)|
-|-----------|-------------------------------------------|
-|CM_AD_TOOLS|	TRUE|
-|-----------|-------------------------------------------|
-|CM_AD_TOOLS_SAFETY	TRUE||
-|-----------|-------------------------------------------|
-|CM_AD_TOOLS_ADMINGROUPS|	Comma-delimited list of AD security groups to protect from modification via CMWT|
-|-----------|-------------------------------------------|
-|CM_AD_TOOLUSER|	Domain user account used for reading and modifying AD accounts from the CMWT console.  Enter as “domain\username” (e.g. “contoso\admin123”)|
-|-----------|-------------------------------------------|
-|CM_AD_TOOLPASS|	Password for CM_AD_TOOLUSER account|
-|-----------|-------------------------------------------|
+
+| Key                    | Description |
+|------------------------|-------------|
+| CMWT_DOMAIN            | NETBIOS name of AD domain (e.g. "Contoso") |
+| CMWT_DOMAINSUFFIX      | FQDN of AD domain (e.g. "contoso.com") |
+| CMWT_ADMINS            | Comma-delimited list of usernames to have access to CMWT.  Note that the usernames must also have explicit or implicit permissions granted within the associated Configuration Manager site. |
+| DSN_CMDB               | The DSN connection string to the Configuration Manager SQL database |
+| DSN_CMWT               | The DSN connection string to the CMWT SQL database |
+| DSN_CMM                | The DSN connection string to the CMMonitor database** |
+| CMWT_PhysicalPath      | The physical installation path to CMWT |
+| CMWT_DomainPath        | The LDAP domain label (e.g. "dc=contoso,dc=local") |
+| CMWT_MailServer        | SMTP or relay server address for sending alerts (not currently used) |
+| CMWT_MailSender        | Email address from which alerts will be sent (not currently used) |
+| CMWT_SupportMail       | (deprecated) |
+| CMWT_ENABLE_LOGGING    | TRUE = Enable logging of console activities, FALSE = disabled logging |
+| CMWT_MAX_LOG_AGE_DAYS  | Number of days to maintain CMWT activity logs |
+| CM_SITECODE            | Configuration Manager site code (e.g. "P01") |
+| CM_AD_TOOLS            | TRUE |
+| CM_AD_TOOLS_SAFETY     | TRUE|
+|CM_AD_TOOLS_ADMINGROUPS | Comma-delimited list of AD security groups to protect from modification via CMWT|
+|CM_AD_TOOLUSER|	Domain user account used for reading and modifying AD accounts from the CMWT console.  Enter as "domain\username" (e.g. "contoso\admin123")|
+|CM_AD_TOOLPASS          | Password for CM_AD_TOOLUSER account       |
+|------------------------|-------------------------------------------|
 
 ** optional – for use with Ola Hallengren’s SQL monitoring utility scripts and associated database.  For more information, refer to https://ola.hallengren.com/  
