@@ -60,7 +60,8 @@ by Microsoft and my violate licensing terms.  We recommend using a separate/diff
  *	Browse to locate the file *"cmwt_db_setup.sql"*
  *	When it opens in SSMS, click Run (or press F5)
 
-Web Server Preparation
+## Web Server Preparation
+
 Add the following Windows Server roles to the site server, if they are not already present:
   *	ASP
     * Web Server / Application Development / ASP
