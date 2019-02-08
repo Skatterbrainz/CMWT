@@ -1,6 +1,7 @@
 # CMWT Installation Guide
+## Configuration Manager Web Tools
 
-As of 
+As of 2017-01-05 (version 2017.01.05.01)
 
 ## Overview
 
@@ -10,6 +11,8 @@ Note that the site system must have the SMS Provider role.  CMWT works with CAS 
 CMWT has been tested on Windows Server 2012 R2, SQL Server 2014 and Configuration Manager 1610 (5.00.8458.1000), 
 using Microsoft Internet Explorer, Microsoft Edge and Google Chrome web browsers. Note that features may not 
 behave identically in different browsers.  It should work equally as well on Windows Server 2016.
+
+NOTE: If you are looking for a workstation-based alternative, try the "sktools" PowerShell module.
 
 ## Installation Process
 
@@ -115,8 +118,7 @@ Note that the values assigned to a given key should not be enclosed in quotation
 | CM_AD_TOOLS_SAFETY     | TRUE|
 |CM_AD_TOOLS_ADMINGROUPS | Comma-delimited list of AD security groups to protect from modification via CMWT|
 |CM_AD_TOOLUSER|	Domain user account used for reading and modifying AD accounts from the CMWT console.  Enter as "domain\username" (e.g. "contoso\admin123")|
-|CM_AD_TOOLPASS          | Password for CM_AD_TOOLUSER account       |
-|------------------------|-------------------------------------------|
+|CM_AD_TOOLPASS          | Password for CM_AD_TOOLUSER account |
 
 ** Optional – for use with Ola Hallengren’s SQL monitoring utility scripts and associated database.  For more information, refer to https://ola.hallengren.com/  
 
@@ -136,3 +138,25 @@ Note that the values assigned to a given key should not be enclosed in quotation
 2.	In many cases, the best way to configure CMWT is to use the same AD user account which was involved with 
     the installation of Configuration Manager.  It will (should) typically have SA permissions in the associated 
     SQL Server database, as well as full Administrator rights within the Configuration Manager site.
+
+## Appendix C - Enable Console Tools
+
+The CMWT console tools use client-side scripting to facilitate direct interfacing with remote computers on a 
+common network environment (and domain credentials).  This allows for browsing remote hard drives, registry 
+and event log information and so on.  This is only supported when using CMWT with Microsoft Internet Explorer, 
+but also requires some security zone settings to be configured to allow the feature to work.
+
+1.	Assuming that the CMWT web site is set as an Intranet site, and that the Local Intranet security zone is set to the Medium-level (default), the remaining steps will enable this feature to work:
+2.	Open "Internet Options" in Internet Explorer by clicking on the small gear icon at top-right
+3.	Select the Security tab
+4.	Select the Local Intranet zone
+5.	Click "Custom level…"
+6.	Scroll down to "Initalize and script ActiveX controls not marked as safe for scripting"
+7.	Change the setting from Disable to Prompt (or Enable, if you don’t want to be prompted each time you use a CMWT tool feature)
+8.	Click OK
+
+## Appendix D - Support
+
+There is no support.  There is no Santa. Elvis was an alien visitor.
+
+Seriously: If you want help, hit me on Twitter @skatterbrainzz, or submit a request using the Issues link above.
