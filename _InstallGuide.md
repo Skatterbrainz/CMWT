@@ -31,11 +31,11 @@ uses a script to walk through the settings individually.  Manual mode involves l
 
  1.	Double-click the script file "config.vbs" located in the CMWT installation folder.
  2.	Review and modify the values for each setting to suit your environment
- 3.	When finished, the settings are written to the _config.txt file, and the original is backed up as _config.bak.
+ 3.	When finished, the settings are written to the *_config.txt* file, and the original is backed up as *_config.bak*.
 
 ### Manual Mode
 
- 1.	Edit the file _config.txt” , located in the CMWT installation folder.
+ 1.	Edit the file *_config.txt* , located in the CMWT installation folder.
  2.	Review and modify the values for each setting to suit your environment
 
 ### Permissions
@@ -55,7 +55,7 @@ by Microsoft and my violate licensing terms.  We recommend using a separate/diff
 
  *	Open SQL Server Management Studio
  *	Connect to the CM database instance
- *	Create a new Database named “CMWT”
+ *	Create a new Database named "CMWT"
  *	Click File / Open
  *	Browse to locate the file *"cmwt_db_setup.sql"*
  *	When it opens in SSMS, click Run (or press F5)
@@ -78,9 +78,9 @@ CMWT requires Windows Authentication in order to work properly.  All other authe
 Anonymous Authentication, must be disabled.
 
   1.	In the IIS Manager console, expand Sites, and click on the CMWT virtual folder object.
-  2.	In the right-hand details panel, double-click “Authentication”
+  2.	In the right-hand details panel, double-click "Authentication"
   3.	Right-click on Windows Authentication and select Enable
-  4.	Right-click any other options in the list which show Status is “Enabled” and select Disable.
+  4.	Right-click any other options in the list which show Status is "Enabled" and select Disable.
 
 ## Test Validation
 
@@ -120,7 +120,7 @@ Note that the values assigned to a given key should not be enclosed in quotation
 |CM_AD_TOOLUSER|	Domain user account used for reading and modifying AD accounts from the CMWT console.  Enter as "domain\username" (e.g. "contoso\admin123")|
 |CM_AD_TOOLPASS          | Password for CM_AD_TOOLUSER account |
 
-** Optional – for use with Ola Hallengren’s SQL monitoring utility scripts and associated database.  For more information, refer to https://ola.hallengren.com/  
+** Optional – for use with Ola Hallengren's SQL monitoring utility scripts and associated database.  For more information, refer to https://ola.hallengren.com/  
 
 ## Appendix B – Notes
 
