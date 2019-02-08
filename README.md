@@ -1,5 +1,9 @@
 # cmwt
-ConfigMgr Web Tools
+## ConfigMgr Web Tools
+
+## Update 02/07/2019
+
+Adapted the installation guide from Microsoft Word to markdown.  See the new *_InstallGuide.md* file
 
 ## Update 05/23/2017
 
