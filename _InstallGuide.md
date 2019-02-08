@@ -118,4 +118,21 @@ Note that the values assigned to a given key should not be enclosed in quotation
 |CM_AD_TOOLPASS          | Password for CM_AD_TOOLUSER account       |
 |------------------------|-------------------------------------------|
 
-** optional – for use with Ola Hallengren’s SQL monitoring utility scripts and associated database.  For more information, refer to https://ola.hallengren.com/  
+** Optional – for use with Ola Hallengren’s SQL monitoring utility scripts and associated database.  For more information, refer to https://ola.hallengren.com/  
+
+## Appendix B – Notes
+
+1.	Whenever changes are made to the *_config.txt* file, the CMWT application pool must be recycled 
+    in order to reset the environment.  This causes CMWT to re-read the *_config.txt* file and assign 
+    the updated values within the IIS application pool which updates the application behavior.  
+    
+    If you modify the *_config.txt*, but do not see the changes reflected in the CMWT web interface, 
+    the most common causes are either that the *_config.txt* file was not saved, or it wasn’t saved in 
+    the correct folder location (the root of the CMWT installation), or the IIS application pool wasn’t recycled.
+
+    To reset the application pool, open Application Pools in the IIS Manager console, right-click on 
+    the application pool and select "Recycle…"
+
+2.	In many cases, the best way to configure CMWT is to use the same AD user account which was involved with 
+    the installation of Configuration Manager.  It will (should) typically have SA permissions in the associated 
+    SQL Server database, as well as full Administrator rights within the Configuration Manager site.
